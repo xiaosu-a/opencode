@@ -1,6 +1,6 @@
-# OpenCode Desktop
+# SumoCode Desktop
 
-The OpenCode Desktop app, built with Electron.
+The SumoCode Desktop app, built with Electron.
 
 ## Development
 

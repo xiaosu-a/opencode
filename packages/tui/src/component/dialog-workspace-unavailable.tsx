@@ -9,13 +9,13 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
   const dialog = useDialog()
   const { theme } = useTheme()
   const [store, setStore] = createStore({
-    active: "restore" as "cancel" | "restore",
+    active: "恢复" as "取消" | "恢复",
   })
 
-  const options = ["cancel", "restore"] as const
+  const options = ["取消", "恢复"] as const
 
   async function confirm() {
-    if (store.active === "cancel") {
+    if (store.active === "取消") {
       dialog.clear()
       return
     }
@@ -25,9 +25,9 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
 
   useBindings(() => ({
     bindings: [
-      { key: "return", desc: "Confirm workspace option", group: "Dialog", cmd: () => void confirm() },
-      { key: "left", desc: "Cancel workspace restore", group: "Dialog", cmd: () => setStore("active", "cancel") },
-      { key: "right", desc: "Restore workspace", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "return", desc: "确认工作区选项", group: "Dialog", cmd: () => void confirm() },
+      { key: "left", desc: "取消工作区恢复", group: "Dialog", cmd: () => setStore("active", "取消") },
+      { key: "right", desc: "恢复工作区", group: "Dialog", cmd: () => setStore("active", "恢复") },
     ],
   }))
 
@@ -35,17 +35,17 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Workspace Unavailable
+          工作区不可用
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
         </text>
       </box>
       <text fg={theme.textMuted} wrapMode="word">
-        This session is attached to a workspace that is no longer available.
+        此会话关联的工作区已不可用。
       </text>
       <text fg={theme.textMuted} wrapMode="word">
-        Would you like to restore this session into a new workspace?
+        是否要将此会话恢复到新的工作区？
       </text>
       <box flexDirection="row" justifyContent="flex-end" paddingBottom={1} gap={1}>
         <For each={options}>

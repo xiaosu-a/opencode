@@ -8,7 +8,7 @@
 import { pathToFileURL } from "bun"
 import { StyledText, fg, type ColorInput, type KeyEvent, type TextareaRenderable } from "@opentui/core"
 import { useRenderer } from "@opentui/solid"
-import { normalizePromptContent } from "@opencode-ai/tui/editor"
+import { normalizePromptContent } from "@sumocode-ai/tui/editor"
 import fuzzysort from "fuzzysort"
 import path from "path"
 import { createEffect, createMemo, createResource, createSignal, onCleanup, onMount, type Accessor } from "solid-js"
@@ -23,7 +23,7 @@ import {
   movePromptHistory,
   pushPromptHistory,
 } from "./prompt.shared"
-import { OPENCODE_BASE_MODE, useBindings } from "@opencode-ai/tui/keymap"
+import { SUMOCODE_BASE_MODE, useBindings } from "@sumocode-ai/tui/keymap"
 import { realignEditorPromptParts, resolveEditorSlashValue } from "./prompt.editor"
 import { FOOTER_MENU_ROWS, createFooterMenuState, type RunFooterMenuItem } from "./footer.menu"
 import type { RunFooterTheme } from "./theme"
@@ -283,14 +283,14 @@ export function createPromptState(input: PromptInput): PromptState {
   const [shell, setShell] = createSignal(false)
   const placeholder = createMemo(() => {
     if (shell()) {
-      return new StyledText([fg(input.theme().muted)('Run a command... "git status"')])
+      return new StyledText([fg(input.theme().muted)('运行命令... "git status"')])
     }
 
     if (!input.state().first) {
       return ""
     }
 
-    return new StyledText([fg(input.theme().muted)('Ask anything... "Fix a TODO in the codebase"')])
+    return new StyledText([fg(input.theme().muted)('随便问... "修复代码库中的 TODO"')])
   })
 
   let history = createPromptHistory(input.history)
@@ -414,10 +414,10 @@ export function createPromptState(input: PromptInput): PromptState {
         action: "editor" as const,
         name: "editor",
         display: "/editor",
-        description: "compose in your external editor",
+        description: "在外部编辑器中编辑",
       } satisfies SlashOption,
-      { kind: "slash", name: "new", display: "/new", description: "start a new session" } satisfies SlashOption,
-      { kind: "slash", name: "exit", display: "/exit", description: "close OpenCode" } satisfies SlashOption,
+      { kind: "slash", name: "new", display: "/new", description: "开始新会话" } satisfies SlashOption,
+      { kind: "slash", name: "exit", display: "/exit", description: "关闭 SumoCode" } satisfies SlashOption,
     ]
     const hidden = new Set(builtins.map((item) => item.name))
     const showSkillMenu = !shell() && skillCommands().length > 0 && !hasSkillsCommand()
@@ -433,7 +433,7 @@ export function createPromptState(input: PromptInput): PromptState {
               action: "skill-menu" as const,
               name: "skills",
               display: "/skills",
-              description: "browse available skills",
+              description: "浏览可用技能",
             } satisfies SlashOption,
           ]
         : []),
@@ -835,7 +835,7 @@ export function createPromptState(input: PromptInput): PromptState {
       })
     } catch {
       restore(current)
-      input.onStatus("failed to open editor")
+      input.onStatus("打开编辑器失败")
     }
   }
 
@@ -976,12 +976,12 @@ export function createPromptState(input: PromptInput): PromptState {
   }
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: baseBindingsEnabled(),
     commands: [
       {
         name: "prompt.clear",
-        title: "Clear prompt or exit",
+        title: "清除提示或退出",
         category: "Prompt",
         run() {
           if (requestExit()) return
@@ -993,12 +993,12 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt(),
     commands: [
       {
         name: "session.interrupt",
-        title: "Interrupt session",
+        title: "中断会话",
         category: "Session",
         run() {
           if (input.onInterrupt()) return
@@ -1010,12 +1010,12 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt() && !visible(),
     commands: [
       {
         name: "prompt.editor",
-        title: "Open editor",
+        title: "打开编辑器",
         category: "Prompt",
         run() {
           void openEditor()
@@ -1026,12 +1026,12 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt() && !visible(),
     commands: [
       {
         name: "prompt.history.previous",
-        title: "Previous prompt history",
+        title: "上一条提示历史",
         category: "Prompt",
         run(ctx: { event: KeyEvent }) {
           return historyCommand(-1, ctx.event)
@@ -1039,7 +1039,7 @@ export function createPromptState(input: PromptInput): PromptState {
       },
       {
         name: "prompt.history.next",
-        title: "Next prompt history",
+        title: "下一条提示历史",
         category: "Prompt",
         run(ctx: { event: KeyEvent }) {
           return historyCommand(1, ctx.event)
@@ -1053,12 +1053,12 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt() && !visible(),
     bindings: [
       {
         key: "!",
-        desc: "Shell mode",
+        desc: "Shell 模式",
         group: "Prompt",
         cmd() {
           if (shell()) return false
@@ -1071,18 +1071,18 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt() && shell() && !visible(),
     bindings: [
       {
         key: "escape",
-        desc: "Exit shell mode",
+        desc: "退出 Shell 模式",
         group: "Prompt",
         cmd: () => setShellMode(false),
       },
       {
         key: "backspace",
-        desc: "Exit shell mode",
+        desc: "退出 Shell 模式",
         group: "Prompt",
         cmd() {
           if (!area || area.isDestroyed) return false
@@ -1094,30 +1094,30 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: OPENCODE_BASE_MODE,
+    mode: SUMOCODE_BASE_MODE,
     enabled: input.prompt() && visible(),
     commands: [
       {
         name: "prompt.autocomplete.prev",
-        title: "Previous autocomplete item",
+        title: "上一个自动补全项",
         category: "Autocomplete",
         run: () => menu.move(-1),
       },
       {
         name: "prompt.autocomplete.next",
-        title: "Next autocomplete item",
+        title: "下一个自动补全项",
         category: "Autocomplete",
         run: () => menu.move(1),
       },
       {
         name: "prompt.autocomplete.hide",
-        title: "Hide autocomplete",
+        title: "隐藏自动补全",
         category: "Autocomplete",
         run: cancelAutocomplete,
       },
       {
         name: "prompt.autocomplete.select",
-        title: "Select autocomplete item",
+        title: "选择自动补全项",
         category: "Autocomplete",
         run() {
           if (mode() === "slash" && options().length === 0) {
@@ -1129,7 +1129,7 @@ export function createPromptState(input: PromptInput): PromptState {
       },
       {
         name: "prompt.autocomplete.complete",
-        title: "Complete autocomplete item",
+        title: "完成自动补全项",
         category: "Autocomplete",
         run() {
           if (mode() === "slash" && options().length === 0) {
@@ -1175,7 +1175,7 @@ export function createPromptState(input: PromptInput): PromptState {
     }
 
     if (!next.text.trim()) {
-      input.onStatus(input.state().phase === "running" ? "waiting for current response" : "empty prompt ignored")
+      input.onStatus(input.state().phase === "running" ? "等待当前回复" : "空提示已忽略")
       return
     }
 
@@ -1190,7 +1190,7 @@ export function createPromptState(input: PromptInput): PromptState {
         ? undefined
         : parseSlashCommand(next.text, input.commands())
     if (parsed?.type === "pending") {
-      input.onStatus("loading commands")
+      input.onStatus("正在加载命令")
       return
     }
 

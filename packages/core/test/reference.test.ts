@@ -1,11 +1,11 @@
 import { describe, expect } from "bun:test"
 import { Effect, Exit, Layer, Scope } from "effect"
-import { AbsolutePath } from "@opencode-ai/core/schema"
-import { Global } from "@opencode-ai/core/global"
-import { Reference } from "@opencode-ai/core/reference"
-import { Repository } from "@opencode-ai/core/repository"
-import { RepositoryCache } from "@opencode-ai/core/repository-cache"
-import { EventV2 } from "@opencode-ai/core/event"
+import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { Global } from "@sumocode-ai/core/global"
+import { Reference } from "@sumocode-ai/core/reference"
+import { Repository } from "@sumocode-ai/core/repository"
+import { RepositoryCache } from "@sumocode-ai/core/repository-cache"
+import { EventV2 } from "@sumocode-ai/core/event"
 import { it } from "./lib/effect"
 
 const cache = Layer.mock(RepositoryCache.Service, {

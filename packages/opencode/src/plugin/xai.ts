@@ -1,7 +1,7 @@
-import type { Hooks, PluginInput } from "@opencode-ai/plugin"
+import type { Hooks, PluginInput } from "@sumocode-ai/plugin"
 import { OAUTH_DUMMY_KEY } from "../auth"
 import { createServer } from "http"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
+import { InstallationVersion } from "@sumocode-ai/core/installation/version"
 import { escapeHtml } from "@/util/html"
 
 // Public Grok-CLI OAuth client. xAI's auth server rejects loopback OAuth from
@@ -288,7 +288,7 @@ export async function pollDeviceCodeToken(
 const HTML_SUCCESS = `<!doctype html>
 <html>
   <head>
-    <title>OpenCode - xAI Authorization Successful</title>
+    <title>SumoCode - xAI Authorization Successful</title>
     <style>
       body {
         font-family:
@@ -319,7 +319,7 @@ const HTML_SUCCESS = `<!doctype html>
   <body>
     <div class="container">
       <h1>Authorization Successful</h1>
-      <p>You can close this window and return to OpenCode.</p>
+      <p>You can close this window and return to SumoCode.</p>
     </div>
     <script>
       setTimeout(() => window.close(), 2000)
@@ -330,7 +330,7 @@ const HTML_SUCCESS = `<!doctype html>
 const HTML_ERROR = (error: string) => `<!doctype html>
 <html>
   <head>
-    <title>OpenCode - xAI Authorization Failed</title>
+    <title>SumoCode - xAI Authorization Failed</title>
     <style>
       body {
         font-family:

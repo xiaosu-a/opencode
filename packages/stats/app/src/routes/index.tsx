@@ -1,6 +1,6 @@
 import "./index.css"
 import { Link, Meta, Title } from "@solidjs/meta"
-import { ProviderIcon } from "@opencode-ai/ui/provider-icon"
+import { ProviderIcon } from "@sumocode-ai/ui/provider-icon"
 import { geoEquirectangular, geoPath } from "d3-geo"
 import { scaleSqrt } from "d3-scale"
 import countryCodesSource from "i18n-iso-countries/codes.json?raw"
@@ -20,7 +20,7 @@ import {
   type SessionCostEntry,
   type TokenCostEntry,
   type UsagePoint,
-} from "@opencode-ai/stats-core/domain/home"
+} from "@sumocode-ai/stats-core/domain/home"
 import { createAsync, query } from "@solidjs/router"
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show, type JSX } from "solid-js"
 import { getRequestEvent } from "solid-js/web"
@@ -49,12 +49,12 @@ const rangeLabels: Record<UsageRange, string> = {
   "1M": "1 Month",
   "2M": "2 Months",
 }
-const statsHomeTitle = "AI Model Usage Rankings | OpenCode Data"
+const statsHomeTitle = "AI Model Usage Rankings | SumoCode Data"
 const statsHomeDescription =
-  "Explore OpenCode Go usage across AI models, including token volume, rankings, market share, token pricing, session cost, cache ratio, and geo breakdowns."
-const statsHomeFallbackUrl = "https://opencode.ai/data/"
+  "Explore SumoCode Go usage across AI models, including token volume, rankings, market share, token pricing, session cost, cache ratio, and geo breakdowns."
+const statsHomeFallbackUrl = "https://sumocode.ai/data/"
 const statsUnfurlPath = "banner.jpg"
-const statsUnfurlAlt = "OpenCode Data wordmark on a dark patterned background"
+const statsUnfurlAlt = "SumoCode Data wordmark on a dark patterned background"
 const usageColors = [
   "#ed6aff",
   "#a684ff",
@@ -145,7 +145,7 @@ export default function StatsHome() {
       <Meta name="description" content={statsHomeDescription} />
       <Link rel="canonical" href={statsHomeUrl} />
       <Meta property="og:type" content="website" />
-      <Meta property="og:site_name" content="OpenCode" />
+      <Meta property="og:site_name" content="SumoCode" />
       <Meta property="og:title" content={statsHomeTitle} />
       <Meta property="og:description" content={statsHomeDescription} />
       <Meta property="og:url" content={statsHomeUrl} />
@@ -189,8 +189,8 @@ export default function StatsHome() {
 
 function getStatsHomeUrl(base: string, requestUrl: string) {
   const url = new URL(base, requestUrl)
-  if (url.hostname === "stats.opencode.ai") return "https://opencode.ai/data/"
-  if (url.hostname === "stats.dev.opencode.ai") return "https://dev.opencode.ai/data/"
+  if (url.hostname === "stats.sumocode.ai") return "https://sumocode.ai/data/"
+  if (url.hostname === "stats.dev.sumocode.ai") return "https://dev.sumocode.ai/data/"
   return url.toString()
 }
 
@@ -403,7 +403,7 @@ function TopModelsSection(props: { data: StatsHomeData["usage"]; leaderboard: St
   return (
     <section id="top-models" data-section="top-models">
       <h2 data-slot="top-models-title">
-        <strong>Top models.</strong> <span>Usage of models across OpenCode Go.</span>
+        <strong>Top models.</strong> <span>Usage of models across SumoCode Go.</span>
       </h2>
       <Show
         when={data().some((item) => usageTotal(item) > 0)}
@@ -792,7 +792,7 @@ function UniqueUsersSection(props: { data: StatsHomeData["users"] }) {
   return (
     <section id="unique-users" data-section="unique-users">
       <SectionBridge label="TOP MODELS" href="#top-models" />
-      <SectionTitle title="Unique Users" description="Daily unique OpenCode Go users by model." />
+      <SectionTitle title="Unique Users" description="Daily unique SumoCode Go users by model." />
       <Show
         when={data().some((item) => usageTotal(item) > 0)}
         fallback={

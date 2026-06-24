@@ -122,7 +122,7 @@ export function error(message: string) {
   if (message.startsWith("Error: ")) {
     message = message.slice("Error: ".length)
   }
-  println(Style.TEXT_DANGER_BOLD + "Error: " + Style.TEXT_NORMAL + message)
+  println(Style.TEXT_DANGER_BOLD + "错误：" + Style.TEXT_NORMAL + message)
 }
 
 export function markdown(text: string): string {

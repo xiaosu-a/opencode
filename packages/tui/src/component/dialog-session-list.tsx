@@ -57,7 +57,7 @@ export function DialogSessionList() {
           result = await sdk.client.experimental.workspace.create({ type: selection.workspaceType, branch: null })
         } catch (err) {
           toast.show({
-            title: "Failed to create workspace",
+            title: "创建工作区失败",
             message: errorMessage(err),
             variant: "error",
           })
@@ -66,7 +66,7 @@ export function DialogSessionList() {
         const workspace = result?.data
         if (!workspace) {
           toast.show({
-            title: "Failed to create workspace",
+            title: "创建工作区失败",
             message: errorMessage(result?.error ?? "no response"),
             variant: "error",
           })
@@ -101,7 +101,7 @@ export function DialogSessionList() {
           if (result.error) {
             toast.show({
               variant: "error",
-              title: "Failed to delete workspace",
+              title: "删除工作区失败",
               message: errorMessage(result.error),
             })
             return false
@@ -148,7 +148,7 @@ export function DialogSessionList() {
   })
   const quickSwitchFooterHints = createMemo(() => {
     const hint = quickSwitchHint()
-    return hint && local.session.slots().length > 0 ? [{ title: "switch", label: hint }] : []
+    return hint && local.session.slots().length > 0 ? [{ title: "切换", label: hint }] : []
   })
 
   const options = createMemo(() => {
@@ -187,7 +187,7 @@ export function DialogSessionList() {
           ? () => <text fg={theme.accent}>{slot}</text>
           : undefined
       return {
-        title: isDeleting ? `Press ${deleteHint()} again to confirm` : x.title,
+        title: isDeleting ? `再按一次 ${deleteHint()} 确认` : x.title,
         bg: isDeleting ? theme.error : undefined,
         value: x.id,
         category,
@@ -202,11 +202,11 @@ export function DialogSessionList() {
         const x = sessionMap.get(id)
         if (!x) return undefined
         const label = new Date(x.time.updated).toDateString()
-        return buildOption(id, label === today ? "Today" : label)
+        return buildOption(id, label === today ? "今天" : label)
       })
       .filter((x) => x !== undefined)
 
-    return [...pinned.map((id) => buildOption(id, "Pinned")).filter((x) => x !== undefined), ...remaining]
+    return [...pinned.map((id) => buildOption(id, "已固定")).filter((x) => x !== undefined), ...remaining]
   })
 
   onMount(() => {
@@ -215,7 +215,7 @@ export function DialogSessionList() {
 
   return (
     <DialogSelect
-      title="Sessions"
+      title="会话"
       options={options()}
       skipFilter={true}
       current={currentSessionID()}
@@ -233,14 +233,14 @@ export function DialogSessionList() {
       actions={[
         {
           command: "session.pin.toggle",
-          title: "pin/unpin",
+          title: "固定/取消固定",
           onTrigger: (option: { value: string }) => {
             local.session.togglePin(option.value)
           },
         },
         {
           command: "session.delete",
-          title: "delete",
+          title: "删除",
           onTrigger: async (option) => {
             if (toDelete() === option.value) {
               const session = sessions().find((item) => item.id === option.value)
@@ -256,7 +256,7 @@ export function DialogSessionList() {
                   } else {
                     toast.show({
                       variant: "error",
-                      title: "Failed to delete session",
+                      title: "删除会话失败",
                       message: errorMessage(result.error),
                     })
                   }
@@ -269,7 +269,7 @@ export function DialogSessionList() {
                 } else {
                   toast.show({
                     variant: "error",
-                    title: "Failed to delete session",
+                    title: "删除会话失败",
                     message: errorMessage(err),
                   })
                 }
@@ -288,7 +288,7 @@ export function DialogSessionList() {
         },
         {
           command: "session.rename",
-          title: "rename",
+          title: "重命名",
           onTrigger: async (option) => {
             dialog.replace(() => <DialogSessionRename session={option.value} />)
           },

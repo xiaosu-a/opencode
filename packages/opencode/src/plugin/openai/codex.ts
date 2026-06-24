@@ -1,5 +1,5 @@
-import type { Hooks, PluginInput } from "@opencode-ai/plugin"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
+import type { Hooks, PluginInput } from "@sumocode-ai/plugin"
+import { InstallationVersion } from "@sumocode-ai/core/installation/version"
 import { OAUTH_DUMMY_KEY } from "../../auth"
 import os from "os"
 import { setTimeout as sleep } from "node:timers/promises"
@@ -141,7 +141,7 @@ async function refreshAccessToken(refreshToken: string, issuer = ISSUER): Promis
 const HTML_SUCCESS = `<!doctype html>
 <html>
   <head>
-    <title>OpenCode - Codex Authorization Successful</title>
+    <title>SumoCode - Codex Authorization Successful</title>
     <style>
       body {
         font-family:
@@ -172,7 +172,7 @@ const HTML_SUCCESS = `<!doctype html>
   <body>
     <div class="container">
       <h1>Authorization Successful</h1>
-      <p>You can close this window and return to OpenCode.</p>
+      <p>You can close this window and return to SumoCode.</p>
     </div>
     <script>
       setTimeout(() => window.close(), 2000)
@@ -183,7 +183,7 @@ const HTML_SUCCESS = `<!doctype html>
 export const renderOAuthError = (error: string) => `<!doctype html>
 <html>
   <head>
-    <title>OpenCode - Codex Authorization Failed</title>
+    <title>SumoCode - Codex Authorization Failed</title>
     <style>
       body {
         font-family:

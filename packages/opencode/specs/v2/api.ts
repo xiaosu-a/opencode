@@ -1,9 +1,9 @@
 // @ts-nocheck
 
-import { OpenCode } from "@opencode-ai/core"
-import { ReadTool } from "@opencode-ai/core/tools"
+import { SumoCode } from "@sumocode-ai/core"
+import { ReadTool } from "@sumocode-ai/core/tools"
 
-const opencode = OpenCode.make({})
+const opencode = SumoCode.make({})
 
 opencode.tool.add(ReadTool)
 

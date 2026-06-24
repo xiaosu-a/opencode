@@ -21,7 +21,7 @@ beforeAll(async () => {
     useParams: () => ({}),
     useSearchParams: () => [{}],
   }))
-  mock.module("@opencode-ai/ui/context", () => ({
+  mock.module("@sumocode-ai/ui/context", () => ({
     createSimpleContext: () => ({
       use: () => undefined,
       provider: () => undefined,

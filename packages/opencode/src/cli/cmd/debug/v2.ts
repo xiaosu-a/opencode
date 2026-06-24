@@ -1,9 +1,9 @@
 import { EOL } from "os"
 import { Effect } from "effect"
-import { Catalog } from "@opencode-ai/core/catalog"
-import { LocationServiceMap } from "@opencode-ai/core/location-layer"
-import { Location } from "@opencode-ai/core/location"
-import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Catalog } from "@sumocode-ai/core/catalog"
+import { LocationServiceMap } from "@sumocode-ai/core/location-layer"
+import { Location } from "@sumocode-ai/core/location"
+import { AbsolutePath } from "@sumocode-ai/core/schema"
 import { effectCmd } from "../../effect-cmd"
 
 export const V2Command = effectCmd({

@@ -1,10 +1,10 @@
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
 import { eq } from "drizzle-orm"
-import { serviceUse } from "@opencode-ai/core/effect/service-use"
+import { serviceUse } from "@sumocode-ai/core/effect/service-use"
 import { Effect, Layer, Option, Schema, Context } from "effect"
 
-import { Database } from "@opencode-ai/core/database/database"
-import { AccountStateTable, AccountTable } from "@opencode-ai/core/account/sql"
+import { Database } from "@sumocode-ai/core/database/database"
+import { AccountStateTable, AccountTable } from "@sumocode-ai/core/account/sql"
 import { AccessToken, AccountID, AccountRepoError, Info, OrgID, RefreshToken } from "./schema"
 import { normalizeServerUrl } from "./url"
 

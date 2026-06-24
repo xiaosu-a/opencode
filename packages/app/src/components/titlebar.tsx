@@ -12,15 +12,15 @@ import {
 } from "solid-js"
 import { createStore } from "solid-js/store"
 import { useLocation, useNavigate, useParams } from "@solidjs/router"
-import { IconButton } from "@opencode-ai/ui/icon-button"
-import { Icon } from "@opencode-ai/ui/icon"
-import { Button } from "@opencode-ai/ui/button"
-import { Tooltip, TooltipKeybind } from "@opencode-ai/ui/tooltip"
-import { useTheme } from "@opencode-ai/ui/theme/context"
-import { IconButtonV2 } from "@opencode-ai/ui/v2/icon-button-v2"
-import { Icon as IconV2 } from "@opencode-ai/ui/v2/icon"
-import { KeybindV2 } from "@opencode-ai/ui/v2/keybind-v2"
-import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
+import { IconButton } from "@sumocode-ai/ui/icon-button"
+import { Icon } from "@sumocode-ai/ui/icon"
+import { Button } from "@sumocode-ai/ui/button"
+import { Tooltip, TooltipKeybind } from "@sumocode-ai/ui/tooltip"
+import { useTheme } from "@sumocode-ai/ui/theme/context"
+import { IconButtonV2 } from "@sumocode-ai/ui/v2/icon-button-v2"
+import { Icon as IconV2 } from "@sumocode-ai/ui/v2/icon"
+import { KeybindV2 } from "@sumocode-ai/ui/v2/keybind-v2"
+import { TooltipV2 } from "@sumocode-ai/ui/v2/tooltip-v2"
 
 import { LayoutRoute, useLayout } from "@/context/layout"
 import { usePlatform } from "@/context/platform"
@@ -40,7 +40,7 @@ import { ServerConnection, useServer } from "@/context/server"
 import { tabHref, useTabs } from "@/context/tabs"
 import "./titlebar.css"
 import { useServerSDK } from "@/context/server-sdk"
-import { Session } from "@opencode-ai/sdk/v2"
+import { Session } from "@sumocode-ai/sdk/v2"
 
 type TauriDesktopWindow = {
   startDragging?: () => Promise<void>
@@ -1018,9 +1018,9 @@ function NewSessionTabItem(props: { ref?: HTMLDivElement; href: string; title: s
 function ChannelIndicator() {
   return (
     <>
-      {["beta", "dev"].includes(import.meta.env.VITE_OPENCODE_CHANNEL) && (
+      {["beta", "dev"].includes(import.meta.env.VITE_SUMOCODE_CHANNEL) && (
         <div class="bg-icon-interactive-base text-[#FFF] font-medium px-2 rounded-sm uppercase font-mono">
-          {import.meta.env.VITE_OPENCODE_CHANNEL.toUpperCase()}
+          {import.meta.env.VITE_SUMOCODE_CHANNEL.toUpperCase()}
         </div>
       )}
     </>

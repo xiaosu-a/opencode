@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test"
-import { base64Encode } from "@opencode-ai/core/util/encode"
-import { mockOpenCodeServer } from "../../utils/mock-server"
+import { base64Encode } from "@sumocode-ai/core/util/encode"
+import { mockSumoCodeServer } from "../../utils/mock-server"
 import { fixture } from "./session-timeline-stress.fixture"
 
 export async function installTimelineSettings(page: Page) {
@@ -20,7 +20,7 @@ export async function installTimelineSettings(page: Page) {
 }
 
 export function mockStressTimeline(page: Page) {
-  return mockOpenCodeServer(page, {
+  return mockSumoCodeServer(page, {
     sessions: fixture.sessions,
     provider: fixture.provider,
     directory: fixture.directory,

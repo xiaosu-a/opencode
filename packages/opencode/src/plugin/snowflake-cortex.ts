@@ -1,6 +1,6 @@
-import type { Hooks, PluginInput } from "@opencode-ai/plugin"
+import type { Hooks, PluginInput } from "@sumocode-ai/plugin"
 import { OAUTH_DUMMY_KEY } from "../auth"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
+import { InstallationVersion } from "@sumocode-ai/core/installation/version"
 import { createServer } from "http"
 import open from "open"
 
@@ -158,11 +158,11 @@ async function refreshAccessToken(account: string, refreshToken: string) {
 
 const HTML_SUCCESS = `<!doctype html>
 <html>
-  <head><title>OpenCode - Snowflake Authorization Successful</title></head>
+  <head><title>SumoCode - Snowflake Authorization Successful</title></head>
   <body style="font-family: system-ui; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#111; color:#eee;">
     <div style="text-align:center; max-width:36rem; padding:2rem;">
       <h1 style="color:#7ee787;">Authorization Successful</h1>
-      <p>You can close this window and return to OpenCode.</p>
+      <p>You can close this window and return to SumoCode.</p>
     </div>
     <script>setTimeout(() => window.close(), 1500)</script>
   </body>
@@ -170,7 +170,7 @@ const HTML_SUCCESS = `<!doctype html>
 
 const htmlError = (message: string) => `<!doctype html>
 <html>
-  <head><title>OpenCode - Snowflake Authorization Failed</title></head>
+  <head><title>SumoCode - Snowflake Authorization Failed</title></head>
   <body style="font-family: system-ui; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#111; color:#eee;">
     <div style="text-align:center; max-width:48rem; padding:2rem;">
       <h1 style="color:#ff7b72;">Authorization Failed</h1>
@@ -497,7 +497,7 @@ export async function SnowflakeCortexAuthPlugin(_input: PluginInput): Promise<Ho
             return {
               url,
               instructions:
-                "Complete Snowflake sign-in in your browser. OpenCode will capture the OAuth callback and store the bearer token automatically.",
+                "Complete Snowflake sign-in in your browser. SumoCode will capture the OAuth callback and store the bearer token automatically.",
               method: "auto" as const,
               async callback() {
                 try {

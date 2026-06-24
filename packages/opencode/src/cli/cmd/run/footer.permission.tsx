@@ -14,7 +14,7 @@
 import type { TextareaRenderable } from "@opentui/core"
 import { useKeyboard, useTerminalDimensions } from "@opentui/solid"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal } from "solid-js"
-import type { PermissionRequest } from "@opencode-ai/sdk/v2"
+import type { PermissionRequest } from "@sumocode-ai/sdk/v2"
 import {
   createPermissionBodyState,
   permissionAlwaysLines,
@@ -100,7 +100,7 @@ export function RejectField(props: {
       minHeight={1}
       maxHeight={3}
       wrapMode="word"
-      placeholder="Tell OpenCode what to do differently"
+      placeholder="告诉 SumoCode 哪里需要改进"
       placeholderColor={props.theme.muted}
       textColor={props.theme.text}
       focusedTextColor={props.theme.text}
@@ -145,14 +145,14 @@ export function RunPermissionBody(props: {
   const busy = createMemo(() => state().submitting)
   const title = createMemo(() => {
     if (state().stage === "always") {
-      return "Always allow"
+      return "始终允许"
     }
 
     if (state().stage === "reject") {
-      return "Reject permission"
+      return "拒绝权限"
     }
 
-    return "Permission required"
+    return "需要权限"
   })
 
   createEffect(() => {
@@ -284,7 +284,7 @@ export function RunPermissionBody(props: {
           </Match>
           <Match when={state().stage === "reject"}>
             <box paddingLeft={1}>
-              <text fg={props.theme.muted}>Tell OpenCode what to do differently</text>
+              <text fg={props.theme.muted}>告诉 SumoCode 哪里需要改进</text>
             </box>
           </Match>
         </Switch>
@@ -325,16 +325,16 @@ export function RunPermissionBody(props: {
                 when={!busy()}
                 fallback={
                   <text fg={props.theme.muted} wrapMode="word" flexShrink={0}>
-                    Waiting for permission event...
+                    等待权限事件...
                   </text>
                 }
               >
                 <box flexDirection="row" gap={2} flexShrink={0}>
                   <text fg={props.theme.text}>
-                    enter <span style={{ fg: props.theme.muted }}>confirm</span>
+                    enter <span style={{ fg: props.theme.muted }}>确认</span>
                   </text>
                   <text fg={props.theme.text}>
-                    esc <span style={{ fg: props.theme.muted }}>cancel</span>
+                    esc <span style={{ fg: props.theme.muted }}>取消</span>
                   </text>
                 </box>
               </Show>
@@ -392,7 +392,7 @@ export function RunPermissionBody(props: {
                   </Show>
                   <Show when={!info().diff && info().lines.length === 0}>
                     <box paddingLeft={1}>
-                      <text fg={props.theme.muted}>No diff provided</text>
+                      <text fg={props.theme.muted}>无差异内容</text>
                     </box>
                   </Show>
                 </box>
@@ -455,13 +455,13 @@ export function RunPermissionBody(props: {
           >
             <box flexDirection="row" gap={2} flexShrink={0}>
               <text fg={props.theme.text}>
-                {"⇆"} <span style={{ fg: props.theme.muted }}>select</span>
+                {"⇆"} <span style={{ fg: props.theme.muted }}>选择</span>
               </text>
               <text fg={props.theme.text}>
-                enter <span style={{ fg: props.theme.muted }}>confirm</span>
+                enter <span style={{ fg: props.theme.muted }}>确认</span>
               </text>
               <text fg={props.theme.text}>
-                esc <span style={{ fg: props.theme.muted }}>{state().stage === "always" ? "cancel" : "reject"}</span>
+                esc <span style={{ fg: props.theme.muted }}>{state().stage === "always" ? "取消" : "拒绝"}</span>
               </text>
             </box>
           </Show>
