@@ -11,6 +11,7 @@ export type GlobalEvent = {
 class GlobalBusEmitter extends EventEmitter<{
   event: [GlobalEvent]
 }> {
+  // @ts-expect-error Pre-existing: EventEmitter generic emit signature incompatibility with Node.js types
   override emit(eventName: "event", event: GlobalEvent): boolean {
     if (event.payload && typeof event.payload === "object" && !("id" in event.payload)) {
       event.payload.id = event.payload.syncEvent?.id ?? Identifier.create("evt", "ascending")
