@@ -180,7 +180,7 @@ export const LoginCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("url", {
-      describe: "server URL",
+      describe: "服务器 URL",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.login")(function* (args) {
@@ -195,7 +195,7 @@ export const LogoutCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("email", {
-      describe: "account email to log out from",
+      describe: "要登出的账户邮箱",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.logout")(function* (args) {
@@ -241,23 +241,23 @@ export const ConsoleCommand = cmd({
     yargs
       .command({
         ...LoginCommand,
-        describe: "log in to console",
+        describe: "登录到控制台",
       })
       .command({
         ...LogoutCommand,
-        describe: "log out from console",
+        describe: "从控制台登出",
       })
       .command({
         ...SwitchCommand,
-        describe: "switch active org",
+        describe: "切换当前组织",
       })
       .command({
         ...OrgsCommand,
-        describe: "list orgs",
+        describe: "列出组织",
       })
       .command({
         ...OpenCommand,
-        describe: "open active console account",
+        describe: "打开当前控制台账户",
       })
       .demandCommand(),
   async handler() {},

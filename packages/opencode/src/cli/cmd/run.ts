@@ -199,7 +199,7 @@ export const RunCommand = effectCmd({
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "基本认证用户名（默认为 SUMOCODE_SERVER_USERNAME 或 'opencode'）",
+        describe: "基本认证用户名（默认为 SUMOCODE_SERVER_USERNAME 或 'sumocode'）",
       })
       .option("dir", {
         type: "string",
@@ -932,7 +932,7 @@ export const RunCommand = effectCmd({
         return Server.Default().app.fetch(new Request(request, { headers }))
       }) as typeof globalThis.fetch
       const sdk = createOpencodeClient({
-        baseUrl: "http://opencode.internal",
+        baseUrl: "http://sumocode.internal",
         fetch: fetchFn,
         directory,
       })
@@ -960,7 +960,7 @@ type MiniCommandInput = {
 export async function runMini(input: MiniCommandInput) {
   if (!RunCommand.handler) throw new Error("Mini 命令处理器不可用")
   await RunCommand.handler({
-    $0: "opencode",
+    $0: "sumocode",
     _: ["mini"],
     message: input.prompt ? [input.prompt] : [],
     command: undefined,

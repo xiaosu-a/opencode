@@ -70,43 +70,43 @@ export function resolveThreadDirectory(project?: string, envPWD = process.env.PW
 
 export const TuiThreadCommand = cmd({
   command: "$0 [project]",
-  describe: "start opencode tui",
+  describe: "启动 SumoCode TUI 界面",
   builder: (yargs) =>
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "path to start opencode in",
+        describe: "项目路径",
       })
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "model to use in the format of provider/model",
+        describe: "使用的模型，格式为 provider/model",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "继续上一次会话",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "session id to continue",
+        describe: "要继续的会话 ID",
       })
       .option("fork", {
         type: "boolean",
-        describe: "fork the session when continuing (use with --continue or --session)",
+        describe: "继续时创建会话分支（与 --continue 或 --session 配合使用）",
       })
       .option("prompt", {
         type: "string",
-        describe: "prompt to use",
+        describe: "使用的提示词",
       })
       .option("agent", {
         type: "string",
-        describe: "agent to use",
+        describe: "使用的 agent",
       })
       .option("mini", {
         type: "boolean",
-        describe: "start the minimal interactive interface",
+        describe: "启动最小化交互界面",
         default: false,
       })
       .option("replay", {
@@ -115,11 +115,11 @@ export const TuiThreadCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "disable mini session history replay on resume and after resize",
+        describe: "恢复时和调整大小后禁用 mini 会话历史回放",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "cap visible mini replay to the newest N messages",
+        describe: "mini 回放最多显示最近 N 条消息",
       })
       .option("demo", {
         type: "boolean",
@@ -226,7 +226,7 @@ export const TuiThreadCommand = cmd({
             events: undefined,
           }
         : {
-            url: "http://opencode.internal",
+            url: "http://sumocode.internal",
             fetch: createWorkerFetch(client),
             events: createEventSource(client),
           }

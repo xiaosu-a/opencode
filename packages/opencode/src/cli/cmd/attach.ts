@@ -6,45 +6,45 @@ import { ServerAuth } from "@/server/auth"
 
 export const AttachCommand = cmd({
   command: "attach <url>",
-  describe: "attach to a running opencode server",
+  describe: "连接到正在运行的 SumoCode 服务器",
   builder: (yargs) =>
     yargs
       .positional("url", {
         type: "string",
-        describe: "http://localhost:4096",
+        describe: "服务器 URL，例如 http://localhost:4096",
         demandOption: true,
       })
       .option("dir", {
         type: "string",
-        description: "directory to run in",
+        description: "运行目录",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "继续上一次会话",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "session id to continue",
+        describe: "要继续的会话 ID",
       })
       .option("fork", {
         type: "boolean",
-        describe: "fork the session when continuing (use with --continue or --session)",
+        describe: "继续时创建会话分支（与 --continue 或 --session 配合使用）",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "basic auth password (defaults to SUMOCODE_SERVER_PASSWORD)",
+        describe: "Basic auth 密码（默认读取 SUMOCODE_SERVER_PASSWORD）",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "basic auth username (defaults to SUMOCODE_SERVER_USERNAME or 'opencode')",
+        describe: "Basic auth 用户名（默认读取 SUMOCODE_SERVER_USERNAME 或 'sumocode'）",
       })
       .option("mini", {
         type: "boolean",
-        describe: "start the minimal interactive interface",
+        describe: "启动最小化交互界面",
         default: false,
       })
       .option("replay", {
@@ -53,11 +53,11 @@ export const AttachCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "disable mini session history replay on resume and after resize",
+        describe: "恢复时和调整大小后禁用 mini 会话历史回放",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "cap visible mini replay to the newest N messages",
+        describe: "mini 回放最多显示最近 N 条消息",
       }),
   handler: async (args) => {
     if (args.replay === true) {

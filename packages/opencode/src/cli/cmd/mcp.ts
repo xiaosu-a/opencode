@@ -96,7 +96,7 @@ function authState() {
 
 export const McpCommand = cmd({
   command: "mcp",
-  describe: "manage MCP (Model Context Protocol) servers",
+  describe: "管理 MCP (Model Context Protocol) 服务器",
   builder: (yargs) =>
     yargs
       .command(McpAddCommand)
@@ -111,7 +111,7 @@ export const McpCommand = cmd({
 export const McpListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list MCP servers and their status",
+  describe: "列出 MCP 服务器及其状态",
   handler: Effect.fn("Cli.mcp.list")(function* () {
     UI.empty()
     prompts.intro("MCP Servers")
@@ -121,7 +121,7 @@ export const McpListCommand = effectCmd({
 
     if (servers.length === 0) {
       prompts.log.warn("No MCP servers configured")
-      prompts.outro("Add servers with: opencode mcp add")
+      prompts.outro("使用以下命令添加服务器：sumocode mcp add")
       return
     }
 
@@ -171,11 +171,11 @@ export const McpListCommand = effectCmd({
 
 export const McpAuthCommand = effectCmd({
   command: "auth [name]",
-  describe: "authenticate with an OAuth-enabled MCP server",
+  describe: "通过 OAuth 认证 MCP 服务器",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "name of the MCP server",
+        describe: "MCP 服务器名称",
         type: "string",
       })
       .command(McpAuthListCommand),
@@ -317,7 +317,7 @@ export const McpAuthCommand = effectCmd({
 export const McpAuthListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list OAuth-capable MCP servers and their auth status",
+  describe: "列出支持 OAuth 的 MCP 服务器及认证状态",
   handler: Effect.fn("Cli.mcp.auth.list")(function* () {
     UI.empty()
     prompts.intro("MCP OAuth Status")
@@ -346,10 +346,10 @@ export const McpAuthListCommand = effectCmd({
 
 export const McpLogoutCommand = effectCmd({
   command: "logout [name]",
-  describe: "remove OAuth credentials for an MCP server",
+  describe: "移除 MCP 服务器的 OAuth 凭据",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "name of the MCP server",
+      describe: "MCP 服务器名称",
       type: "string",
     }),
   handler: Effect.fn("Cli.mcp.logout")(function* (args) {
@@ -439,24 +439,24 @@ async function addMcpToConfig(name: string, mcpConfig: ConfigMCPV1.Info, configP
 
 export const McpAddCommand = effectCmd({
   command: "add [name]",
-  describe: "add an MCP server",
+  describe: "添加 MCP 服务器",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "name of the MCP server",
+        describe: "MCP 服务器名称",
         type: "string",
       })
       .option("url", {
-        describe: "URL for a remote MCP server",
+        describe: "远程 MCP 服务器的 URL",
         type: "string",
       })
       .option("env", {
-        describe: "environment variable for a local MCP server (KEY=VALUE)",
+        describe: "本地 MCP 服务器的环境变量 (KEY=VALUE)",
         type: "string",
         array: true,
       })
       .option("header", {
-        describe: "HTTP header for a remote MCP server (KEY=VALUE)",
+        describe: "远程 MCP 服务器的 HTTP 头 (KEY=VALUE)",
         type: "string",
         array: true,
       }),
@@ -570,7 +570,7 @@ export const McpAddCommand = effectCmd({
       if (type === "local") {
         const command = await prompts.text({
           message: "Enter command to run",
-          placeholder: "e.g., opencode x @modelcontextprotocol/server-filesystem",
+          placeholder: "例如：sumocode x @modelcontextprotocol/server-filesystem",
           validate: (x) => (x && x.length > 0 ? undefined : "Required"),
         })
         if (prompts.isCancel(command)) throw new UI.CancelledError()
@@ -669,10 +669,10 @@ export const McpAddCommand = effectCmd({
 
 export const McpDebugCommand = effectCmd({
   command: "debug <name>",
-  describe: "debug OAuth connection for an MCP server",
+  describe: "调试 MCP 服务器的 OAuth 连接",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "name of the MCP server",
+      describe: "MCP 服务器名称",
       type: "string",
       demandOption: true,
     }),

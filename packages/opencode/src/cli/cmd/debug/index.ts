@@ -18,7 +18,7 @@ import { V2Command } from "./v2"
 
 export const DebugCommand = cmd({
   command: "debug",
-  describe: "debugging and troubleshooting tools",
+  describe: "调试和故障排除工具",
   builder: (yargs) =>
     yargs
       .command(ConfigCommand)
@@ -40,7 +40,7 @@ export const DebugCommand = cmd({
 
 const WaitCommand = effectCmd({
   command: "wait",
-  describe: "wait indefinitely (for debugging)",
+  describe: "无限等待（用于调试）",
   handler: Effect.fn("Cli.debug.wait")(function* () {
     yield* Effect.sleep(Duration.days(1))
   }),
@@ -48,7 +48,7 @@ const WaitCommand = effectCmd({
 
 const InfoCommand = effectCmd({
   command: "info",
-  describe: "show debug information",
+  describe: "显示应用信息",
   handler: Effect.fn("Cli.debug.info")(function* () {
     const { Config } = yield* Effect.promise(() => import("@/config/config"))
     const { ConfigPlugin } = yield* Effect.promise(() => import("@/config/plugin"))
@@ -58,7 +58,7 @@ const InfoCommand = effectCmd({
       : undefined
     const terminal = [termProgram, process.env.TERM].filter((item): item is string => Boolean(item)).join(" / ")
 
-    console.log(`opencode version: ${InstallationVersion}`)
+    console.log(`SumoCode 版本：${InstallationVersion}`)
     console.log(`os: ${os.type()} ${os.release()} ${os.arch()}`)
     console.log(`terminal: ${terminal || "unknown"}`)
     console.log("plugins:")
@@ -78,7 +78,7 @@ const InfoCommand = effectCmd({
 
 const PathsCommand = cmd({
   command: "paths",
-  describe: "show global paths (data, config, cache, state)",
+  describe: "显示全局路径（数据、配置、缓存、状态）",
   handler() {
     for (const [key, value] of Object.entries(Global.Path)) {
       console.log(key.padEnd(10), value)

@@ -133,9 +133,9 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
       pnpm: "pnpm uninstall -g sumocode-ai",
       bun: "bun remove -g sumocode-ai",
       yarn: "yarn global remove sumocode-ai",
-      brew: "brew uninstall opencode",
-      choco: "choco uninstall opencode",
-      scoop: "scoop uninstall opencode",
+      brew: "brew uninstall sumocode",
+      choco: "choco uninstall sumocode",
+      scoop: "scoop uninstall sumocode",
     }
     prompts.log.info(`  ✓ 包: ${cmds[method] || method}`)
   }
@@ -184,15 +184,15 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
       pnpm: ["pnpm", "uninstall", "-g", "sumocode-ai"],
       bun: ["bun", "remove", "-g", "sumocode-ai"],
       yarn: ["yarn", "global", "remove", "sumocode-ai"],
-      brew: ["brew", "uninstall", "opencode"],
-      choco: ["choco", "uninstall", "opencode"],
-      scoop: ["scoop", "uninstall", "opencode"],
+      brew: ["brew", "uninstall", "sumocode"],
+      choco: ["choco", "uninstall", "sumocode"],
+      scoop: ["scoop", "uninstall", "sumocode"],
     }
 
     const cmd = cmds[method]
     if (cmd) {
       spinner.start(`正在运行 ${cmd.join(" ")}...`)
-      const result = await Process.run(method === "choco" ? ["choco", "uninstall", "opencode", "-y", "-r"] : cmd, {
+      const result = await Process.run(method === "choco" ? ["choco", "uninstall", "sumocode", "-y", "-r"] : cmd, {
         nothrow: true,
       })
       if (result.code !== 0) {
@@ -266,7 +266,7 @@ async function getShellConfigFile(): Promise<string | null> {
     if (!exists) continue
 
     const content = await Filesystem.readText(file).catch(() => "")
-    if (content.includes("# opencode") || content.includes(".sumocode/bin")) {
+    if (content.includes("# sumocode") || content.includes(".sumocode/bin")) {
       return file
     }
   }
@@ -284,7 +284,7 @@ async function cleanShellConfig(file: string) {
   for (const line of lines) {
     const trimmed = line.trim()
 
-    if (trimmed === "# opencode") {
+    if (trimmed === "# sumocode") {
       skip = true
       continue
     }

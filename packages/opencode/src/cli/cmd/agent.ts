@@ -32,20 +32,20 @@ const AVAILABLE_PERMISSIONS = [
 
 const AgentCreateCommand = effectCmd({
   command: "create",
-  describe: "create a new agent",
+  describe: "创建新 agent",
   builder: (yargs: Argv) =>
     yargs
       .option("path", {
         type: "string",
-        describe: "directory path to generate the agent file",
+        describe: "agent 文件的生成目录路径",
       })
       .option("description", {
         type: "string",
-        describe: "what the agent should do",
+        describe: "agent 的功能描述",
       })
       .option("mode", {
         type: "string",
-        describe: "agent mode",
+        describe: "agent 模式",
         choices: ["all", "primary", "subagent"] as const,
       })
       .option("permissions", {
@@ -56,7 +56,7 @@ const AgentCreateCommand = effectCmd({
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "model to use in the format of provider/model",
+        describe: "使用的模型，格式为 provider/model",
       }),
   handler: Effect.fn("Cli.agent.create")(function* (args) {
     const { InstanceRef } = yield* Effect.promise(() => import("@/effect/instance-ref"))
@@ -233,7 +233,7 @@ const AgentCreateCommand = effectCmd({
 
 const AgentListCommand = effectCmd({
   command: "list",
-  describe: "list all available agents",
+  describe: "列出所有可用 agent",
   handler: Effect.fn("Cli.agent.list")(function* () {
     const { Agent } = yield* Effect.promise(() => import("../../agent/agent"))
     const agents = yield* Agent.Service.use((svc) => svc.list())
@@ -253,7 +253,7 @@ const AgentListCommand = effectCmd({
 
 export const AgentCommand = cmd({
   command: "agent",
-  describe: "manage agents",
+  describe: "管理 agent",
   builder: (yargs) => yargs.command(AgentCreateCommand).command(AgentListCommand).demandCommand(),
   async handler() {},
 })

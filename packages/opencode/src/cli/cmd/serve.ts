@@ -6,7 +6,7 @@ import { Flag } from "@sumocode-ai/core/flag/flag"
 export const ServeCommand = effectCmd({
   command: "serve",
   builder: (yargs) => withNetworkOptions(yargs),
-  describe: "starts a headless opencode server",
+  describe: "启动无头 SumoCode 服务器",
   // Server loads instances per-request via x-opencode-directory header — no
   // need for an ambient project InstanceContext at startup.
   instance: false,
@@ -17,7 +17,7 @@ export const ServeCommand = effectCmd({
     }
     const opts = yield* resolveNetworkOptions(args)
     const server = yield* Effect.promise(() => Server.listen(opts))
-    console.log(`opencode server listening on http://${server.hostname}:${server.port}`)
+    console.log(`SumoCode 服务器监听在 http://${server.hostname}:${server.port}`)
 
     yield* Effect.never
   }),
