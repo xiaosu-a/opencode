@@ -33,7 +33,7 @@ const run = Effect.fn("Cli.debug.agent.body")(function* (
   const agent = yield* Agent.Service.use((svc) => svc.get(agentName))
   if (!agent) {
     process.stderr.write(
-      `Agent ${agentName} not found, run '${basename(process.execPath)} agent list' to get an agent list` + EOL,
+      `未找到智能体 ${agentName}，运行 '${basename(process.execPath)} agent list' 获取智能体列表` + EOL,
     )
     return yield* fail("", 1)
   }
@@ -43,11 +43,11 @@ const run = Effect.fn("Cli.debug.agent.body")(function* (
   if (toolID) {
     const tool = availableTools.find((item) => item.id === toolID)
     if (!tool) {
-      process.stderr.write(`Tool ${toolID} not found for agent ${agentName}` + EOL)
+      process.stderr.write(`未找到智能体 ${agentName} 的工具 ${toolID}` + EOL)
       return yield* fail("", 1)
     }
     if (resolvedTools[toolID] === false) {
-      process.stderr.write(`Tool ${toolID} is disabled for agent ${agentName}` + EOL)
+      process.stderr.write(`工具 ${toolID} 已被智能体 ${agentName} 禁用` + EOL)
       return yield* fail("", 1)
     }
     const params = parseToolParams(args.params)
@@ -75,10 +75,10 @@ const getAvailableTools = Effect.fn("Cli.debug.agent.getAvailableTools")(functio
         onFailure: (cause) => {
           const error = Cause.squash(cause) as Provider.DefaultModelError
           if (error instanceof Provider.ModelNotFoundError) {
-            return fail(`Model not found: ${error.providerID}/${error.modelID}`)
+            return fail(`未找到模型: ${error.providerID}/${error.modelID}`)
           }
-          if (error instanceof Provider.NoModelsError) return fail(`No models found for provider ${error.providerID}`)
-          return fail("No providers found")
+          if (error instanceof Provider.NoModelsError) return fail(`未找到提供商 ${error.providerID} 的模型`)
+          return fail("未找到提供商")
         },
       }),
     ))
