@@ -3,7 +3,7 @@ title: GitHub
 description: Użyj opencode w problemach z GitHubem i zastosujch ściągnięcia.
 ---
 
-opencode integruje się z przepływem pracy w GitHub. Wspomnij o `/opencode` lub `/oc` w swoim komentarzu, a opencode wykonaj zadania w ramach modułu uruchamiającego GitHub Actions.
+sumocode integruje się z przepływem pracy w GitHub. Wspomnij o `/opencode` lub `/oc` w swoim komentarzu, a opencode wykonaj zadania w ramach modułu uruchamiającego GitHub Actions.
 
 ---
 
@@ -20,7 +20,7 @@ opencode integruje się z przepływem pracy w GitHub. Wspomnij o `/opencode` lub
 Uruchomione dalsze postępowanie w przypadku wystąpienia w repozytorium GitHub:
 
 ```bash
-opencode github install
+sumocode github install
 ```
 
 Aby przeprowadzić Cię przez proces instalacji aplikacji GitHub, utwórz działanie i skonfiguruj wpisy tajnych.
@@ -63,7 +63,7 @@ Można też uszkodzić to rozwiązanie.
               fetch-depth: 1
               persist-credentials: false
 
-          - name: Run OpenCode
+          - name: Run SumoCode
            uses: anomalyco/opencode/github@latest
            env:
              ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -103,7 +103,7 @@ Można też uszkodzić to rozwiązanie.
 
 ## Obsługiwane wydarzenia
 
-opencode może zostać wywołany przez zdarzenie GitHub:
+sumocode może zostać wywołany przez zdarzenie GitHub:
 
 | Typ zdarzenia                 | Wywołane przez                                   | Szczegóły                                                                                                                                             |
 | ----------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -119,7 +119,7 @@ opencode może zostać wywołany przez zdarzenie GitHub:
 Uruchamiaj opencode zgodnie z harmonogramem, aby wykonać zautomatyzowane zadania:
 
 ```yaml title=".github/workflows/opencode-scheduled.yml"
-name: Scheduled OpenCode Task
+name: Scheduled SumoCode Task
 
 on:
   schedule:
@@ -139,7 +139,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Run OpenCode
+      - name: Run SumoCode
         uses: anomalyco/opencode/github@latest
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

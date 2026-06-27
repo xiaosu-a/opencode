@@ -16,13 +16,13 @@ Pliki logów są zapisywane w:
 
 Nazwy plików dziennika zawierają znaczniki czasu (np. `2025-01-09T123456.log`) i przechowywanych jest 10 ostatnich plików dziennika.
 
-Możesz ustawić poziom dziennika za pomocą opcji wiersza poleceń `--log-level`, aby uzyskać bardziej szczegółowe informacje debugowania. Na przykład `opencode --log-level DEBUG`.
+Możesz ustawić poziom dziennika za pomocą opcji wiersza poleceń `--log-level`, aby uzyskać bardziej szczegółowe informacje debugowania. Na przykład `sumocode --log-level DEBUG`.
 
 ---
 
 ## Przechowywanie danych
 
-opencode przechowuje dane sesji i inne dane aplikacji na dysku pod adresem:
+sumocode przechowuje dane sesji i inne dane aplikacji na dysku pod adresem:
 
 - **macOS/Linux**: `~/.local/share/opencode/`
 - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.local\share\opencode`
@@ -39,13 +39,13 @@ Ten katalog zawiera:
 
 ## Aplikacja desktopowa
 
-opencode Desktop uruchamia w tle lokalny serwer opencode (sidecar `opencode-cli`). Większość problemów jest spowodowana nieprawidłowo działającą wtyczką, uszkodzoną pamięcią podręczną lub złymi ustawieniami serwera.
+sumocode Desktop uruchamia w tle lokalny serwer opencode (sidecar `opencode-cli`). Większość problemów jest spowodowana nieprawidłowo działającą wtyczką, uszkodzoną pamięcią podręczną lub złymi ustawieniami serwera.
 
 ### Szybkie sprawdzenie
 
 - Całkowicie zakończ i uruchom ponownie aplikację.
 - Jeśli aplikacja wyświetli ekran błędu, kliknij **Uruchom ponownie** i skopiuj szczegóły błędu.
-- Tylko macOS: menu `OpenCode` -> **Załaduj ponownie przeglądarkę internetową** (pomaga, jeśli interfejs użytkownika jest pusty/zawieszony).
+- Tylko macOS: menu `SumoCode` -> **Załaduj ponownie przeglądarkę internetową** (pomaga, jeśli interfejs użytkownika jest pusty/zawieszony).
 
 ---
 
@@ -57,9 +57,9 @@ Jeśli aplikacja komputerowa ulega awarii podczas uruchamiania, zawiesza się lu
 
 Otwórz globalny plik konfiguracyjny i poszukaj klucza `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (lub `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (starsze instalacje): `~/.local/share/opencode/opencode.jsonc`
-- **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.config\opencode\opencode.jsonc`
+- **macOS/Linux**: `~/.config/sumocode/sumocode.jsonc` (lub `~/.config/sumocode/sumocode.json`)
+- **macOS/Linux** (starsze instalacje): `~/.local/share/opencode/sumocode.jsonc`
+- **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.config\opencode\sumocode.jsonc`
 
 Jeśli masz skonfigurowane wtyczki, tymczasowo je wyłącz, usuwając klucz lub ustawiając go na pustą tablicę:
 
@@ -72,10 +72,10 @@ Jeśli masz skonfigurowane wtyczki, tymczasowo je wyłącz, usuwając klucz lub 
 
 #### Sprawdź katalogi wtyczek
 
-opencode może także ładować lokalne wtyczki z dysku. Tymczasowo usuń je (lub zmień nazwę folderu) i uruchom ponownie aplikację komputerową:
+sumocode może także ładować lokalne wtyczki z dysku. Tymczasowo usuń je (lub zmień nazwę folderu) i uruchom ponownie aplikację komputerową:
 
 - **Wtyczki globalne**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/sumocode/plugins/`
   - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.config\opencode\plugins`
 - **Wtyczki projektowe** (tylko jeśli używasz konfiguracji dla poszczególnych projektów)
   - `<your-project>/.sumocode/plugins/`
@@ -101,7 +101,7 @@ Jeśli wyłączenie wtyczek nie pomoże (lub instalacja wtyczki utknęła), wycz
 
 ### Napraw problemy z połączeniem z serwerem
 
-opencode Desktop może uruchomić własny serwer lokalny (domyślnie) lub połączyć się ze skonfigurowanym adresem URL serwera.
+sumocode Desktop może uruchomić własny serwer lokalny (domyślnie) lub połączyć się ze skonfigurowanym adresem URL serwera.
 
 Jeśli zobaczysz okno dialogowe **„Połączenie nie powiodło się”** (lub aplikacja nigdy nie wychodzi poza ekran powitalny), sprawdź, czy jest niestandardowy adres URL serwera.
 
@@ -111,7 +111,7 @@ Na ekranie głównym kliknij nazwę serwera (z kropką stanu), aby otworzyć sel
 
 #### Usuń `server.port` / `server.hostname` ze swojej konfiguracji
 
-Jeśli Twój `opencode.json(c)` zawiera sekcję `server`, tymczasowo usuń ją i uruchom ponownie aplikację komputerową.
+Jeśli Twój `sumocode.json(c)` zawiera sekcję `server`, tymczasowo usuń ją i uruchom ponownie aplikację komputerową.
 
 #### Sprawdź zmienne środowiskowe
 
@@ -144,7 +144,7 @@ Jeśli doświadczasz niskiej wydajności, problemów z dostępem do plików lub 
 
 ### Brak powiadomień
 
-opencode Desktop pokazuje powiadomienia systemowe tylko wtedy, gdy:
+sumocode Desktop pokazuje powiadomienia systemowe tylko wtedy, gdy:
 
 - powiadomienia są włączone dla opencode w ustawieniach systemu operacyjnego, oraz
 - okno aplikacji nie jest aktywne.
@@ -199,7 +199,7 @@ Oto kilka typowych problemów i sposobów ich rozwiązania.
 
 1. Sprawdź dzienniki pod kątem komunikatów o błędach
 2. Spróbuj uruchomić z `--print-logs`, aby zobaczyć dane wyjściowe w terminalu
-3. Upewnij się, że masz najnowszą wersję z `opencode upgrade`
+3. Upewnij się, że masz najnowszą wersję z `sumocode upgrade`
 
 ---
 
@@ -227,7 +227,7 @@ Przykłady:
 - `openrouter/google/gemini-2.5-flash`
 - `opencode/kimi-k2`
 
-Aby dowiedzieć się, do jakich modeli masz dostęp, uruchom `opencode models`
+Aby dowiedzieć się, do jakich modeli masz dostęp, uruchom `sumocode models`
 
 ---
 
@@ -297,4 +297,4 @@ Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 export DISPLAY=:99.0
 ```
 
-opencode wykryje, czy używasz Waylanda i wolisz `wl-clipboard`, w przeciwnym razie spróbuje znaleźć narzędzia schowka w kolejności: `xclip` i `xsel`.
+sumocode wykryje, czy używasz Waylanda i wolisz `wl-clipboard`, w przeciwnym razie spróbuje znaleźć narzędzia schowka w kolejności: `xclip` i `xsel`.

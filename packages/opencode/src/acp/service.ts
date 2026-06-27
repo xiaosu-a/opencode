@@ -45,7 +45,7 @@ import { ModelV2 } from "@sumocode-ai/core/model"
 import { Provider } from "@/provider/provider"
 import type { Command } from "@/command"
 
-export const AuthMethodID = "opencode-login"
+export const AuthMethodID = "sumocode-login"
 
 export type Error = ACPError.Error
 type ServiceConnection = Pick<AgentSideConnection, "sessionUpdate"> &
@@ -69,7 +69,7 @@ export type Interface = {
   readonly cancel: (input: CancelNotification) => Effect.Effect<void, Error>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/ACP/Service") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/ACP/Service") {}
 
 export function make(input: {
   sdk: OpencodeClient
@@ -91,17 +91,17 @@ export function make(input: {
   const initialize = Effect.fn("ACP.initialize")(function* (params: InitializeRequest) {
     const started = performance.now()
     const authMethod: AuthMethod = {
-      description: "Run `opencode auth login` in the terminal",
-      name: "Login with opencode",
+      description: "Run `sumocode auth login` in the terminal",
+      name: "Login with sumocode",
       id: AuthMethodID,
     }
 
     if (params.clientCapabilities?._meta?.["terminal-auth"] === true) {
       authMethod._meta = {
         "terminal-auth": {
-          command: "opencode",
+          command: "sumocode",
           args: ["auth", "login"],
-          label: "OpenCode Login",
+          label: "SumoCode Login",
         },
       }
     }
@@ -127,7 +127,7 @@ export function make(input: {
       },
       authMethods: [authMethod],
       agentInfo: {
-        name: "OpenCode",
+        name: "SumoCode",
         version: InstallationVersion,
       },
     }
@@ -864,7 +864,7 @@ const promptResponse = Effect.fn("ACP.promptResponse")(function* (
 
 function promptErrorMessage(error: AssistantError) {
   if ("message" in error.data && typeof error.data.message === "string") return error.data.message
-  return "OpenCode prompt failed"
+  return "SumoCode prompt failed"
 }
 
 function sendUsageUpdate(
@@ -1057,7 +1057,7 @@ function fromUnknownError(error: unknown, service?: string): Error {
   if (isAuthRequired(error)) {
     return new ACPError.AuthRequiredError({ providerId: findProviderID(error) })
   }
-  return new ACPError.ServiceFailureError({ safeMessage: "OpenCode service failure", service })
+  return new ACPError.ServiceFailureError({ safeMessage: "SumoCode service failure", service })
 }
 
 function isACPError(error: unknown): error is Error {

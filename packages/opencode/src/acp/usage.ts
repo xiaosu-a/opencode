@@ -1,5 +1,5 @@
 import type { AgentSideConnection, Usage } from "@agentclientprotocol/sdk"
-import type { AssistantMessage as OpenCodeAssistantMessage, Message } from "@sumocode-ai/sdk/v2"
+import type { AssistantMessage as SumoCodeAssistantMessage, Message } from "@sumocode-ai/sdk/v2"
 import { InstanceRef } from "@/effect/instance-ref"
 import { InstanceStore } from "@/project/instance-store"
 import { ProviderV2 } from "@sumocode-ai/core/provider"
@@ -7,11 +7,11 @@ import { ModelV2 } from "@sumocode-ai/core/model"
 import { Provider } from "@/provider/provider"
 import { Context, Effect, Layer, SynchronizedRef } from "effect"
 
-export type AssistantTokenCost = Pick<OpenCodeAssistantMessage, "cost" | "tokens">
+export type AssistantTokenCost = Pick<SumoCodeAssistantMessage, "cost" | "tokens">
 
 export type AssistantMessage = AssistantTokenCost &
-  Pick<OpenCodeAssistantMessage, "role"> &
-  Partial<Pick<OpenCodeAssistantMessage, "providerID" | "modelID">>
+  Pick<SumoCodeAssistantMessage, "role"> &
+  Partial<Pick<SumoCodeAssistantMessage, "providerID" | "modelID">>
 
 export type SessionMessage = {
   readonly info: { readonly role: Message["role"] } | AssistantMessage
@@ -58,14 +58,14 @@ export interface Interface {
 }
 
 export class MessageLoader extends Context.Service<MessageLoader, MessageLoaderInterface>()(
-  "@opencode/ACPUsageMessageLoader",
+  "@sumocode/ACPUsageMessageLoader",
 ) {}
 
 export class ContextLimitLoader extends Context.Service<ContextLimitLoader, ContextLimitLoaderInterface>()(
-  "@opencode/ACPUsageContextLimitLoader",
+  "@sumocode/ACPUsageContextLimitLoader",
 ) {}
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/ACPUsage") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/ACPUsage") {}
 
 export function messageLoaderFromSDK(sdk: SDK): MessageLoaderInterface {
   return MessageLoader.of({

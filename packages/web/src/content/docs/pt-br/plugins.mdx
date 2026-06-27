@@ -20,7 +20,7 @@ Existem duas maneiras de carregar plugins.
 Coloque arquivos JavaScript ou TypeScript no diretório de plugins.
 
 - `.sumocode/plugins/` - Plugins em nível de projeto
-- `~/.config/opencode/plugins/` - Plugins globais
+- `~/.config/sumocode/plugins/` - Plugins globais
 
 Os arquivos nesses diretórios são carregados automaticamente na inicialização.
 
@@ -30,7 +30,7 @@ Os arquivos nesses diretórios são carregados automaticamente na inicializaçã
 
 Especifique pacotes npm no seu arquivo de configuração.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ Navegue pelos plugins disponíveis no [ecossistema](/docs/ecosystem#plugins).
 
 Os plugins são carregados de todas as fontes e todos os hooks são executados em sequência. A ordem de carregamento é:
 
-1. Configuração global (`~/.config/opencode/opencode.json`)
-2. Configuração do projeto (`opencode.json`)
-3. Diretório de plugins global (`~/.config/opencode/plugins/`)
+1. Configuração global (`~/.config/sumocode/sumocode.json`)
+2. Configuração do projeto (`sumocode.json`)
+3. Diretório de plugins global (`~/.config/sumocode/plugins/`)
 4. Diretório de plugins do projeto (`.sumocode/plugins/`)
 
 Pacotes npm duplicados com o mesmo nome e versão são carregados uma vez. No entanto, um plugin local e um plugin npm com nomes semelhantes são carregados separadamente.

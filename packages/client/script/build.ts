@@ -15,8 +15,8 @@ await Effect.runPromise(
         emitPromise(contract, {
           outputTypes: {
             "events.subscribe": {
-              name: "OpenCodeEventEncoded",
-              import: 'import type { OpenCodeEventEncoded } from "@sumocode-ai/protocol/groups/event"',
+              name: "SumoCodeEventEncoded",
+              import: 'import type { SumoCodeEventEncoded } from "@sumocode-ai/protocol/groups/event"',
             },
           },
         }),

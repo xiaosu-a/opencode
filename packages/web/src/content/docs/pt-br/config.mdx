@@ -11,7 +11,7 @@ Você pode configurar o opencode usando um arquivo de configuração JSON.
 
 O opencode suporta os formatos **JSON** e **JSONC** (JSON com Comentários).
 
-```jsonc title="opencode.jsonc"
+```jsonc title="sumocode.jsonc"
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-sonnet-4-5",
@@ -44,9 +44,9 @@ Por exemplo, se sua configuração global define `autoupdate: true` e sua config
 As fontes de configuração são carregadas nesta ordem (fontes posteriores substituem as anteriores):
 
 1. **Configuração remota** (de `.well-known/opencode`) - padrões organizacionais
-2. **Configuração global** (`~/.config/opencode/opencode.json`) - preferências do usuário
+2. **Configuração global** (`~/.config/sumocode/sumocode.json`) - preferências do usuário
 3. **Configuração personalizada** (`OPENCODE_CONFIG` var de ambiente) - substituições personalizadas
-4. **Configuração do projeto** (`opencode.json` no projeto) - configurações específicas do projeto
+4. **Configuração do projeto** (`sumocode.json` no projeto) - configurações específicas do projeto
 5. **Diretórios `.opencode`** - agentes, comandos, plugins
 6. **Configuração inline** (`OPENCODE_CONFIG_CONTENT` var de ambiente) - substituições em tempo de execução
 
@@ -80,7 +80,7 @@ Por exemplo, se sua organização fornece servidores MCP que estão desativados 
 
 Você pode habilitar servidores específicos em sua configuração local:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "mcp": {
     "jira": {
@@ -96,9 +96,9 @@ Você pode habilitar servidores específicos em sua configuração local:
 
 ### Global
 
-Coloque sua configuração global do opencode em `~/.config/opencode/opencode.json`. Use a configuração global para preferências de todo o usuário, como provedores, modelos e permissões.
+Coloque sua configuração global do opencode em `~/.config/sumocode/sumocode.json`. Use a configuração global para preferências de todo o usuário, como provedores, modelos e permissões.
 
-Para configurações específicas do TUI, use `~/.config/opencode/tui.json`.
+Para configurações específicas do TUI, use `~/.config/sumocode/tui.json`.
 
 A configuração global substitui os padrões organizacionais remotos.
 
@@ -106,7 +106,7 @@ A configuração global substitui os padrões organizacionais remotos.
 
 ### Por projeto
 
-Adicione `opencode.json` na raiz do seu projeto. A configuração do projeto tem a maior precedência entre os arquivos de configuração padrão - ela substitui tanto as configurações globais quanto as remotas.
+Adicione `sumocode.json` na raiz do seu projeto. A configuração do projeto tem a maior precedência entre os arquivos de configuração padrão - ela substitui tanto as configurações globais quanto as remotas.
 
 Para configurações específicas do TUI do projeto, adicione `tui.json` junto a ele.
 
@@ -126,7 +126,7 @@ Especifique um caminho de arquivo de configuração personalizado usando a vari�
 
 ```bash
 export OPENCODE_CONFIG=/path/to/my/custom-config.json
-opencode run "Hello world"
+sumocode run "Hello world"
 ```
 
 A configuração personalizada é carregada entre as configurações globais e do projeto na ordem de precedência.
@@ -139,7 +139,7 @@ Especifique um diretório de configuração personalizado usando a variável de 
 
 ```bash
 export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
-opencode run "Hello world"
+sumocode run "Hello world"
 ```
 
 O diretório personalizado é carregado após a configuração global e os diretórios `.opencode`, então ele **pode substituir** suas configurações.
@@ -173,7 +173,7 @@ Use um arquivo `tui.json` (ou `tui.jsonc`) dedicado para configurações especí
 
 Use `OPENCODE_TUI_CONFIG` para apontar para um arquivo de configuração TUI personalizado.
 
-Chaves legadas `theme`, `keybinds` e `tui` em `opencode.json` estão obsoletas e são migradas automaticamente quando possível.
+Chaves legadas `theme`, `keybinds` e `tui` em `sumocode.json` estão obsoletas e são migradas automaticamente quando possível.
 
 [Saiba mais sobre a configuração do TUI aqui](/docs/tui#configure).
 
@@ -181,9 +181,9 @@ Chaves legadas `theme`, `keybinds` e `tui` em `opencode.json` estão obsoletas e
 
 ### Servidor
 
-Você pode configurar as configurações do servidor para os comandos `opencode serve` e `opencode web` através da opção `server`.
+Você pode configurar as configurações do servidor para os comandos `sumocode serve` e `sumocode web` através da opção `server`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "server": {
@@ -212,7 +212,7 @@ Opções disponíveis:
 
 Você pode gerenciar as ferramentas que um LLM pode usar através da opção `tools`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "tools": {
@@ -230,7 +230,7 @@ Você pode gerenciar as ferramentas que um LLM pode usar através da opção `to
 
 Você pode configurar os provedores e modelos que deseja usar em sua configuração do opencode através das opções `provider`, `model` e `small_model`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {},
@@ -243,7 +243,7 @@ A opção `small_model` configura um modelo separado para tarefas leves, como ge
 
 As opções do provedor podem incluir `timeout` e `setCacheKey`:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -272,7 +272,7 @@ Alguns provedores suportam opções de configuração adicionais além das confi
 
 Amazon Bedrock suporta configuração específica da AWS:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -318,7 +318,7 @@ Defina seu tema de interface em `tui.json`.
 
 Você pode configurar agentes especializados para tarefas específicas através da opção `agent`.
 
-```jsonc title="opencode.jsonc"
+```jsonc title="sumocode.jsonc"
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
@@ -336,7 +336,7 @@ Você pode configurar agentes especializados para tarefas específicas através 
 }
 ```
 
-Você também pode definir agentes usando arquivos markdown em `~/.config/opencode/agents/` ou `.sumocode/agents/`. [Saiba mais aqui](/docs/agents).
+Você também pode definir agentes usando arquivos markdown em `~/.config/sumocode/agents/` ou `.sumocode/agents/`. [Saiba mais aqui](/docs/agents).
 
 ---
 
@@ -344,7 +344,7 @@ Você também pode definir agentes usando arquivos markdown em `~/.config/openco
 
 Você pode definir o agente padrão usando a opção `default_agent`. Isso determina qual agente é usado quando nenhum é explicitamente especificado.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "plan"
@@ -353,7 +353,7 @@ Você pode definir o agente padrão usando a opção `default_agent`. Isso deter
 
 O agente padrão deve ser um agente primário (não um subagente). Isso pode ser um agente embutido como `"build"` ou `"plan"`, ou um [agente personalizado](/docs/agents) que você definiu. Se o agente especificado não existir ou for um subagente, o opencode recuará para `"build"` com um aviso.
 
-Essa configuração se aplica a todas as interfaces: TUI, CLI (`opencode run`), aplicativo desktop e GitHub Action.
+Essa configuração se aplica a todas as interfaces: TUI, CLI (`sumocode run`), aplicativo desktop e GitHub Action.
 
 ---
 
@@ -361,7 +361,7 @@ Essa configuração se aplica a todas as interfaces: TUI, CLI (`opencode run`), 
 
 Você pode configurar o recurso [share](/docs/share) através da opção `share`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "share": "manual"
@@ -382,7 +382,7 @@ Por padrão, o compartilhamento é definido para o modo manual, onde você preci
 
 Você pode configurar comandos personalizados para tarefas repetitivas através da opção `command`.
 
-```jsonc title="opencode.jsonc"
+```jsonc title="sumocode.jsonc"
 {
   "$schema": "https://opencode.ai/config.json",
   "command": {
@@ -400,7 +400,7 @@ Você pode configurar comandos personalizados para tarefas repetitivas através 
 }
 ```
 
-Você também pode definir comandos usando arquivos markdown em `~/.config/opencode/commands/` ou `.sumocode/commands/`. [Saiba mais aqui](/docs/commands).
+Você também pode definir comandos usando arquivos markdown em `~/.config/sumocode/commands/` ou `.sumocode/commands/`. [Saiba mais aqui](/docs/commands).
 
 ---
 
@@ -423,7 +423,7 @@ Personalize atalhos de teclado em `tui.json`.
 
 O opencode fará o download automaticamente de quaisquer novas atualizações quando for iniciado. Você pode desabilitar isso com a opção `autoupdate`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": false
@@ -439,7 +439,7 @@ Observe que isso só funciona se não foi instalado usando um gerenciador de pac
 
 Você pode configurar formatadores de código através da opção `formatter`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "formatter": {
@@ -467,7 +467,7 @@ Por padrão, o opencode **permite todas as operações** sem exigir aprovação 
 
 Por exemplo, para garantir que as ferramentas `edit` e `bash` exijam aprovação do usuário:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": {
@@ -485,7 +485,7 @@ Por exemplo, para garantir que as ferramentas `edit` e `bash` exijam aprovação
 
 Você pode controlar o comportamento de compactação de contexto através da opção `compaction`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "compaction": {
@@ -506,7 +506,7 @@ Você pode controlar o comportamento de compactação de contexto através da op
 
 Você pode configurar padrões de ignorar do observador de arquivos através da opção `watcher`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "watcher": {
@@ -523,7 +523,7 @@ Os padrões seguem a sintaxe glob. Use isso para excluir diretórios barulhentos
 
 Você pode configurar servidores MCP que deseja usar através da opção `mcp`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {}
@@ -538,9 +538,9 @@ Você pode configurar servidores MCP que deseja usar através da opção `mcp`.
 
 [Plugins](/docs/plugins) estendem o opencode com ferramentas, hooks e integrações personalizadas.
 
-Coloque arquivos de plugin em `.sumocode/plugins/` ou `~/.config/opencode/plugins/`. Você também pode carregar plugins do npm através da opção `plugin`.
+Coloque arquivos de plugin em `.sumocode/plugins/` ou `~/.config/sumocode/plugins/`. Você também pode carregar plugins do npm através da opção `plugin`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
@@ -555,7 +555,7 @@ Coloque arquivos de plugin em `.sumocode/plugins/` ou `~/.config/opencode/plugin
 
 Você pode configurar as instruções para o modelo que está usando através da opção `instructions`.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["CONTRIBUTING.md", "docs/guidelines.md", ".cursor/rules/*.md"]
@@ -570,7 +570,7 @@ Isso aceita um array de caminhos e padrões glob para arquivos de instrução. [
 
 Você pode desabilitar provedores que são carregados automaticamente através da opção `disabled_providers`. Isso é útil quando você deseja impedir que certos provedores sejam carregados, mesmo que suas credenciais estejam disponíveis.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "disabled_providers": ["openai", "gemini"]
@@ -593,7 +593,7 @@ A opção `disabled_providers` aceita um array de IDs de provedores. Quando um p
 
 Você pode especificar uma lista de permissão de provedores através da opção `enabled_providers`. Quando definida, apenas os provedores especificados serão habilitados e todos os outros serão ignorados.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "enabled_providers": ["anthropic", "openai"]
@@ -614,7 +614,7 @@ Se um provedor aparecer em `enabled_providers` e `disabled_providers`, a `disabl
 
 A chave `experimental` contém opções que estão em desenvolvimento ativo.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "experimental": {}
@@ -637,7 +637,7 @@ Você pode usar substituição de variáveis em seus arquivos de configuração 
 
 Use `{env:VARIABLE_NAME}` para substituir variáveis de ambiente:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "{env:OPENCODE_MODEL}",
@@ -660,7 +660,7 @@ Se a variável de ambiente não estiver definida, ela será substituída por uma
 
 Use `{file:path/to/file}` para substituir o conteúdo de um arquivo:
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["./custom-instructions.md"],

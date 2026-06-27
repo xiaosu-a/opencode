@@ -5,7 +5,7 @@ description: En iyi deneyim icin opencode'u WSL'de calistirin.
 
 import { Steps } from "@astrojs/starlight/components"
 
-opencode Windows'ta dogrudan calisabilir, ancak en iyi deneyim icin [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) kullanmanizi oneriyoruz. WSL, opencode ozellikleriyle sorunsuz calisan bir Linux ortami saglar.
+sumocode Windows'ta dogrudan calisabilir, ancak en iyi deneyim icin [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) kullanmanizi oneriyoruz. WSL, opencode ozellikleriyle sorunsuz calisan bir Linux ortami saglar.
 
 :::tip[Neden WSL?]
 WSL, daha iyi dosya sistemi performansi, tam terminal destegi ve opencode'un dayandigi gelistirme araclariyla uyumluluk sunar.
@@ -44,7 +44,7 @@ WSL, daha iyi dosya sistemi performansi, tam terminal destegi ve opencode'un day
 
 ## Masaüstü uygulaması + WSL sunucusu
 
-opencode Desktop kullanmak isteyip sunucuyu WSL'de calistirmak istiyorsaniz:
+sumocode Desktop kullanmak isteyip sunucuyu WSL'de calistirmak istiyorsaniz:
 
 1. **Sunucuyu WSL'de baslatin** ve dis baglantilara izin vermek icin `--hostname 0.0.0.0` kullanin:
 
@@ -73,7 +73,7 @@ OPENCODE_SERVER_PASSWORD=your-password opencode serve --hostname 0.0.0.0
 
 Windows'ta en iyi web deneyimi icin:
 
-1. **`opencode web` komutunu PowerShell yerine WSL terminalinde calistirin**:
+1. **`sumocode web` komutunu PowerShell yerine WSL terminalinde calistirin**:
 
    ```bash
    opencode web --hostname 0.0.0.0
@@ -81,7 +81,7 @@ Windows'ta en iyi web deneyimi icin:
 
 2. **Windows tarayicinizdan** `http://localhost:<port>` adresini acin (opencode URL'yi yazdirir)
 
-`opencode web` komutunu WSL'den calistirmak, dosya sistemi erisimi ve terminal entegrasyonunu daha tutarli hale getirirken tarayicidan erisimi korur.
+`sumocode web` komutunu WSL'den calistirmak, dosya sistemi erisimi ve terminal entegrasyonunu daha tutarli hale getirirken tarayicidan erisimi korur.
 
 ---
 

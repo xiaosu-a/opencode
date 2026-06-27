@@ -286,8 +286,8 @@ export function SessionHeader() {
   const [centerMount, setCenterMount] = createSignal<HTMLElement | null>(null)
   const [rightMount, setRightMount] = createSignal<HTMLElement | null>(null)
   onMount(() => {
-    setCenterMount(document.getElementById("opencode-titlebar-center"))
-    setRightMount(document.getElementById("opencode-titlebar-right"))
+    setCenterMount(document.getElementById("sumocode-titlebar-center"))
+    setRightMount(document.getElementById("sumocode-titlebar-right"))
   })
 
   return (

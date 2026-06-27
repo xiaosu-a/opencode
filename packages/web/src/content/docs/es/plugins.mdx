@@ -1,9 +1,9 @@
 ---
 title: Complementos
-description: Escriba sus propios complementos para extender OpenCode.
+description: Escriba sus propios complementos para extender SumoCode.
 ---
 
-Los complementos le permiten extender OpenCode al conectarse a varios eventos y personalizar el comportamiento. Puede crear complementos para agregar nuevas funciones, integrarlos con servicios externos o modificar el comportamiento predeterminado de OpenCode.
+Los complementos le permiten extender SumoCode al conectarse a varios eventos y personalizar el comportamiento. Puede crear complementos para agregar nuevas funciones, integrarlos con servicios externos o modificar el comportamiento predeterminado de SumoCode.
 
 Para ver ejemplos, consulte los [complementos](/docs/ecosystem#plugins) creados por la comunidad.
 
@@ -20,7 +20,7 @@ Hay dos formas de cargar complementos.
 Coloque los archivos JavaScript o TypeScript en el directorio del complemento.
 
 - `.sumocode/plugins/` - Complementos a nivel de proyecto
-- `~/.config/opencode/plugins/` - Complementos globales
+- `~/.config/sumocode/plugins/` - Complementos globales
 
 Los archivos en estos directorios se cargan automáticamente al inicio.
 
@@ -30,7 +30,7 @@ Los archivos en estos directorios se cargan automáticamente al inicio.
 
 Especifique paquetes npm en su archivo de configuración.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ Los **complementos npm** se instalan automáticamente usando Bun al inicio. Los 
 
 Los complementos se cargan desde todas las fuentes y todos los enlaces se ejecutan en secuencia. El orden de carga es:
 
-1. Configuración global (`~/.config/opencode/opencode.json`)
-2. Configuración del proyecto (`opencode.json`)
-3. Directorio global de complementos (`~/.config/opencode/plugins/`)
+1. Configuración global (`~/.config/sumocode/sumocode.json`)
+2. Configuración del proyecto (`sumocode.json`)
+3. Directorio global de complementos (`~/.config/sumocode/plugins/`)
 4. Directorio de complementos del proyecto (`.sumocode/plugins/`)
 
 Los paquetes npm duplicados con el mismo nombre y versión se cargan una vez. Sin embargo, un complemento local y un complemento npm con nombres similares se cargan por separado.
@@ -83,7 +83,7 @@ Los complementos locales y las herramientas personalizadas pueden utilizar paque
 }
 ```
 
-OpenCode ejecuta `bun install` al inicio para instalarlos. Luego, sus complementos y herramientas pueden importarlos.
+SumoCode ejecuta `bun install` al inicio para instalarlos. Luego, sus complementos y herramientas pueden importarlos.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"
@@ -235,7 +235,7 @@ export const NotificationPlugin = async ({ project, client, $, directory, worktr
 Estamos usando `osascript` para ejecutar AppleScript en macOS. Aquí lo estamos usando para enviar notificaciones.
 
 :::note
-Si está utilizando la aplicación de escritorio OpenCode, puede enviar notificaciones del sistema automáticamente cuando una respuesta esté lista o cuando se produzca un error en una sesión.
+Si está utilizando la aplicación de escritorio SumoCode, puede enviar notificaciones del sistema automáticamente cuando una respuesta esté lista o cuando se produzca un error en una sesión.
 :::
 
 ---

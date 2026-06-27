@@ -1,4 +1,4 @@
-import type { OpenCodeEventEncoded } from "@sumocode-ai/protocol/groups/event"
+import type { SumoCodeEventEncoded } from "@sumocode-ai/protocol/groups/event"
 
 export type JsonValue =
   | null
@@ -1671,4 +1671,4 @@ export type SessionsMessageOutput = {
       }
 }["data"]
 
-export type EventsSubscribeOutput = OpenCodeEventEncoded
+export type EventsSubscribeOutput = SumoCodeEventEncoded

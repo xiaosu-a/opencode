@@ -1,9 +1,9 @@
 ---
 title: الإضافات
-description: اكتب إضافاتك الخاصة لتوسيع OpenCode.
+description: اكتب إضافاتك الخاصة لتوسيع SumoCode.
 ---
 
-تتيح لك الإضافات توسيع OpenCode عبر ربطها بأحداث مختلفة وتخصيص السلوك. يمكنك إنشاء إضافات لإضافة ميزات جديدة، أو التكامل مع خدمات خارجية، أو تعديل السلوك الافتراضي لـ OpenCode.
+تتيح لك الإضافات توسيع SumoCode عبر ربطها بأحداث مختلفة وتخصيص السلوك. يمكنك إنشاء إضافات لإضافة ميزات جديدة، أو التكامل مع خدمات خارجية، أو تعديل السلوك الافتراضي لـ SumoCode.
 
 للاطلاع على أمثلة، راجع [الإضافات](/docs/ecosystem#plugins) التي أنشأها المجتمع.
 
@@ -20,7 +20,7 @@ description: اكتب إضافاتك الخاصة لتوسيع OpenCode.
 ضع ملفات JavaScript أو TypeScript في دليل الإضافات.
 
 - `.sumocode/plugins/` - إضافات على مستوى المشروع
-- `~/.config/opencode/plugins/` - إضافات عامة
+- `~/.config/sumocode/plugins/` - إضافات عامة
 
 تُحمَّل الملفات في هذه الأدلة تلقائيا عند بدء التشغيل.
 
@@ -30,7 +30,7 @@ description: اكتب إضافاتك الخاصة لتوسيع OpenCode.
 
 حدّد حزم npm في ملف الإعدادات.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ description: اكتب إضافاتك الخاصة لتوسيع OpenCode.
 
 تُحمَّل الإضافات من جميع المصادر وتعمل جميع الخطافات بالتتابع. ترتيب التحميل هو:
 
-1. إعدادات عامة (`~/.config/opencode/opencode.json`)
-2. إعدادات المشروع (`opencode.json`)
-3. دليل الإضافات العام (`~/.config/opencode/plugins/`)
+1. إعدادات عامة (`~/.config/sumocode/sumocode.json`)
+2. إعدادات المشروع (`sumocode.json`)
+3. دليل الإضافات العام (`~/.config/sumocode/plugins/`)
 4. دليل إضافات المشروع (`.sumocode/plugins/`)
 
 تُحمَّل حزم npm المكررة ذات الاسم والإصدار نفسيهما مرة واحدة. ومع ذلك، تُحمَّل الإضافة المحلية وإضافة npm ذات الاسم المشابه كلتاهما بشكل مستقل.
@@ -83,7 +83,7 @@ description: اكتب إضافاتك الخاصة لتوسيع OpenCode.
 }
 ```
 
-يشغّل OpenCode الأمر `bun install` عند بدء التشغيل لتثبيتها. بعد ذلك يمكن لإضافاتك وأدواتك استيرادها.
+يشغّل SumoCode الأمر `bun install` عند بدء التشغيل لتثبيتها. بعد ذلك يمكن لإضافاتك وأدواتك استيرادها.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"
@@ -235,7 +235,7 @@ export const NotificationPlugin = async ({ project, client, $, directory, worktr
 نستخدم `osascript` لتشغيل AppleScript على macOS. هنا نستخدمه لإرسال إشعارات.
 
 :::note
-إذا كنت تستخدم تطبيق OpenCode لسطح المكتب، فيمكنه إرسال إشعارات النظام تلقائيا عند جاهزية الرد أو عند حدوث خطأ في جلسة.
+إذا كنت تستخدم تطبيق SumoCode لسطح المكتب، فيمكنه إرسال إشعارات النظام تلقائيا عند جاهزية الرد أو عند حدوث خطأ في جلسة.
 :::
 
 ---

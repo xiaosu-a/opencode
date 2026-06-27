@@ -16,7 +16,7 @@ Os arquivos de log são gravados em:
 
 Os arquivos de log são nomeados com timestamps (por exemplo, `2025-01-09T123456.log`) e os 10 arquivos de log mais recentes são mantidos.
 
-Você pode definir o nível de log com a opção de linha de comando `--log-level` para obter informações de depuração mais detalhadas. Por exemplo, `opencode --log-level DEBUG`.
+Você pode definir o nível de log com a opção de linha de comando `--log-level` para obter informações de depuração mais detalhadas. Por exemplo, `sumocode --log-level DEBUG`.
 
 ---
 
@@ -45,7 +45,7 @@ O opencode Desktop executa um servidor opencode local (o sidecar `opencode-cli`)
 
 - Saia completamente do aplicativo e reinicie-o.
 - Se o aplicativo mostrar uma tela de erro, clique em **Reiniciar** e copie os detalhes do erro.
-- Apenas macOS: menu `OpenCode` -> **Recarregar Webview** (ajuda se a interface estiver em branco/congelada).
+- Apenas macOS: menu `SumoCode` -> **Recarregar Webview** (ajuda se a interface estiver em branco/congelada).
 
 ---
 
@@ -57,9 +57,9 @@ Se o aplicativo de desktop estiver travando ao iniciar, pendurado ou se comporta
 
 Abra seu arquivo de configuração global e procure uma chave `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (ou `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (instalações mais antigas): `~/.local/share/opencode/opencode.jsonc`
-- **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.config\opencode\opencode.jsonc`
+- **macOS/Linux**: `~/.config/sumocode/sumocode.jsonc` (ou `~/.config/sumocode/sumocode.json`)
+- **macOS/Linux** (instalações mais antigas): `~/.local/share/opencode/sumocode.jsonc`
+- **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.config\opencode\sumocode.jsonc`
 
 Se você tiver plugins configurados, desative-os temporariamente removendo a chave ou definindo-a como um array vazio:
 
@@ -75,7 +75,7 @@ Se você tiver plugins configurados, desative-os temporariamente removendo a cha
 O opencode também pode carregar plugins locais do disco. Mova-os temporariamente para fora do caminho (ou renomeie a pasta) e reinicie o aplicativo de desktop:
 
 - **Plugins globais**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/sumocode/plugins/`
   - **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.config\opencode\plugins`
 - **Plugins de projeto** (apenas se você usar configuração por projeto)
   - `<your-project>/.sumocode/plugins/`
@@ -111,7 +111,7 @@ Na tela inicial, clique no nome do servidor (com o ponto de status) para abrir o
 
 #### Removendo `server.port` / `server.hostname` da sua configuração
 
-Se seu `opencode.json(c)` contiver uma seção `server`, remova-a temporariamente e reinicie o aplicativo de desktop.
+Se seu `sumocode.json(c)` contiver uma seção `server`, remova-a temporariamente e reinicie o aplicativo de desktop.
 
 #### Verificando as variáveis de ambiente
 
@@ -199,7 +199,7 @@ Aqui estão alguns problemas comuns e como resolvê-los.
 
 1. Verifique os logs em busca de mensagens de erro
 2. Tente executar com `--print-logs` para ver a saída no terminal
-3. Certifique-se de que você tem a versão mais recente com `opencode upgrade`
+3. Certifique-se de que você tem a versão mais recente com `sumocode upgrade`
 
 ---
 
@@ -226,7 +226,7 @@ Exemplos:
 - `openrouter/google/gemini-2.5-flash`
 - `opencode/kimi-k2`
 
-Para descobrir quais modelos você tem acesso, execute `opencode models`
+Para descobrir quais modelos você tem acesso, execute `sumocode models`
 
 ---
 

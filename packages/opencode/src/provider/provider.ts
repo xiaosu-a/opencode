@@ -362,7 +362,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           }
 
           // Region resolution precedence (highest to lowest):
-          // 1. options.region from opencode.json provider config
+          // 1. options.region from sumocode.json provider config
           // 2. defaultRegion from AWS_REGION environment variable
           // 3. Default "us-east-1" (baked into defaultRegion)
           const region = options?.region ?? defaultRegion
@@ -445,7 +445,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://opencode.ai/",
+            "HTTP-Referer": "https://sumocode.ai/",
             "X-Title": "opencode",
             "X-Source": "opencode",
           },
@@ -456,7 +456,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://opencode.ai/",
+            "HTTP-Referer": "https://sumocode.ai/",
             "X-Title": "opencode",
           },
         },
@@ -466,9 +466,9 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: provider.source === "config",
         options: {
           headers: {
-            "HTTP-Referer": "https://opencode.ai/",
+            "HTTP-Referer": "https://sumocode.ai/",
             "X-Title": "opencode",
-            "X-BILLING-INVOKE-ORIGIN": "OpenCode",
+            "X-BILLING-INVOKE-ORIGIN": "SumoCode",
           },
         },
       }),
@@ -477,7 +477,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "http-referer": "https://opencode.ai/",
+            "http-referer": "https://sumocode.ai/",
             "x-title": "opencode",
           },
         },
@@ -583,7 +583,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://opencode.ai/",
+            "HTTP-Referer": "https://sumocode.ai/",
             "X-Title": "opencode",
           },
         },
@@ -841,7 +841,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://opencode.ai/",
+            "HTTP-Referer": "https://sumocode.ai/",
             "X-Title": "opencode",
           },
         },
@@ -1148,7 +1148,7 @@ interface State {
   varsLoaders: Record<string, CustomVarsLoader>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/Provider") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/Provider") {}
 
 export const use = serviceUse(Service)
 

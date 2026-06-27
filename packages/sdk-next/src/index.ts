@@ -1,4 +1,4 @@
-export * as OpenCode from "./opencode"
+export * as SumoCode from "./opencode"
 export * as Tool from "./tool"
 
 export { ClientError } from "@sumocode-ai/client/effect"
@@ -14,4 +14,4 @@ export {
   SessionInput,
   SessionMessage,
 } from "@sumocode-ai/client/effect"
-export type { OpenCodeEvent } from "@sumocode-ai/client/effect"
+export type { SumoCodeEvent } from "@sumocode-ai/client/effect"

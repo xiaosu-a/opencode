@@ -3,7 +3,7 @@ title: Sorun giderme
 description: Yaygin sorunlar ve cozum adimlari.
 ---
 
-opencode ile ilgili bir sorunu ayiklamak icin once loglari ve diskte tuttugu yerel verileri kontrol edin.
+sumocode ile ilgili bir sorunu ayiklamak icin once loglari ve diskte tuttugu yerel verileri kontrol edin.
 
 ---
 
@@ -16,7 +16,7 @@ Log dosyalari su konuma yazilir:
 
 Log dosyalari zaman damgasiyla adlandirilir (ornegin `2025-01-09T123456.log`) ve en yeni 10 log dosyasi tutulur.
 
-Daha ayrintili ayiklama bilgisi icin `--log-level` komut satiri secenegini kullanabilirsiniz. Ornek: `opencode --log-level DEBUG`.
+Daha ayrintili ayiklama bilgisi icin `--log-level` komut satiri secenegini kullanabilirsiniz. Ornek: `sumocode --log-level DEBUG`.
 
 ---
 
@@ -39,7 +39,7 @@ Bu dizin sunlari icerir:
 
 ## Masaüstü uygulaması
 
-opencode Desktop arka planda yerel bir opencode sunucusu (`opencode-cli` sidecar) calistirir. Sorunlarin cogu bozuk bir plugin, hasarli cache veya hatali sunucu ayarindan kaynaklanir.
+sumocode Desktop arka planda yerel bir opencode sunucusu (`opencode-cli` sidecar) calistirir. Sorunlarin cogu bozuk bir plugin, hasarli cache veya hatali sunucu ayarindan kaynaklanir.
 
 ### Hızlı kontroller
 
@@ -57,9 +57,9 @@ Desktop uygulamasi acilista cokuyorsa, takiliyorsa veya garip davranislar goster
 
 Global config dosyanizi acin ve `plugin` anahtarini arayin.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (veya `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (eski kurulumlar): `~/.local/share/opencode/opencode.jsonc`
-- **Windows**: `WIN+R` tuslayip `%USERPROFILE%\.config\opencode\opencode.jsonc` yapistirin
+- **macOS/Linux**: `~/.config/sumocode/sumocode.jsonc` (veya `~/.config/sumocode/sumocode.json`)
+- **macOS/Linux** (eski kurulumlar): `~/.local/share/opencode/sumocode.jsonc`
+- **Windows**: `WIN+R` tuslayip `%USERPROFILE%\.config\opencode\sumocode.jsonc` yapistirin
 
 Plugin tanimliysa anahtari kaldirarak veya bos bir diziye cekerek gecici olarak devre disi birakin:
 
@@ -72,10 +72,10 @@ Plugin tanimliysa anahtari kaldirarak veya bos bir diziye cekerek gecici olarak 
 
 #### Eklenti dizinlerini kontrol edin
 
-opencode diskten yerel plugin de yukleyebilir. Bu dizinleri gecici olarak tasiyin (veya klasoru yeniden adlandirin) ve uygulamayi yeniden baslatin:
+sumocode diskten yerel plugin de yukleyebilir. Bu dizinleri gecici olarak tasiyin (veya klasoru yeniden adlandirin) ve uygulamayi yeniden baslatin:
 
 - **Global plugins**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/sumocode/plugins/`
   - **Windows**: `WIN+R` tuslayip `%USERPROFILE%\.config\opencode\plugins` yapistirin
 - **Project plugins** (sadece proje bazli config kullaniyorsaniz)
   - `<your-project>/.sumocode/plugins/`
@@ -101,7 +101,7 @@ Pluginleri kapatmak ise yaramazsa (veya plugin kurulumu takili kaldiysa), openco
 
 ### Sunucu bağlantı sorunlarını düzeltin
 
-opencode Desktop ya kendi yerel sunucusunu baslatir (varsayilan) ya da sizin tanimladiginiz bir sunucu URL'sine baglanir.
+sumocode Desktop ya kendi yerel sunucusunu baslatir (varsayilan) ya da sizin tanimladiginiz bir sunucu URL'sine baglanir.
 
 **"Connection Failed"** penceresi goruyorsaniz (veya uygulama acilis ekranini gecemiyorsa), ozel bir sunucu URL'si olup olmadigini kontrol edin.
 
@@ -111,7 +111,7 @@ Ana ekranda sunucu adina (durum noktali) tiklayarak Server secicisini acin. **De
 
 #### Config'ten `server.port` / `server.hostname` kaldirin
 
-`opencode.json(c)` dosyanizda `server` bolumu varsa gecici olarak kaldirin ve desktop uygulamasini yeniden baslatin.
+`sumocode.json(c)` dosyanizda `server` bolumu varsa gecici olarak kaldirin ve desktop uygulamasini yeniden baslatin.
 
 #### Ortam degiskenlerini kontrol edin
 
@@ -144,7 +144,7 @@ Windows'ta yavaslik, dosya erisim sorunlari veya terminal problemleri yasiyorsan
 
 ### Bildirimler görünmüyor
 
-opencode Desktop sistem bildirimlerini yalnizca su durumlarda gosterir:
+sumocode Desktop sistem bildirimlerini yalnizca su durumlarda gosterir:
 
 - Isletim sistemi ayarlarinizda opencode icin bildirimler etkinse
 - Uygulama penceresi odakta degilse
@@ -171,7 +171,7 @@ Dizini hizlica bulmak icin:
 
 ## Yardım alın
 
-opencode ile ilgili bir sorun yasiyorsaniz:
+sumocode ile ilgili bir sorun yasiyorsaniz:
 
 1. **GitHub'da issue acin**
 
@@ -199,7 +199,7 @@ Asagida yaygin sorunlar ve cozumleri yer aliyor.
 
 1. Hata mesaji icin loglari kontrol edin
 2. Terminalde cikti gormek icin `--print-logs` ile calistirin
-3. `opencode upgrade` ile en guncel surumu kullandiginizdan emin olun
+3. `sumocode upgrade` ile en guncel surumu kullandiginizdan emin olun
 
 ---
 
@@ -226,7 +226,7 @@ Ornekler:
 - `openrouter/google/gemini-2.5-flash`
 - `opencode/kimi-k2`
 
-Erisiminiz olan modelleri gormek icin `opencode models` calistirin.
+Erisiminiz olan modelleri gormek icin `sumocode models` calistirin.
 
 ---
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-APP=opencode
+APP=sumocode
 
 MUTED='\033[0;2m'
 RED='\033[0;31m'
@@ -9,7 +9,7 @@ NC='\033[0m' # No Color
 
 usage() {
     cat <<EOF
-OpenCode Installer
+SumoCode Installer
 
 Usage: install.sh [options]
 
@@ -22,7 +22,7 @@ Options:
 Examples:
     curl -fsSL https://opencode.ai/install | bash
     curl -fsSL https://opencode.ai/install | bash -s -- --version 1.0.180
-    ./install --binary /path/to/opencode
+    ./install --binary /path/to/sumocode
 EOF
 }
 
@@ -220,7 +220,7 @@ print_message() {
 
 check_version() {
     if command -v opencode >/dev/null 2>&1; then
-        opencode_path=$(which opencode)
+        sumocode_path=$(which opencode)
 
         ## Check the installed version
         installed_version=$(opencode --version 2>/dev/null || echo "")
@@ -275,7 +275,7 @@ download_with_progress() {
     fi
 
     local tmp_dir=${TMPDIR:-/tmp}
-    local basename="${tmp_dir}/opencode_install_$$"
+    local basename="${tmp_dir}/sumocode_install_$$"
     local tracefile="${basename}.trace"
 
     rm -f "$tracefile"
@@ -326,7 +326,7 @@ download_with_progress() {
 
 download_and_install() {
     print_message info "\n${MUTED}Installing ${NC}opencode ${MUTED}version: ${NC}$specific_version"
-    local tmp_dir="${TMPDIR:-/tmp}/opencode_install_$$"
+    local tmp_dir="${TMPDIR:-/tmp}/sumocode_install_$$"
     mkdir -p "$tmp_dir"
 
     if [[ "$os" == "windows" ]] || ! [ -t 2 ] || ! download_with_progress "$url" "$tmp_dir/$filename"; then
@@ -450,7 +450,7 @@ echo -e "${MUTED}█░░█ █░░█ █▀▀▀ █░░█ ${NC}█░
 echo -e "${MUTED}▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀  ▀ ${NC}▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀"
 echo -e ""
 echo -e ""
-echo -e "${MUTED}OpenCode includes free models, to start:${NC}"
+echo -e "${MUTED}SumoCode includes free models, to start:${NC}"
 echo -e ""
 echo -e "cd <project>  ${MUTED}# Open directory${NC}"
 echo -e "opencode      ${MUTED}# Run command${NC}"

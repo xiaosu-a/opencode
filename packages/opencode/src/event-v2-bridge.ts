@@ -9,7 +9,7 @@ import { Project } from "@sumocode-ai/core/project"
 import { AbsolutePath } from "@sumocode-ai/core/schema"
 import { Context, Effect, Layer } from "effect"
 
-export class Service extends Context.Service<Service, EventV2.Interface>()("@opencode/EventV2Bridge") {}
+export class Service extends Context.Service<Service, EventV2.Interface>()("@sumocode/EventV2Bridge") {}
 
 export const layer = Layer.effect(
   Service,

@@ -11,10 +11,10 @@ Beceriler, yerel `skill` araci uzerinden ihtiyac aninda yuklenir; ajanlar mevcut
 ## Dosyalari yerlestirin
 
 Her beceri adi icin bir klasor olusturun ve icine bir `SKILL.md` koyun.
-opencode su konumlari tarar:
+sumocode su konumlari tarar:
 
 - Proje konfigurasyonu: `.sumocode/skills/<name>/SKILL.md`
-- Genel konfigurasyon: `~/.config/opencode/skills/<name>/SKILL.md`
+- Genel konfigurasyon: `~/.config/sumocode/skills/<name>/SKILL.md`
 - Proje Claude uyumlu: `.claude/skills/<name>/SKILL.md`
 - Genel Claude uyumlu: `~/.claude/skills/<name>/SKILL.md`
 - Proje agent uyumlu: `.agents/skills/<name>/SKILL.md`
@@ -27,7 +27,7 @@ opencode su konumlari tarar:
 Proje yerel yollarinda opencode, mevcut calisma dizininizden baslayip git worktree kokune kadar yukari cikar.
 Bu sirada `skills/*/SKILL.md` altindaki eslesen `.sumocode/` dosyalarini ve `.claude/skills/*/SKILL.md` ya da `.agents/skills/*/SKILL.md` dosyalarini yukler.
 
-Genel tanimlar da `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` ve `~/.agents/skills/*/SKILL.md` yollarindan yuklenir.
+Genel tanimlar da `~/.config/sumocode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` ve `~/.agents/skills/*/SKILL.md` yollarindan yuklenir.
 
 ---
 
@@ -124,7 +124,7 @@ skill({ name: "git-release" })
 
 ## Izinleri yapilandirin
 
-`opencode.json` icinde pattern tabanli izinlerle ajanlarin hangi becerilere erisecegini kontrol edin:
+`sumocode.json` icinde pattern tabanli izinlerle ajanlarin hangi becerilere erisecegini kontrol edin:
 
 ```json
 {
@@ -163,7 +163,7 @@ permission:
 ---
 ```
 
-**Yerlesik ajanlar icin** (`opencode.json` icinde):
+**Yerlesik ajanlar icin** (`sumocode.json` icinde):
 
 ```json
 {

@@ -132,12 +132,12 @@ export interface Interface {
   readonly waitForDependencies: () => Effect.Effect<void>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/Config") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/Config") {}
 
 export const use = serviceUse(Service)
 
 function globalConfigFile() {
-  const candidates = ["opencode.jsonc", "opencode.json", "config.json"].map((file) =>
+  const candidates = ["sumocode.jsonc", "sumocode.json", "config.json"].map((file) =>
     path.join(Global.Path.config, file),
   )
   for (const file of candidates) {
@@ -229,8 +229,8 @@ export const layer = Layer.effect(
 
       yield* Effect.promise(() => resolveLoadedPlugins(data, options.path))
       if (!data.$schema) {
-        data.$schema = "https://opencode.ai/config.json"
-        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://opencode.ai/config.json",')
+        data.$schema = "https://sumocode.ai/config.json"
+        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://sumocode.ai/config.json",')
         yield* fs.writeFileString(options.path, updated).pipe(Effect.catch(() => Effect.void))
       }
       return data
@@ -251,13 +251,13 @@ export const layer = Layer.effect(
         const file = globalConfigFile()
         if (!existsSync(file)) {
           yield* fs
-            .writeWithDirs(file, JSON.stringify({ $schema: "https://opencode.ai/config.json" }, null, 2))
+            .writeWithDirs(file, JSON.stringify({ $schema: "https://sumocode.ai/config.json" }, null, 2))
             .pipe(Effect.catch(() => Effect.void))
         }
       }
       result = mergeConfig(result, yield* loadFile(path.join(Global.Path.config, "config.json"), env))
-      result = mergeConfig(result, yield* loadFile(path.join(Global.Path.config, "opencode.json"), env))
-      result = mergeConfig(result, yield* loadFile(path.join(Global.Path.config, "opencode.jsonc"), env))
+      result = mergeConfig(result, yield* loadFile(path.join(Global.Path.config, "sumocode.json"), env))
+      result = mergeConfig(result, yield* loadFile(path.join(Global.Path.config, "sumocode.jsonc"), env))
 
       const legacy = path.join(Global.Path.config, "config")
       if (existsSync(legacy)) {
@@ -266,7 +266,7 @@ export const layer = Layer.effect(
             .then(async (mod) => {
               const { provider, model, ...rest } = mod.default
               if (provider && model) result.model = `${provider}/${model}`
-              result["$schema"] = "https://opencode.ai/config.json"
+              result["$schema"] = "https://sumocode.ai/config.json"
               result = mergeConfig(result, rest)
               await fsNode.writeFile(path.join(Global.Path.config, "config.json"), JSON.stringify(result, null, 2))
               await fsNode.unlink(legacy)
@@ -356,7 +356,7 @@ export const layer = Layer.effect(
           if (value.type === "wellknown") {
             const url = key.replace(/\/+$/, "")
             authEnv[value.key] = value.token
-            const wellknownURL = `${url}/.well-known/opencode`
+            const wellknownURL = `${url}/.well-known/sumocode`
             yield* Effect.logDebug("fetching remote config", { url: wellknownURL })
             const wellknown = yield* fetchRemoteJson(wellknownURL, undefined, ConfigV1.WellKnown, url)
             const remote = yield* Effect.promise(() =>
@@ -379,7 +379,7 @@ export const layer = Layer.effect(
                 })
               : {}
             const remoteConfig = mergeConfig(isRecord(wellknown.config) ? wellknown.config : {}, fetchedConfig)
-            if (!remoteConfig.$schema) remoteConfig.$schema = "https://opencode.ai/config.json"
+            if (!remoteConfig.$schema) remoteConfig.$schema = "https://sumocode.ai/config.json"
             const source = wellknownURL
             const next = yield* loadConfig(
               JSON.stringify(remoteConfig),
@@ -421,8 +421,8 @@ export const layer = Layer.effect(
         const deps: Fiber.Fiber<void>[] = []
 
         for (const dir of directories) {
-          if (dir.endsWith(".opencode") || dir === Flag.OPENCODE_CONFIG_DIR) {
-            for (const file of ["opencode.json", "opencode.jsonc"]) {
+          if (dir.endsWith(".sumocode") || dir === Flag.OPENCODE_CONFIG_DIR) {
+            for (const file of ["sumocode.json", "sumocode.jsonc"]) {
               const source = path.join(dir, file)
               yield* Effect.logDebug(`loading config from ${source}`)
               yield* merge(source, yield* loadFile(source, authEnv))
@@ -514,7 +514,7 @@ export const layer = Layer.effect(
 
         const managedDir = ConfigManaged.managedConfigDir()
         if (existsSync(managedDir)) {
-          for (const file of ["opencode.json", "opencode.jsonc"]) {
+          for (const file of ["sumocode.json", "sumocode.jsonc"]) {
             const source = path.join(managedDir, file)
             yield* merge(source, yield* loadFile(source), "global")
           }

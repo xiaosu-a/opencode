@@ -15,7 +15,7 @@ O ACP é um protocolo aberto que padroniza a comunicação entre editores de có
 
 ## Configuração
 
-Para usar opencode via ACP, configure seu editor para executar o comando `opencode acp`.
+Para usar opencode via ACP, configure seu editor para executar o comando `sumocode acp`.
 
 Este comando inicia o opencode como um subprocesso compatível com ACP que se comunica com seu editor via JSON-RPC através do stdio.
 
@@ -30,8 +30,8 @@ Adicione à sua configuração do [Zed](https://zed.dev) (`~/.config/zed/setting
 ```json title="~/.config/zed/settings.json"
 {
   "agent_servers": {
-    "OpenCode": {
-      "command": "opencode",
+    "SumoCode": {
+      "command": "sumocode",
       "args": ["acp"]
     }
   }
@@ -51,9 +51,9 @@ Você também pode vincular um atalho de teclado editando seu `keymap.json`:
         {
           "agent": {
             "custom": {
-              "name": "OpenCode",
+              "name": "SumoCode",
               "command": {
-                "command": "opencode",
+                "command": "sumocode",
                 "args": ["acp"]
               }
             }
@@ -74,8 +74,8 @@ Adicione ao seu acp.json do [JetBrains IDE](https://www.jetbrains.com/) de acord
 ```json title="acp.json"
 {
   "agent_servers": {
-    "OpenCode": {
-      "command": "/absolute/path/bin/opencode",
+    "SumoCode": {
+      "command": "/absolute/path/bin/sumocode",
       "args": ["acp"]
     }
   }
@@ -93,8 +93,8 @@ Adicione à sua configuração do [Avante.nvim](https://github.com/yetone/avante
 ```lua
 {
   acp_providers = {
-    ["opencode"] = {
-      command = "opencode",
+    ["sumocode"] = {
+      command = "sumocode",
       args = { "acp" }
     }
   }
@@ -106,8 +106,8 @@ Se você precisar passar variáveis de ambiente:
 ```lua {6-8}
 {
   acp_providers = {
-    ["opencode"] = {
-      command = "opencode",
+    ["sumocode"] = {
+      command = "sumocode",
       args = { "acp" },
       env = {
         OPENCODE_API_KEY = os.getenv("OPENCODE_API_KEY")
@@ -128,7 +128,7 @@ require("codecompanion").setup({
   interactions = {
     chat = {
       adapter = {
-        name = "opencode",
+        name = "sumocode",
         model = "claude-sonnet-4",
       },
     },

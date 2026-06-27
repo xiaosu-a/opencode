@@ -1,9 +1,9 @@
 ---
 title: Dodaci
-description: Napišite vlastite dodatke za proširenje OpenCode.
+description: Napišite vlastite dodatke za proširenje SumoCode.
 ---
 
-Dodaci vam omogućavaju da proširite OpenCode spajanjem na različite događaje i prilagođavanjem ponašanja. Možete kreirati dodatke za dodavanje novih funkcija, integraciju sa eksternim uslugama ili izmenu zadanog ponašanja OpenCode.
+Dodaci vam omogućavaju da proširite SumoCode spajanjem na različite događaje i prilagođavanjem ponašanja. Možete kreirati dodatke za dodavanje novih funkcija, integraciju sa eksternim uslugama ili izmenu zadanog ponašanja SumoCode.
 Za primjere, pogledajte [plugins](/docs/ecosystem#plugins) kreirane od strane zajednice.
 
 ---
@@ -17,7 +17,7 @@ Postoje dva načina za učitavanje dodataka.
 Postavite JavaScript ili TypeScript datoteke u direktorij dodataka.
 
 - `.sumocode/plugins/` - Dodaci na nivou projekta
-- `~/.config/opencode/plugins/` - Globalni dodaci
+- `~/.config/sumocode/plugins/` - Globalni dodaci
   Datoteke u ovim direktorijumima se automatski učitavaju pri pokretanju.
 
 ---
@@ -26,7 +26,7 @@ Postavite JavaScript ili TypeScript datoteke u direktorij dodataka.
 
 Navedite npm pakete u vašoj konfiguracijskoj datoteci.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -49,9 +49,9 @@ Pregledajte dostupne dodatke u [ecosystem](/docs/ecosystem#plugins).
 
 Dodaci se učitavaju iz svih izvora i svi zakačnjaci rade u nizu. Redoslijed učitavanja je:
 
-1. Globalna konfiguracija (`~/.config/opencode/opencode.json`)
-2. Konfiguracija projekta (`opencode.json`)
-3. Globalni direktorij dodataka (`~/.config/opencode/plugins/`)
+1. Globalna konfiguracija (`~/.config/sumocode/sumocode.json`)
+2. Konfiguracija projekta (`sumocode.json`)
+3. Globalni direktorij dodataka (`~/.config/sumocode/plugins/`)
 4. Direktorij dodataka projekta (`.sumocode/plugins/`)
    Duplicirani npm paketi sa istim imenom i verzijom se učitavaju jednom. Međutim, lokalni dodatak i npm dodatak sa sličnim nazivima se učitavaju odvojeno.
 
@@ -76,7 +76,7 @@ Lokalni dodaci i prilagođeni alati mogu koristiti vanjske npm pakete. Dodajte `
 }
 ```
 
-OpenCode pokreće `bun install` pri pokretanju da ih instalira. Vaši dodaci i alati ih zatim mogu uvesti.
+SumoCode pokreće `bun install` pri pokretanju da ih instalira. Vaši dodaci i alati ih zatim mogu uvesti.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"
@@ -204,7 +204,7 @@ Dodaci se mogu pretplatiti na događaje kao što je prikazano ispod u odjeljku P
 
 ## Primjeri
 
-Evo nekoliko primjera dodataka koje možete koristiti za proširenje OpenCode.
+Evo nekoliko primjera dodataka koje možete koristiti za proširenje SumoCode.
 
 ### Slanje obavještenja
 

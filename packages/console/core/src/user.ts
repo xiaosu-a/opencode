@@ -142,7 +142,7 @@ export namespace User {
         const { InviteEmail } = await import("@sumocode-ai/console-mail/InviteEmail.jsx")
         await AWS.sendEmail({
           to: email,
-          subject: `You've been invited to join the ${emailInfo.workspaceName} workspace on OpenCode`,
+          subject: `You've been invited to join the ${emailInfo.workspaceName} workspace on SumoCode`,
           body: render(
             // @ts-ignore
             InviteEmail({

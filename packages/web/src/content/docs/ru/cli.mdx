@@ -14,7 +14,7 @@ opencode
 Но он также принимает команды, описанные на этой странице. Это позволяет вам программно взаимодействовать с opencode.
 
 ```bash
-opencode run "Explain how closures work in JavaScript"
+sumocode run "Explain how closures work in JavaScript"
 ```
 
 ---
@@ -24,7 +24,7 @@ opencode run "Explain how closures work in JavaScript"
 Запустите TUI opencode.
 
 ```bash
-opencode [project]
+sumocode [project]
 ```
 
 #### Флаги
@@ -53,7 +53,7 @@ CLI opencode также имеет следующие команды.
 Управляйте агентами для opencode.
 
 ```bash
-opencode agent [command]
+sumocode agent [command]
 ```
 
 ---
@@ -63,17 +63,17 @@ opencode agent [command]
 Подключите терминал к уже работающему внутреннему серверу opencode, запущенному с помощью команд `serve` или `web`.
 
 ```bash
-opencode attach [url]
+sumocode attach [url]
 ```
 
 Это позволяет использовать TUI с удаленным сервером opencode. Например:
 
 ```bash
 # Start the backend server for web/mobile access
-opencode web --port 4096 --hostname 0.0.0.0
+sumocode web --port 4096 --hostname 0.0.0.0
 
 # In another terminal, attach the TUI to the running backend
-opencode attach http://10.20.30.40:4096
+sumocode attach http://10.20.30.40:4096
 ```
 
 #### Флаги
@@ -94,7 +94,7 @@ opencode attach http://10.20.30.40:4096
 Создайте нового агента с пользовательской конфигурацией.
 
 ```bash
-opencode agent create
+sumocode agent create
 ```
 
 Эта команда поможет вам создать новый агент с настраиваемой системной подсказкой и настройкой инструмента.
@@ -106,7 +106,7 @@ opencode agent create
 Перечислите всех доступных агентов.
 
 ```bash
-opencode agent list
+sumocode agent list
 ```
 
 ---
@@ -116,17 +116,17 @@ opencode agent list
 Команда для управления учетными данными и входом в систему для провайдеров.
 
 ```bash
-opencode auth [command]
+sumocode auth [command]
 ```
 
 ---
 
 #### login
 
-opencode использует список провайдеров с [Models.dev](https://models.dev), поэтому вы можете использовать `opencode auth login` для настройки ключей API для любого поставщика, которого вы хотите использовать. Это хранится в `~/.local/share/opencode/auth.json`.
+sumocode использует список провайдеров с [Models.dev](https://models.dev), поэтому вы можете использовать `sumocode auth login` для настройки ключей API для любого поставщика, которого вы хотите использовать. Это хранится в `~/.local/share/opencode/auth.json`.
 
 ```bash
-opencode auth login
+sumocode auth login
 ```
 
 Когда opencode запускается, он загружает поставщиков из файла учетных данных. И если в ваших средах определены какие-либо ключи или файл `.env` в вашем проекте.
@@ -138,13 +138,13 @@ opencode auth login
 Перечисляет всех проверенных поставщиков, которые хранятся в файле учетных данных.
 
 ```bash
-opencode auth list
+sumocode auth list
 ```
 
 Или короткая версия.
 
 ```bash
-opencode auth ls
+sumocode auth ls
 ```
 
 ---
@@ -154,7 +154,7 @@ opencode auth ls
 Выключает вас из провайдера, удаляя его из файла учетных данных.
 
 ```bash
-opencode auth logout
+sumocode auth logout
 ```
 
 ---
@@ -164,7 +164,7 @@ opencode auth logout
 Управляйте агентом GitHub для автоматизации репозитория.
 
 ```bash
-opencode github [command]
+sumocode github [command]
 ```
 
 ---
@@ -174,7 +174,7 @@ opencode github [command]
 Установите агент GitHub в свой репозиторий.
 
 ```bash
-opencode github install
+sumocode github install
 ```
 
 Это настроит необходимый рабочий процесс GitHub Actions и проведет вас через процесс настройки. [Подробнее](/docs/github).
@@ -186,7 +186,7 @@ opencode github install
 Запустите агент GitHub. Обычно это используется в действиях GitHub.
 
 ```bash
-opencode github run
+sumocode github run
 ```
 
 ##### Флаги
@@ -203,7 +203,7 @@ opencode github run
 Управляйте серверами протокола контекста модели.
 
 ```bash
-opencode mcp [command]
+sumocode mcp [command]
 ```
 
 ---
@@ -213,7 +213,7 @@ opencode mcp [command]
 Добавьте сервер MCP в свою конфигурацию.
 
 ```bash
-opencode mcp add
+sumocode mcp add
 ```
 
 Эта команда поможет вам добавить локальный или удаленный сервер MCP.
@@ -225,13 +225,13 @@ opencode mcp add
 Перечислите все настроенные серверы MCP и состояние их подключения.
 
 ```bash
-opencode mcp list
+sumocode mcp list
 ```
 
 Или используйте короткую версию.
 
 ```bash
-opencode mcp ls
+sumocode mcp ls
 ```
 
 ---
@@ -241,7 +241,7 @@ opencode mcp ls
 Аутентификация с помощью сервера MCP с поддержкой OAuth.
 
 ```bash
-opencode mcp auth [name]
+sumocode mcp auth [name]
 ```
 
 Если вы не укажете имя сервера, вам будет предложено выбрать один из доступных серверов с поддержкой OAuth.
@@ -249,13 +249,13 @@ opencode mcp auth [name]
 Вы также можете перечислить серверы с поддержкой OAuth и их статус аутентификации.
 
 ```bash
-opencode mcp auth list
+sumocode mcp auth list
 ```
 
 Или используйте короткую версию.
 
 ```bash
-opencode mcp auth ls
+sumocode mcp auth ls
 ```
 
 ---
@@ -265,7 +265,7 @@ opencode mcp auth ls
 Удалите учетные данные OAuth для сервера MCP.
 
 ```bash
-opencode mcp logout [name]
+sumocode mcp logout [name]
 ```
 
 ---
@@ -275,7 +275,7 @@ opencode mcp logout [name]
 Отладка проблем с подключением OAuth для сервера MCP.
 
 ```bash
-opencode mcp debug <name>
+sumocode mcp debug <name>
 ```
 
 ---
@@ -285,7 +285,7 @@ opencode mcp debug <name>
 Перечислите все доступные модели от настроенных поставщиков.
 
 ```bash
-opencode models [provider]
+sumocode models [provider]
 ```
 
 Эта команда отображает все модели, доступные у настроенных вами поставщиков, в формате `provider/model`.
@@ -295,7 +295,7 @@ opencode models [provider]
 При желании вы можете передать идентификатор поставщика, чтобы фильтровать модели по этому поставщику.
 
 ```bash
-opencode models anthropic
+sumocode models anthropic
 ```
 
 #### Флаги
@@ -308,7 +308,7 @@ opencode models anthropic
 Используйте флаг `--refresh` для обновления списка кэшированных моделей. Это полезно, когда к поставщику добавлены новые модели и вы хотите увидеть их в opencode.
 
 ```bash
-opencode models --refresh
+sumocode models --refresh
 ```
 
 ---
@@ -318,23 +318,23 @@ opencode models --refresh
 Запустите opencode в неинтерактивном режиме, передав приглашение напрямую.
 
 ```bash
-opencode run [message..]
+sumocode run [message..]
 ```
 
 Это полезно для создания сценариев, автоматизации или когда вам нужен быстрый ответ без запуска полного TUI. Например.
 
 ```bash "opencode run"
-opencode run Explain the use of context in Go
+sumocode run Explain the use of context in Go
 ```
 
-Вы также можете подключиться к работающему экземпляру `opencode serve`, чтобы избежать холодной загрузки сервера MCP при каждом запуске:
+Вы также можете подключиться к работающему экземпляру `sumocode serve`, чтобы избежать холодной загрузки сервера MCP при каждом запуске:
 
 ```bash
 # Start a headless server in one terminal
-opencode serve
+sumocode serve
 
 # In another terminal, run commands that attach to it
-opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
+sumocode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 ```
 
 #### Флаги
@@ -366,7 +366,7 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 Запустите автономный сервер opencode для доступа к API. Полный HTTP-интерфейс можно найти в [server docs](/docs/server).
 
 ```bash
-opencode serve
+sumocode serve
 ```
 
 При этом запускается HTTP-сервер, который обеспечивает доступ API к функциям opencode без интерфейса TUI. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `opencode`).
@@ -387,7 +387,7 @@ opencode serve
 Управляйте сессиями opencode.
 
 ```bash
-opencode session [command]
+sumocode session [command]
 ```
 
 ---
@@ -397,7 +397,7 @@ opencode session [command]
 Перечислите все сеансы opencode.
 
 ```bash
-opencode session list
+sumocode session list
 ```
 
 ##### Флаги
@@ -414,7 +414,7 @@ opencode session list
 Покажите статистику использования токенов и затрат для ваших сеансов opencode.
 
 ```bash
-opencode stats
+sumocode stats
 ```
 
 #### Флаги
@@ -433,7 +433,7 @@ opencode stats
 Экспортируйте данные сеанса в формате JSON.
 
 ```bash
-opencode export [sessionID]
+sumocode export [sessionID]
 ```
 
 Если вы не укажете идентификатор сеанса, вам будет предложено выбрать один из доступных сеансов.
@@ -445,14 +445,14 @@ opencode export [sessionID]
 Импортируйте данные сеанса из файла JSON или URL-адреса общего ресурса opencode.
 
 ```bash
-opencode import <file>
+sumocode import <file>
 ```
 
 Вы можете импортировать из локального файла или URL-адреса общего ресурса opencode.
 
 ```bash
-opencode import session.json
-opencode import https://opncd.ai/s/abc123
+sumocode import session.json
+sumocode import https://opncd.ai/s/abc123
 ```
 
 ---
@@ -462,7 +462,7 @@ opencode import https://opncd.ai/s/abc123
 Запустите автономный сервер opencode с веб-интерфейсом.
 
 ```bash
-opencode web
+sumocode web
 ```
 
 При этом запускается HTTP-сервер и открывается веб-браузер для доступа к opencode через веб-интерфейс. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `opencode`).
@@ -483,7 +483,7 @@ opencode web
 Запустите сервер ACP (агент-клиентский протокол).
 
 ```bash
-opencode acp
+sumocode acp
 ```
 
 Эта команда запускает сервер ACP, который обменивается данными через stdin/stdout с использованием nd-JSON.
@@ -503,7 +503,7 @@ opencode acp
 Удалите opencode и удалите все связанные файлы.
 
 ```bash
-opencode uninstall
+sumocode uninstall
 ```
 
 #### Флаги
@@ -522,19 +522,19 @@ opencode uninstall
 Обновляет opencode до последней версии или определенной версии.
 
 ```bash
-opencode upgrade [target]
+sumocode upgrade [target]
 ```
 
 Чтобы обновиться до последней версии.
 
 ```bash
-opencode upgrade
+sumocode upgrade
 ```
 
 Для обновления до определенной версии.
 
 ```bash
-opencode upgrade v0.1.48
+sumocode upgrade v0.1.48
 ```
 
 #### Флаги
@@ -560,7 +560,7 @@ CLI opencode принимает следующие глобальные флаг
 
 ## Переменные среды
 
-opencode можно настроить с помощью переменных среды.
+sumocode можно настроить с помощью переменных среды.
 
 | Переменная                            | Тип                 | Описание                                                                         |
 | ------------------------------------- | ------------------- | -------------------------------------------------------------------------------- |

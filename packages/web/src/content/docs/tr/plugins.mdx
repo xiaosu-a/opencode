@@ -1,9 +1,9 @@
 ---
 title: Eklentiler
-description: OpenCode'u genişletmek için kendi eklentilerinizi yazın.
+description: SumoCode'u genişletmek için kendi eklentilerinizi yazın.
 ---
 
-Eklentiler, çeşitli olaylara bağlanarak ve davranışı özelleştirerek OpenCode'u genişletmenize olanak tanır. Yeni özellikler eklemek, harici hizmetlerle entegrasyon sağlamak veya OpenCode'un varsayılan davranışını değiştirmek için eklentiler oluşturabilirsiniz.
+Eklentiler, çeşitli olaylara bağlanarak ve davranışı özelleştirerek SumoCode'u genişletmenize olanak tanır. Yeni özellikler eklemek, harici hizmetlerle entegrasyon sağlamak veya SumoCode'un varsayılan davranışını değiştirmek için eklentiler oluşturabilirsiniz.
 
 Örnekler için topluluk tarafından oluşturulan [eklentilere](/docs/ecosystem#plugins) göz atın.
 
@@ -20,7 +20,7 @@ Eklentileri yüklemenin iki yolu vardır.
 JavaScript veya TypeScript dosyalarını eklenti dizinine yerleştirin.
 
 - `.sumocode/plugins/` - Proje düzeyinde eklentiler
-- `~/.config/opencode/plugins/` - Genel eklentiler
+- `~/.config/sumocode/plugins/` - Genel eklentiler
 
 Bu dizinlerdeki dosyalar başlangıçta otomatik olarak yüklenir.
 
@@ -30,7 +30,7 @@ Bu dizinlerdeki dosyalar başlangıçta otomatik olarak yüklenir.
 
 Yapılandırma dosyanızda npm paketlerini belirtin.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ Hem normal hem de kapsamlı npm paketleri desteklenir.
 
 Eklentiler tüm kaynaklardan yüklenir ve tüm kancalar sırayla çalışır. Yükleme sırası şöyledir:
 
-1. Global config (`~/.config/opencode/opencode.json`)
-2. Project config (`opencode.json`)
-3. Global eklenti dizini (`~/.config/opencode/plugins/`)
+1. Global config (`~/.config/sumocode/sumocode.json`)
+2. Project config (`sumocode.json`)
+3. Global eklenti dizini (`~/.config/sumocode/plugins/`)
 4. Proje eklenti dizini (`.sumocode/plugins/`)
 
 Aynı ad ve sürüme sahip yinelenen npm paketleri bir kez yüklenir. Ancak benzer adlara sahip bir yerel eklenti ve bir npm eklentisinin her ikisi de ayrı ayrı yüklenir.
@@ -82,7 +82,7 @@ Yerel eklentiler ve özel araçlar harici npm paketlerini kullanabilir. İhtiyac
 }
 ```
 
-OpenCode bunları yüklemek için başlangıçta `bun install` komutunu çalıştırır. Eklentileriniz ve araçlarınız daha sonra bunları içe aktarabilir.
+SumoCode bunları yüklemek için başlangıçta `bun install` komutunu çalıştırır. Eklentileriniz ve araçlarınız daha sonra bunları içe aktarabilir.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"
@@ -117,7 +117,7 @@ Eklenti işlevi şunları alır:
 - `project`: Mevcut proje bilgisi.
 - `directory`: Güncel çalışma dizini.
 - `worktree`: Git çalışma ağacı yolu.
-- `client`: Yapay zeka ile etkileşim kurmak için bir OpenCode SDK istemcisi.
+- `client`: Yapay zeka ile etkileşim kurmak için bir SumoCode SDK istemcisi.
 - `$`: Bun'un komutları yürütmek için kullandığı [shell API](https://bun.com/docs/runtime/shell).
 
 ---
@@ -210,7 +210,7 @@ Eklentiler aşağıdaki Örnekler bölümünde görüldüğü gibi etkinliklere 
 
 ## Örnekler
 
-OpenCode'u genişletmek için kullanabileceğiniz bazı eklenti örneklerini burada bulabilirsiniz.
+SumoCode'u genişletmek için kullanabileceğiniz bazı eklenti örneklerini burada bulabilirsiniz.
 
 ---
 
@@ -234,14 +234,14 @@ export const NotificationPlugin = async ({ project, client, $, directory, worktr
 macOS'ta AppleScript'i çalıştırmak için `osascript` kullanıyoruz. Burada bildirim göndermek için kullanıyoruz.
 
 :::note
-OpenCode masaüstü uygulamasını kullanıyorsanız yanıt hazır olduğunda veya oturum hataları oluştuğunda otomatik olarak sistem bildirimleri gönderebilir.
+SumoCode masaüstü uygulamasını kullanıyorsanız yanıt hazır olduğunda veya oturum hataları oluştuğunda otomatik olarak sistem bildirimleri gönderebilir.
 :::
 
 ---
 
 ### .env Koruması
 
-OpenCode'un `.env` dosyalarını okumasını önleyin:
+SumoCode'un `.env` dosyalarını okumasını önleyin:
 
 ```javascript title=".sumocode/plugins/env-protection.js"
 export const EnvProtection = async ({ project, client, $, directory, worktree }) => {
@@ -276,7 +276,7 @@ export const InjectEnvPlugin = async () => {
 
 ### Özel araçlar
 
-Eklentiler ayrıca OpenCode'a özel araçlar da ekleyebilir:
+Eklentiler ayrıca SumoCode'a özel araçlar da ekleyebilir:
 
 ```ts title=".sumocode/plugins/custom-tools.ts"
 import { type Plugin, tool } from "@sumocode-ai/plugin"
@@ -299,13 +299,13 @@ export const CustomToolsPlugin: Plugin = async (ctx) => {
 }
 ```
 
-`tool` yardımcısı, OpenCode'un çağırabileceği özel bir araç oluşturur. Bir Zod şeması işlevini alır ve aşağıdakileri içeren bir araç tanımı döndürür:
+`tool` yardımcısı, SumoCode'un çağırabileceği özel bir araç oluşturur. Bir Zod şeması işlevini alır ve aşağıdakileri içeren bir araç tanımı döndürür:
 
 - `description`: Araç ne yapar?
 - `args`: Aracın argümanları için Zod şeması
 - `execute`: Araç çağrıldığında çalışan fonksiyon
 
-Özel araçlarınız, yerleşik araçların yanı sıra OpenCode'a da hazır olacaktır.
+Özel araçlarınız, yerleşik araçların yanı sıra SumoCode'a da hazır olacaktır.
 
 :::note
 Eğer bir eklenti aracı yerleşik bir araçla aynı adı kullanırsa, eklenti aracı öncelik kazanır.

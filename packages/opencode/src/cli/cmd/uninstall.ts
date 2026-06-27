@@ -55,7 +55,7 @@ export const UninstallCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("Uninstall OpenCode")
+    prompts.intro("Uninstall SumoCode")
 
     const method = await Installation.method()
     prompts.log.info(`Installation method: ${method}`)
@@ -215,7 +215,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
     prompts.log.info(`  rm "${targets.binary}"`)
 
     const binDir = path.dirname(targets.binary)
-    if (binDir.includes(".opencode")) {
+    if (binDir.includes(".sumocode")) {
       prompts.log.info(`  rmdir "${binDir}" 2>/dev/null`)
     }
   }
@@ -229,7 +229,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
   }
 
   UI.empty()
-  prompts.log.success("Thank you for using OpenCode!")
+  prompts.log.success("Thank you for using SumoCode!")
 }
 
 async function getShellConfigFile(): Promise<string | null> {
@@ -298,7 +298,7 @@ async function cleanShellConfig(file: string) {
 
     if (
       (trimmed.startsWith("export PATH=") && trimmed.includes(".sumocode/bin")) ||
-      (trimmed.startsWith("fish_add_path") && trimmed.includes(".opencode"))
+      (trimmed.startsWith("fish_add_path") && trimmed.includes(".sumocode"))
     ) {
       continue
     }

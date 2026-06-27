@@ -25,7 +25,7 @@ const PROVIDER_PRIORITY: Record<string, number> = {
   google: 5,
 }
 
-const CUSTOM_PROVIDER_OPTION_VALUE = "__opencode_custom_provider__"
+const CUSTOM_PROVIDER_OPTION_VALUE = "__sumocode_custom_provider__"
 const CUSTOM_PROVIDER_ID = /^[a-z0-9][a-z0-9-_]*$/
 
 type ProviderOptionBase = {
@@ -96,7 +96,7 @@ export function createDialogProviderOptions() {
       placeholder: "Provider id",
       description: () => (
         <text fg={theme.textMuted}>
-          This only stores a credential. Configure the provider in opencode.json to use it.
+          This only stores a credential. Configure the provider in sumocode.json to use it.
         </text>
       ),
     })
@@ -371,7 +371,7 @@ function ApiMethod(props: ApiMethodProps) {
           opencode: (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                OpenCode Zen gives you access to all the best coding models at the cheapest prices with a single API
+                SumoCode Zen gives you access to all the best coding models at the cheapest prices with a single API
                 key.
               </text>
               <text fg={theme.text}>
@@ -382,11 +382,11 @@ function ApiMethod(props: ApiMethodProps) {
           "opencode-go": (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                OpenCode Go is a $10 per month subscription that provides reliable access to popular open coding models
+                SumoCode Go is a $10 per month subscription that provides reliable access to popular open coding models
                 with generous usage limits.
               </text>
               <text fg={theme.text}>
-                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/go</span> and enable OpenCode Go
+                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/go</span> and enable SumoCode Go
               </text>
             </box>
           ),
@@ -407,7 +407,7 @@ function ApiMethod(props: ApiMethodProps) {
         if (props.custom && !sync.data.provider_next.all.some((provider) => provider.id === props.providerID)) {
           toast.show({
             variant: "info",
-            message: `Saved credential for ${props.providerID}. Configure it in opencode.json to use it.`,
+            message: `Saved credential for ${props.providerID}. Configure it in sumocode.json to use it.`,
           })
           dialog.clear()
           return

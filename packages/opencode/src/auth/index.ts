@@ -5,7 +5,7 @@ import { NonNegativeInt } from "@sumocode-ai/core/schema"
 import { Global } from "@sumocode-ai/core/global"
 import { FSUtil } from "@sumocode-ai/core/fs-util"
 
-export const OAUTH_DUMMY_KEY = "opencode-oauth-dummy-key"
+export const OAUTH_DUMMY_KEY = "sumocode-oauth-dummy-key"
 
 const file = path.join(Global.Path.data, "auth.json")
 
@@ -47,7 +47,7 @@ export interface Interface {
   readonly remove: (key: string) => Effect.Effect<void, AuthError>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/Auth") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/Auth") {}
 
 export const layer = Layer.effect(
   Service,

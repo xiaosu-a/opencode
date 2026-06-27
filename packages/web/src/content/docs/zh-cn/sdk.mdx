@@ -6,7 +6,7 @@ description: opencode 服务器的类型安全 JS 客户端。
 import config from "../../../../config.mjs"
 export const typesUrl = `${config.github}/blob/dev/packages/sdk/js/src/gen/types.gen.ts`
 
-opencode JS/TS SDK 提供了一个类型安全的客户端，用于与服务器进行交互。
+sumocode JS/TS SDK 提供了一个类型安全的客户端，用于与服务器进行交互。
 你可以用它来构建集成方案，并以编程方式控制 opencode。
 
 [了解更多](/docs/server)关于服务器的工作原理。如需示例，请查看社区构建的[项目](/docs/ecosystem#projects)。
@@ -49,7 +49,7 @@ const { client } = await createOpencode()
 
 ## 配置
 
-你可以传入一个配置对象来自定义行为。实例仍然会读取你的 `opencode.json`，但你可以通过内联方式覆盖或添加配置：
+你可以传入一个配置对象来自定义行为。实例仍然会读取你的 `sumocode.json`，但你可以通过内联方式覆盖或添加配置：
 
 ```javascript
 import { createOpencode } from "@sumocode-ai/sdk"

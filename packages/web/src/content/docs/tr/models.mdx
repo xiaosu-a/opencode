@@ -49,16 +49,16 @@ Burada, opencode ile belirli bir sıraya göre iyi çalışan birkaç model yer 
 ## Varsayılan ayarlama
 
 Bunlardan birini varsayılan model olarak ayarlamak için `model` anahtarınızı telefonunuzudan ayarlayabilirsiniz.
-opencode yapılandırması
+sumocode yapılandırması
 
-```json title="opencode.json" {3}
+```json title="sumocode.json" {3}
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "lmstudio/google/gemma-3n-e4b"
 }
 ```
 
-Burada tam kimlik `provider_id/model_id`'dir. Örneğin, [OpenCode Zen](/docs/zen) kullanıyorsanız, GPT 5.1 Codex için `opencode/gpt-5.1-codex` kullanırsınız.
+Burada tam kimlik `provider_id/model_id`'dir. Örneğin, [SumoCode Zen](/docs/zen) kullanıyorsanız, GPT 5.1 Codex için `sumocode/gpt-5.1-codex` kullanırsınız.
 
 Bir [custom provider](/docs/providers#custom) yapılandırılmışsa, `provider_id`, performansınızın `provider` bölümünden gelen anahtardır ve `model_id`, `provider.models`'den gelen anahtardır.
 
@@ -68,7 +68,7 @@ Bir [custom provider](/docs/providers#custom) yapılandırılmışsa, `provider_
 
 Bir modelin seçeneklerini genel olarak yapılandırma aracılığıyla yapılandırabilirsiniz.
 
-```jsonc title="opencode.jsonc" {7-12,19-24}
+```jsonc title="sumocode.jsonc" {7-12,19-24}
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -107,7 +107,7 @@ Bu seçenekleri kullandığınız tüm aracılar için de yapılandırabilirsini
 
 Ayrıca yerleşik çeşitleri genişleten özel varyantlar da tanımlayabilirsiniz. Varyantlar, yinelenen girişler oluşturmadan aynı model için farklı ayarları yapılandırmanıza olanak tanır:
 
-```jsonc title="opencode.jsonc" {6-21}
+```jsonc title="sumocode.jsonc" {6-21}
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -141,7 +141,7 @@ Birçok model, farklı konfigürasyonlara sahip birden fazla kapasiteye sahip. o
 
 ### Yerleşik çeşitler
 
-opencode birçok sağlayıcı için varsayılan değişkenlerle birlikte gelir:
+sumocode birçok sağlayıcı için varsayılan değişkenlerle birlikte gelir:
 
 **Antropik**:
 
@@ -172,7 +172,7 @@ Bu liste kapsamlı değildir. Diğer birçok sağlayıcının da yerleşik varsa
 
 Mevcut varyantları geçersiz kılabilir veya kendinizinkini ekleyebilirsiniz:
 
-```jsonc title="opencode.jsonc" {7-18}
+```jsonc title="sumocode.jsonc" {7-18}
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -203,13 +203,13 @@ Mevcut varyantları geçersiz kılabilir veya kendinizinkini ekleyebilirsiniz:
 
 ## Modelleri yükleme
 
-opencode başlatıldığında modelleri aşağıdaki öncelik sırasına göre kontrol eder:
+sumocode başlatıldığında modelleri aşağıdaki öncelik sırasına göre kontrol eder:
 
 1. `--model` veya `-m` komut satırı bayrağı. Biçim, yapılandırma dosyasındakiyle aynıdır: `provider_id/model_id`.
 
 2. opencode yapılandırmasındaki model listesi.
 
-   ```json title="opencode.json"
+   ```json title="sumocode.json"
    {
      "$schema": "https://opencode.ai/config.json",
      "model": "anthropic/claude-sonnet-4-20250514"

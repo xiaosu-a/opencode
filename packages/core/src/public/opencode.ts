@@ -19,7 +19,7 @@ export interface Interface {
 }
 
 /** Intentional public native API for Effect applications embedding SumoCode. */
-export class Service extends Context.Service<Service, Interface>()("@opencode/public/SumoCode") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/public/SumoCode") {}
 
 const SessionsLayer = SessionV2.layer.pipe(
   Layer.provide(SessionProjector.layer),

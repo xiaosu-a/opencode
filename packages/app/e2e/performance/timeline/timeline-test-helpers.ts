@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test"
 import { base64Encode } from "@sumocode-ai/core/util/encode"
-import { mockOpenCodeServer } from "../../utils/mock-server"
+import { mockSumoCodeServer } from "../../utils/mock-server"
 import { fixture, pageMessages } from "./session-timeline-stress.fixture"
 
 export async function installTimelineSettings(page: Page) {
@@ -23,7 +23,7 @@ export function mockStressTimeline(
   page: Page,
   input?: { onMessages?: (input: { sessionID: string; before?: string; phase: "start" | "end" }) => void },
 ) {
-  return mockOpenCodeServer(page, {
+  return mockSumoCodeServer(page, {
     sessions: fixture.sessions,
     provider: fixture.provider,
     directory: fixture.directory,

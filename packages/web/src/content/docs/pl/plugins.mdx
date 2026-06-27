@@ -20,7 +20,7 @@ Istnieją dwa sposoby ładowania wtyczek.
 Miejsce plików JavaScript lub TypeScript w katalogu wtyczki.
 
 - `.sumocode/plugins/` - Wtyczki na poziomie projektu
-- `~/.config/opencode/plugins/` - Wtyczki globalne
+- `~/.config/sumocode/plugins/` - Wtyczki globalne
 
 Pliki w tych katalogach są automatycznie ładowane podczas uruchamiania.
 
@@ -30,7 +30,7 @@ Pliki w tych katalogach są automatycznie ładowane podczas uruchamiania.
 
 szczegółowy pakiet npm w pliku konfiguracyjnym.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ Przeglądaj dostępną wtyczkę w [ekosystemie](/docs/ecosystem#plugins).
 
 Wtyczki są ładowane ze wszystkich źródeł, a wszystkie hooki napisane po kolei. Kolejność ładowania do:
 
-1. Konfiguracja globalna (`~/.config/opencode/opencode.json`)
-2. Konfiguracja projektu (`opencode.json`)
-3. Globalny katalog wtyczek (`~/.config/opencode/plugins/`)
+1. Konfiguracja globalna (`~/.config/sumocode/sumocode.json`)
+2. Konfiguracja projektu (`sumocode.json`)
+3. Globalny katalog wtyczek (`~/.config/sumocode/plugins/`)
 4. Katalog wtyczek projektu (`.sumocode/plugins/`)
 
 Zduplikowane pakiety npm o tej samej nazwie i wersji są ładowane raz. Równie ważny jest dostęp lokalny i zewnętrzny npm o dodatkowych nazwach, które są zewnętrzne.
@@ -83,7 +83,7 @@ Lokalne narzędzie i narzędzie, które można wykorzystać z zewnętrznych paki
 }
 ```
 
-opencode uruchomienie `bun install` przy uruchomieniu, aby je uruchomić. Twoje dodatkowe funkcje będą dostępne po zaimportowaniu.
+sumocode uruchomienie `bun install` przy uruchomieniu, aby je uruchomić. Twoje dodatkowe funkcje będą dostępne po zaimportowaniu.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"

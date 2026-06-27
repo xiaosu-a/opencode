@@ -1,9 +1,9 @@
 ---
 title: Plugins
-description: Write your own plugins to extend OpenCode.
+description: Write your own plugins to extend SumoCode.
 ---
 
-Plugins allow you to extend OpenCode by hooking into various events and customizing behavior. You can create plugins to add new features, integrate with external services, or modify OpenCode's default behavior.
+Plugins allow you to extend SumoCode by hooking into various events and customizing behavior. You can create plugins to add new features, integrate with external services, or modify SumoCode's default behavior.
 
 For examples, check out the [plugins](/docs/ecosystem#plugins) created by the community.
 
@@ -20,7 +20,7 @@ There are two ways to load plugins.
 Place JavaScript or TypeScript files in the plugin directory.
 
 - `.sumocode/plugins/` - Project-level plugins
-- `~/.config/opencode/plugins/` - Global plugins
+- `~/.config/sumocode/plugins/` - Global plugins
 
 Files in these directories are automatically loaded at startup.
 
@@ -30,7 +30,7 @@ Files in these directories are automatically loaded at startup.
 
 Specify npm packages in your config file.
 
-```json title="opencode.json"
+```json title="sumocode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
@@ -55,9 +55,9 @@ Browse available plugins in the [ecosystem](/docs/ecosystem#plugins).
 
 Plugins are loaded from all sources and all hooks run in sequence. The load order is:
 
-1. Global config (`~/.config/opencode/opencode.json`)
-2. Project config (`opencode.json`)
-3. Global plugin directory (`~/.config/opencode/plugins/`)
+1. Global config (`~/.config/sumocode/sumocode.json`)
+2. Project config (`sumocode.json`)
+3. Global plugin directory (`~/.config/sumocode/plugins/`)
 4. Project plugin directory (`.sumocode/plugins/`)
 
 Duplicate npm packages with the same name and version are loaded once. However, a local plugin and an npm plugin with similar names are both loaded separately.
@@ -83,7 +83,7 @@ Local plugins and custom tools can use external npm packages. Add a `package.jso
 }
 ```
 
-OpenCode runs `bun install` at startup to install these. Your plugins and tools can then import them.
+SumoCode runs `bun install` at startup to install these. Your plugins and tools can then import them.
 
 ```ts title=".sumocode/plugins/my-plugin.ts"
 import { escape } from "shescape"
@@ -235,7 +235,7 @@ export const NotificationPlugin = async ({ project, client, $, directory, worktr
 We are using `osascript` to run AppleScript on macOS. Here we are using it to send notifications.
 
 :::note
-If you’re using the OpenCode desktop app, it can send system notifications automatically when a response is ready or when a session errors.
+If you’re using the SumoCode desktop app, it can send system notifications automatically when a response is ready or when a session errors.
 :::
 
 ---

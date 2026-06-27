@@ -23,7 +23,7 @@ Bez obsługi Truecolor motywy mogą pojawiać się ze zmniejszoną dokładności
 
 ## Wbudowane motywy
 
-opencode ma kilka wbudowanych motywów.
+sumocode ma kilka wbudowanych motywów.
 
 | Name                   | Description                                                                       |
 | ---------------------- | --------------------------------------------------------------------------------- |
@@ -53,7 +53,7 @@ Motyw `system` został zaprojektowany tak, aby automatycznie dostosowywał się 
 
 Motyw systemu przeznaczony jest dla użytkowników, którzy:
 
-- Chcą, aby OpenCode pasował do wyglądu ich terminala
+- Chcą, aby SumoCode pasował do wyglądu ich terminala
 - Używają niestandardowych schematów kolorów terminala
 - Preferują spójny wygląd we wszystkich aplikacjach terminalowych
 
@@ -74,7 +74,7 @@ Możesz wybrać motyw, wywołując opcję wyboru motywu za pomocą polecenia `/t
 
 ## Motywy niestandardowe
 
-opencode obsługuje elastyczny system motywów oparty na JSON, który pozwala użytkownikom łatwo tworzyć i dostosowywać motywy.
+sumocode obsługuje elastyczny system motywów oparty na JSON, który pozwala użytkownikom łatwo tworzyć i dostosowywać motywy.
 
 ---
 
@@ -83,7 +83,7 @@ opencode obsługuje elastyczny system motywów oparty na JSON, który pozwala u�
 Motywy są ładowane z wielu katalogów w następującej kolejności, przy czym późniejsze katalogi zastępują wcześniejsze:
 
 1. **Wbudowane motywy** – są osadzone w formacie binarnym
-2. **Katalog konfiguracji użytkownika** - Zdefiniowany w `~/.config/opencode/themes/*.json` lub `$XDG_CONFIG_HOME/opencode/themes/*.json`
+2. **Katalog konfiguracji użytkownika** - Zdefiniowany w `~/.config/sumocode/themes/*.json` lub `$XDG_CONFIG_HOME/opencode/themes/*.json`
 3. **Katalog główny projektu** - Zdefiniowany w `<project-root>/.sumocode/themes/*.json`
 4. **Bieżący katalog roboczy** - Zdefiniowany w `./.sumocode/themes/*.json`
 
@@ -98,8 +98,8 @@ Aby utworzyć niestandardowy motyw, utwórz plik JSON w jednym z katalogów moty
 W przypadku motywów dla całego użytkownika:
 
 ```bash no-frame
-mkdir -p ~/.config/opencode/themes
-vim ~/.config/opencode/themes/my-theme.json
+mkdir -p ~/.config/sumocode/themes
+vim ~/.config/sumocode/themes/my-theme.json
 ```
 
 Oraz dla tematów specyficznych dla projektu.

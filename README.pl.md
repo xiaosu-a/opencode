@@ -3,15 +3,15 @@
     <picture>
       <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
       <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
+      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="SumoCode logo">
     </picture>
   </a>
 </p>
 <p align="center">Otwartoźródłowy agent kodujący AI.</p>
 <p align="center">
   <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
+  <a href="https://www.npmjs.com/package/sumocode-ai"><img alt="npm" src="https://img.shields.io/npm/v/sumocode-ai?style=flat-square" /></a>
+  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/sumocode/publish.yml?style=flat-square&branch=dev" /></a>
 </p>
 
 <p align="center">
@@ -39,7 +39,7 @@
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
+[![SumoCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
 
 ---
 
@@ -50,15 +50,15 @@
 curl -fsSL https://opencode.ai/install | bash
 
 # Menedżery pakietów
-npm i -g opencode-ai@latest        # albo bun/pnpm/yarn
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install anomalyco/tap/opencode # macOS i Linux (polecane, zawsze aktualne)
-brew install opencode              # macOS i Linux (oficjalna formuła brew, rzadziej aktualizowana)
-sudo pacman -S opencode            # Arch Linux (Stable)
-paru -S opencode-bin               # Arch Linux (Latest from AUR)
-mise use -g opencode               # dowolny system
-nix run nixpkgs#opencode           # lub github:anomalyco/opencode dla najnowszej gałęzi dev
+npm i -g sumocode-ai@latest        # albo bun/pnpm/yarn
+scoop install sumocode             # Windows
+choco install sumocode             # Windows
+brew install anomalyco/tap/sumocode # macOS i Linux (polecane, zawsze aktualne)
+brew install sumocode              # macOS i Linux (oficjalna formuła brew, rzadziej aktualizowana)
+sudo pacman -S sumocode            # Arch Linux (Stable)
+paru -S sumocode-bin               # Arch Linux (Latest from AUR)
+mise use -g sumocode               # dowolny system
+nix run nixpkgs#sumocode           # lub github:anomalyco/sumocode dla najnowszej gałęzi dev
 ```
 
 > [!TIP]
@@ -66,20 +66,20 @@ nix run nixpkgs#opencode           # lub github:anomalyco/opencode dla najnowsze
 
 ### Aplikacja desktopowa (BETA)
 
-OpenCode jest także dostępny jako aplikacja desktopowa. Pobierz ją bezpośrednio ze strony [releases](https://github.com/anomalyco/opencode/releases) lub z [opencode.ai/download](https://opencode.ai/download).
+SumoCode jest także dostępny jako aplikacja desktopowa. Pobierz ją bezpośrednio ze strony [releases](https://github.com/anomalyco/opencode/releases) lub z [opencode.ai/download](https://opencode.ai/download).
 
 | Platforma             | Pobieranie                         |
 | --------------------- | ---------------------------------- |
-| macOS (Apple Silicon) | `opencode-desktop-mac-arm64.dmg`   |
-| macOS (Intel)         | `opencode-desktop-mac-x64.dmg`     |
-| Windows               | `opencode-desktop-windows-x64.exe` |
+| macOS (Apple Silicon) | `sumocode-desktop-mac-arm64.dmg`   |
+| macOS (Intel)         | `sumocode-desktop-mac-x64.dmg`     |
+| Windows               | `sumocode-desktop-windows-x64.exe` |
 | Linux                 | `.deb`, `.rpm` lub AppImage        |
 
 ```bash
 # macOS (Homebrew)
-brew install --cask opencode-desktop
+brew install --cask sumocode-desktop
 # Windows (Scoop)
-scoop bucket add extras; scoop install extras/opencode-desktop
+scoop bucket add extras; scoop install extras/sumocode-desktop
 ```
 
 #### Katalog instalacji
@@ -99,7 +99,7 @@ XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
 
 ### Agents
 
-OpenCode zawiera dwóch wbudowanych agentów, między którymi możesz przełączać się klawiszem `Tab`.
+SumoCode zawiera dwóch wbudowanych agentów, między którymi możesz przełączać się klawiszem `Tab`.
 
 - **build** - Domyślny agent z pełnym dostępem do pracy developerskiej
 - **plan** - Agent tylko do odczytu do analizy i eksploracji kodu
@@ -114,16 +114,16 @@ Dowiedz się więcej o [agents](https://opencode.ai/docs/agents).
 
 ### Dokumentacja
 
-Więcej informacji o konfiguracji OpenCode znajdziesz w [**dokumentacji**](https://opencode.ai/docs).
+Więcej informacji o konfiguracji SumoCode znajdziesz w [**dokumentacji**](https://opencode.ai/docs).
 
 ### Współtworzenie
 
-Jeśli chcesz współtworzyć OpenCode, przeczytaj [contributing docs](./CONTRIBUTING.md) przed wysłaniem pull requesta.
+Jeśli chcesz współtworzyć SumoCode, przeczytaj [contributing docs](./CONTRIBUTING.md) przed wysłaniem pull requesta.
 
-### Budowanie na OpenCode
+### Budowanie na SumoCode
 
-Jeśli pracujesz nad projektem związanym z OpenCode i używasz "opencode" jako części nazwy (na przykład "opencode-dashboard" lub "opencode-mobile"), dodaj proszę notatkę do swojego README, aby wyjaśnić, że projekt nie jest tworzony przez zespół OpenCode i nie jest z nami w żaden sposób powiązany.
+Jeśli pracujesz nad projektem związanym z SumoCode i używasz "sumocode" jako części nazwy (na przykład "sumocode-dashboard" lub "sumocode-mobile"), dodaj proszę notatkę do swojego README, aby wyjaśnić, że projekt nie jest tworzony przez zespół SumoCode i nie jest z nami w żaden sposób powiązany.
 
 ---
 
-**Dołącz do naszej społeczności** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+**Dołącz do naszej społeczności** [Discord](https://discord.gg/sumocode) | [X.com](https://x.com/sumocode)

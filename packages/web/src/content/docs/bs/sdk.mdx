@@ -6,7 +6,7 @@ description: Type-safe JS klijent za opencode server.
 import config from "../../../../config.mjs"
 export const typesUrl = `${config.github}/blob/dev/packages/sdk/js/src/gen/types.gen.ts`
 
-opencode JS/TS SDK pruza type-safe klijent za interakciju sa serverom.
+sumocode JS/TS SDK pruza type-safe klijent za interakciju sa serverom.
 Koristite ga za izradu integracija i programsko upravljanje opencode-om.
 
 [Saznajte vise](/docs/server) kako server radi. Za primjere pogledajte [projects](/docs/ecosystem#projects) koje je napravila zajednica.
@@ -49,7 +49,7 @@ Ovo pokrece i server i klijent
 
 ## Konfiguracija
 
-Mozete proslijediti konfiguracijski objekat za prilagodavanje ponasanja. Instanca i dalje ucitava `opencode.json`, ali konfiguraciju mozete nadjacati ili dodati inline:
+Mozete proslijediti konfiguracijski objekat za prilagodavanje ponasanja. Instanca i dalje ucitava `sumocode.json`, ali konfiguraciju mozete nadjacati ili dodati inline:
 
 ```javascript
 import { createOpencode } from "@sumocode-ai/sdk"

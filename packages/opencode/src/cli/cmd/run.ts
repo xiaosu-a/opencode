@@ -189,7 +189,7 @@ export const RunCommand = effectCmd({
       })
       .option("attach", {
         type: "string",
-        describe: "attach to a running opencode server (e.g., http://localhost:4096)",
+        describe: "attach to a running sumocode server (e.g., http://localhost:4096)",
       })
       .option("password", {
         alias: ["p"],
@@ -199,7 +199,7 @@ export const RunCommand = effectCmd({
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')",
+        describe: "basic auth username (defaults to SUMOCODE_SERVER_USERNAME or 'opencode')",
       })
       .option("dir", {
         type: "string",
@@ -932,7 +932,7 @@ export const RunCommand = effectCmd({
         return Server.Default().app.fetch(new Request(request, { headers }))
       }) as typeof globalThis.fetch
       const sdk = createOpencodeClient({
-        baseUrl: "http://opencode.internal",
+        baseUrl: "http://sumocode.internal",
         fetch: fetchFn,
         directory,
       })

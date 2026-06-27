@@ -3,15 +3,15 @@
     <picture>
       <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
       <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
+      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="SumoCode logo">
     </picture>
   </a>
 </p>
 <p align="center">Ο πράκτορας τεχνητής νοημοσύνης ανοικτού κώδικα για προγραμματισμό.</p>
 <p align="center">
   <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
+  <a href="https://www.npmjs.com/package/sumocode-ai"><img alt="npm" src="https://img.shields.io/npm/v/sumocode-ai?style=flat-square" /></a>
+  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/sumocode/publish.yml?style=flat-square&branch=dev" /></a>
 </p>
 
 <p align="center">
@@ -39,7 +39,7 @@
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
+[![SumoCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
 
 ---
 
@@ -50,15 +50,15 @@
 curl -fsSL https://opencode.ai/install | bash
 
 # Διαχειριστές πακέτων
-npm i -g opencode-ai@latest        # ή bun/pnpm/yarn
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install anomalyco/tap/opencode # macOS και Linux (προτείνεται, πάντα ενημερωμένο)
-brew install opencode              # macOS και Linux (επίσημος τύπος brew, λιγότερο συχνές ενημερώσεις)
-sudo pacman -S opencode            # Arch Linux (Σταθερό)
-paru -S opencode-bin               # Arch Linux (Τελευταία έκδοση από AUR)
-mise use -g opencode               # Οποιοδήποτε λειτουργικό σύστημα
-nix run nixpkgs#opencode           # ή github:anomalyco/opencode με βάση την πιο πρόσφατη αλλαγή από το dev branch
+npm i -g sumocode-ai@latest        # ή bun/pnpm/yarn
+scoop install sumocode             # Windows
+choco install sumocode             # Windows
+brew install anomalyco/tap/sumocode # macOS και Linux (προτείνεται, πάντα ενημερωμένο)
+brew install sumocode              # macOS και Linux (επίσημος τύπος brew, λιγότερο συχνές ενημερώσεις)
+sudo pacman -S sumocode            # Arch Linux (Σταθερό)
+paru -S sumocode-bin               # Arch Linux (Τελευταία έκδοση από AUR)
+mise use -g sumocode               # Οποιοδήποτε λειτουργικό σύστημα
+nix run nixpkgs#sumocode           # ή github:anomalyco/sumocode με βάση την πιο πρόσφατη αλλαγή από το dev branch
 ```
 
 > [!TIP]
@@ -66,20 +66,20 @@ nix run nixpkgs#opencode           # ή github:anomalyco/opencode με βάση 
 
 ### Εφαρμογή Desktop (BETA)
 
-Το OpenCode είναι επίσης διαθέσιμο ως εφαρμογή. Κατέβασε το απευθείας από τη [σελίδα εκδόσεων](https://github.com/anomalyco/opencode/releases) ή το [opencode.ai/download](https://opencode.ai/download).
+Το SumoCode είναι επίσης διαθέσιμο ως εφαρμογή. Κατέβασε το απευθείας από τη [σελίδα εκδόσεων](https://github.com/anomalyco/opencode/releases) ή το [opencode.ai/download](https://opencode.ai/download).
 
 | Πλατφόρμα             | Λήψη                               |
 | --------------------- | ---------------------------------- |
-| macOS (Apple Silicon) | `opencode-desktop-mac-arm64.dmg`   |
-| macOS (Intel)         | `opencode-desktop-mac-x64.dmg`     |
-| Windows               | `opencode-desktop-windows-x64.exe` |
+| macOS (Apple Silicon) | `sumocode-desktop-mac-arm64.dmg`   |
+| macOS (Intel)         | `sumocode-desktop-mac-x64.dmg`     |
+| Windows               | `sumocode-desktop-windows-x64.exe` |
 | Linux                 | `.deb`, `.rpm`, ή AppImage         |
 
 ```bash
 # macOS (Homebrew)
-brew install --cask opencode-desktop
+brew install --cask sumocode-desktop
 # Windows (Scoop)
-scoop bucket add extras; scoop install extras/opencode-desktop
+scoop bucket add extras; scoop install extras/sumocode-desktop
 ```
 
 #### Κατάλογος Εγκατάστασης
@@ -99,7 +99,7 @@ XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
 
 ### Πράκτορες
 
-Το OpenCode περιλαμβάνει δύο ενσωματωμένους πράκτορες μεταξύ των οποίων μπορείτε να εναλλάσσεστε με το πλήκτρο `Tab`.
+Το SumoCode περιλαμβάνει δύο ενσωματωμένους πράκτορες μεταξύ των οποίων μπορείτε να εναλλάσσεστε με το πλήκτρο `Tab`.
 
 - **build** - Προεπιλεγμένος πράκτορας με πλήρη πρόσβαση για εργασία πάνω σε κώδικα
 - **plan** - Πράκτορας μόνο ανάγνωσης για ανάλυση και εξερεύνηση κώδικα
@@ -114,16 +114,16 @@ XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
 
 ### Οδηγός Χρήσης
 
-Για περισσότερες πληροφορίες σχετικά με τη ρύθμιση του OpenCode, [**πλοηγήσου στον οδηγό χρήσης μας**](https://opencode.ai/docs).
+Για περισσότερες πληροφορίες σχετικά με τη ρύθμιση του SumoCode, [**πλοηγήσου στον οδηγό χρήσης μας**](https://opencode.ai/docs).
 
 ### Συνεισφορά
 
-Εάν ενδιαφέρεσαι να συνεισφέρεις στο OpenCode, διαβάστε τα [οδηγό χρήσης συνεισφοράς](./CONTRIBUTING.md) πριν υποβάλεις ένα pull request.
+Εάν ενδιαφέρεσαι να συνεισφέρεις στο SumoCode, διαβάστε τα [οδηγό χρήσης συνεισφοράς](./CONTRIBUTING.md) πριν υποβάλεις ένα pull request.
 
-### Δημιουργία πάνω στο OpenCode
+### Δημιουργία πάνω στο SumoCode
 
-Εάν εργάζεσαι σε ένα έργο σχετικό με το OpenCode και χρησιμοποιείτε το "opencode" ως μέρος του ονόματός του, για παράδειγμα "opencode-dashboard" ή "opencode-mobile", πρόσθεσε μια σημείωση στο README σας για να διευκρινίσεις ότι δεν είναι κατασκευασμένο από την ομάδα του OpenCode και δεν έχει καμία σχέση με εμάς.
+Εάν εργάζεσαι σε ένα έργο σχετικό με το SumoCode και χρησιμοποιείτε το "sumocode" ως μέρος του ονόματός του, για παράδειγμα "sumocode-dashboard" ή "sumocode-mobile", πρόσθεσε μια σημείωση στο README σας για να διευκρινίσεις ότι δεν είναι κατασκευασμένο από την ομάδα του SumoCode και δεν έχει καμία σχέση με εμάς.
 
 ---
 
-**Γίνε μέλος της κοινότητάς μας** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+**Γίνε μέλος της κοινότητάς μας** [Discord](https://discord.gg/sumocode) | [X.com](https://x.com/sumocode)

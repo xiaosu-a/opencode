@@ -39,13 +39,13 @@ import { McpEvent } from "@sumocode-ai/schema/mcp-event"
 const DEFAULT_TIMEOUT = 30_000
 const CLIENT_OPTIONS = {
   capabilities: {
-    // https://github.com/anomalyco/opencode/issues/11948
+    // https://github.com/anomalyco/sumocode/issues/11948
     // sampling: {},
-    // https://github.com/anomalyco/opencode/issues/23066
+    // https://github.com/anomalyco/sumocode/issues/23066
     // elicitation: {},
-    // https://github.com/anomalyco/opencode/issues/2308
+    // https://github.com/anomalyco/sumocode/issues/2308
     roots: {},
-    // https://github.com/anomalyco/opencode/issues/28567
+    // https://github.com/anomalyco/sumocode/issues/28567
     // tasks: {},
   },
 } satisfies ClientOptions
@@ -190,7 +190,7 @@ export interface Interface {
   readonly getAuthStatus: (mcpName: string) => Effect.Effect<AuthStatus>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/MCP") {}
+export class Service extends Context.Service<Service, Interface>()("@sumocode/MCP") {}
 
 export const use = serviceUse(Service)
 
