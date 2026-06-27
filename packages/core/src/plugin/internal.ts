@@ -2,7 +2,7 @@ export * as PluginInternal from "./internal"
 
 import { makeLocationNode } from "../effect/node"
 import { httpClient } from "../effect/layer-node-platform"
-import type { PluginContext } from "@opencode-ai/plugin/v2/effect"
+import type { PluginContext } from "@sumocode-ai/plugin/v2/effect"
 import { Effect, Layer, Scope } from "effect"
 import { AgentV2 } from "../agent"
 import { Catalog } from "../catalog"

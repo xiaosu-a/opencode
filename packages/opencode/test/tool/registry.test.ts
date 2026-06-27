@@ -3,8 +3,8 @@ import path from "path"
 import fs from "fs/promises"
 import { fileURLToPath, pathToFileURL } from "url"
 import { Effect, Layer, Result, Schema } from "effect"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
-import { LayerNodeTree } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
+import { LayerNodeTree } from "@sumocode-ai/core/effect/layer-node"
 import { ToolRegistry } from "@/tool/registry"
 import { Tool } from "@/tool/tool"
 import { disposeAllInstances, TestInstance } from "../fixture/fixture"
@@ -18,8 +18,8 @@ import { InstanceState } from "@/effect/instance-state"
 import { ToolJsonSchema } from "@/tool/json-schema"
 import { MessageID, SessionID } from "@/session/schema"
 import { RuntimeFlags } from "@/effect/runtime-flags"
-import { ProviderV2 } from "@opencode-ai/core/provider"
-import { ModelV2 } from "@opencode-ai/core/model"
+import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@sumocode-ai/core/model"
 
 const configLayer = TestConfig.layer({
   directories: () => InstanceState.directory.pipe(Effect.map((dir) => [path.join(dir, ".opencode")])),
@@ -99,7 +99,7 @@ describe("tool.registry", () => {
     }),
   )
 
-  it.instance("loads tools from .opencode/tool (singular)", () =>
+  it.instance("loads tools from .sumocode/tool (singular)", () =>
     Effect.gen(function* () {
       const test = yield* TestInstance
       const opencode = path.join(test.directory, ".opencode")
@@ -126,7 +126,7 @@ describe("tool.registry", () => {
     }),
   )
 
-  it.instance("ignores non-tool exports in .opencode/tool files", () =>
+  it.instance("ignores non-tool exports in .sumocode/tool files", () =>
     Effect.gen(function* () {
       const test = yield* TestInstance
       const tool = path.join(test.directory, ".opencode", "tool")
@@ -204,7 +204,7 @@ describe("tool.registry", () => {
     }),
   )
 
-  it.instance("loads tools from .opencode/tools (plural)", () =>
+  it.instance("loads tools from .sumocode/tools (plural)", () =>
     Effect.gen(function* () {
       const test = yield* TestInstance
       const opencode = path.join(test.directory, ".opencode")
@@ -289,7 +289,7 @@ describe("tool.registry", () => {
         const test = yield* TestInstance
         const opencode = path.join(test.directory, ".opencode")
         const customTools = path.join(opencode, "tools")
-        const plugin = path.join(opencode, "node_modules", "@opencode-ai", "plugin")
+        const plugin = path.join(opencode, "node_modules", "@sumocode-ai", "plugin")
         yield* Effect.promise(() => fs.mkdir(path.join(plugin, "dist"), { recursive: true }))
         yield* Effect.promise(() => fs.mkdir(customTools, { recursive: true }))
         yield* Effect.promise(() =>
@@ -301,7 +301,7 @@ describe("tool.registry", () => {
         yield* Effect.promise(() =>
           Bun.write(
             path.join(plugin, "package.json"),
-            JSON.stringify({ name: "@opencode-ai/plugin", type: "module", exports: { ".": "./dist/index.js" } }),
+            JSON.stringify({ name: "@sumocode-ai/plugin", type: "module", exports: { ".": "./dist/index.js" } }),
           ),
         )
         yield* Effect.promise(() =>
@@ -321,7 +321,7 @@ describe("tool.registry", () => {
           Bun.write(
             path.join(customTools, "addition.ts"),
             [
-              'import { tool } from "@opencode-ai/plugin"',
+              'import { tool } from "@sumocode-ai/plugin"',
               "export default tool({",
               "  description: 'Use this tool to add two numbers and return their sum.',",
               "  args: {",
@@ -438,7 +438,7 @@ describe("tool.registry", () => {
           JSON.stringify({
             name: "custom-tools",
             dependencies: {
-              "@opencode-ai/plugin": "^0.0.0",
+              "@sumocode-ai/plugin": "^0.0.0",
               cowsay: "^1.6.0",
             },
           }),
@@ -453,7 +453,7 @@ describe("tool.registry", () => {
             packages: {
               "": {
                 dependencies: {
-                  "@opencode-ai/plugin": "^0.0.0",
+                  "@sumocode-ai/plugin": "^0.0.0",
                   cowsay: "^1.6.0",
                 },
               },

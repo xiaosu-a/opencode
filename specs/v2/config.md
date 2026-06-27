@@ -105,7 +105,7 @@ Plugin order remains part of the v2 configuration contract because hook registra
 }
 ```
 
-The configured `plugins` list represents package-loaded plugins only. Local plugin code remains discovered from plugin directories such as `.opencode/plugins/`; v2 does not port arbitrary configured local paths or file URLs into this field.
+The configured `plugins` list represents package-loaded plugins only. Local plugin code remains discovered from plugin directories such as `.sumocode/plugins/`; v2 does not port arbitrary configured local paths or file URLs into this field.
 
 ## Group 5: Filesystem And Tool Runtime
 

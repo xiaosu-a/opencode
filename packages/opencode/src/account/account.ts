@@ -1,7 +1,7 @@
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
-import { httpClient } from "@opencode-ai/core/effect/layer-node-platform"
+import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
+import { httpClient } from "@sumocode-ai/core/effect/layer-node-platform"
 import { Cache, Clock, Duration, Effect, Layer, Option, Schema, SchemaGetter, Context } from "effect"
-import { serviceUse } from "@opencode-ai/core/effect/service-use"
+import { serviceUse } from "@sumocode-ai/core/effect/service-use"
 import {
   FetchHttpClient,
   HttpClient,

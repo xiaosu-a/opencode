@@ -1,7 +1,7 @@
 {
   "$schema": "https://sumocode.ai/desktop-theme.json",
   "name": "SumoCode",
-  "id": "opencode",
+  "id": "sumocode",
   "light": {
     "palette": {
       "neutral": "#ffffff",

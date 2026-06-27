@@ -1,7 +1,7 @@
 {
-  "name": "opencode",
-  "displayName": "opencode",
-  "description": "opencode for VS Code",
+  "name": "sumocode",
+  "displayName": "sumocode",
+  "description": "SumoCode for VS Code",
   "version": "1.17.11",
   "publisher": "sst-dev",
   "repository": {

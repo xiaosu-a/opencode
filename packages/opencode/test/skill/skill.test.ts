@@ -5,9 +5,9 @@ import { Discovery } from "../../src/skill/discovery"
 import { RuntimeFlags } from "../../src/effect/runtime-flags"
 import { EventV2Bridge } from "../../src/event-v2-bridge"
 import { Config } from "../../src/config/config"
-import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
-import { FSUtil } from "@opencode-ai/core/fs-util"
-import { Global } from "@opencode-ai/core/global"
+import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
+import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { Global } from "@sumocode-ai/core/global"
 import { provideInstance, provideTmpdirInstance, testInstanceStoreLayer, tmpdir } from "../fixture/fixture"
 import { testEffect } from "../lib/effect"
 import path from "path"
@@ -104,7 +104,7 @@ describe("skill", () => {
     }),
   )
 
-  it.live("discovers skills from .opencode/skill/ directory", () =>
+  it.live("discovers skills from .sumocode/skill/ directory", () =>
     provideTmpdirInstance(
       (dir) =>
         Effect.gen(function* () {
@@ -164,7 +164,7 @@ description: Skill for dirs test.
     ),
   )
 
-  it.live("discovers multiple skills from .opencode/skill/ directory", () =>
+  it.live("discovers multiple skills from .sumocode/skill/ directory", () =>
     provideTmpdirInstance(
       (dir) =>
         Effect.gen(function* () {
@@ -523,7 +523,7 @@ description: A skill in the .agents/skills directory.
                 path.join(dir, ".opencode", "skill", "opencode-skill", "SKILL.md"),
                 `---
 name: opencode-skill
-description: A skill in the .opencode/skill directory.
+description: A skill in the .sumocode/skill directory.
 ---
 
 # OpenCode Skill
@@ -570,7 +570,7 @@ description: A skill in the .agents/skills directory.
                 path.join(dir, ".opencode", "skill", "agent-skill", "SKILL.md"),
                 `---
 name: opencode-skill
-description: A skill in the .opencode/skill directory.
+description: A skill in the .sumocode/skill directory.
 ---
 
 # OpenCode Skill
@@ -580,7 +580,7 @@ description: A skill in the .opencode/skill directory.
                 path.join(dir, ".opencode", "skills", "agent-skill", "SKILL.md"),
                 `---
 name: opencode-skill
-description: A skill in the .opencode/skills directory.
+description: A skill in the .sumocode/skills directory.
 ---
 
 # OpenCode Skill

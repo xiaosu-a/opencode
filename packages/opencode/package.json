@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "version": "1.17.11",
-  "name": "opencode",
+  "name": "sumocode",
   "type": "module",
   "license": "MIT",
   "private": true,
@@ -16,7 +16,7 @@
     "dev:temporary": "bun run --conditions=browser ./src/temporary.ts"
   },
   "bin": {
-    "opencode": "./bin/opencode"
+    "sumocode": "./bin/sumocode"
   },
   "exports": {
     "./*": "./src/*.ts"
@@ -31,9 +31,9 @@
   "devDependencies": {
     "@babel/core": "7.28.4",
     "@octokit/webhooks-types": "7.6.1",
-    "@opencode-ai/core": "workspace:*",
-    "@opencode-ai/http-recorder": "workspace:*",
-    "@opencode-ai/script": "workspace:*",
+    "@sumocode-ai/core": "workspace:*",
+    "@sumocode-ai/http-recorder": "workspace:*",
+    "@sumocode-ai/script": "workspace:*",
     "@standard-schema/spec": "1.0.0",
     "@tsconfig/bun": "catalog:",
     "@types/babel__core": "7.20.5",
@@ -84,14 +84,14 @@
     "@octokit/graphql": "9.0.2",
     "@octokit/rest": "catalog:",
     "@openauthjs/openauth": "catalog:",
-    "@opencode-ai/llm": "workspace:*",
-    "@opencode-ai/plugin": "workspace:*",
-    "@opencode-ai/protocol": "workspace:*",
-    "@opencode-ai/schema": "workspace:*",
-    "@opencode-ai/script": "workspace:*",
-    "@opencode-ai/sdk": "workspace:*",
-    "@opencode-ai/server": "workspace:*",
-    "@opencode-ai/tui": "workspace:*",
+    "@sumocode-ai/llm": "workspace:*",
+    "@sumocode-ai/plugin": "workspace:*",
+    "@sumocode-ai/protocol": "workspace:*",
+    "@sumocode-ai/schema": "workspace:*",
+    "@sumocode-ai/script": "workspace:*",
+    "@sumocode-ai/sdk": "workspace:*",
+    "@sumocode-ai/server": "workspace:*",
+    "@sumocode-ai/tui": "workspace:*",
     "@openrouter/ai-sdk-provider": "2.9.0",
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/context-async-hooks": "2.6.1",

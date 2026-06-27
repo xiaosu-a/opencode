@@ -17,9 +17,9 @@ Les commandes personnalisées s'ajoutent aux commandes intégrées telles que `/
 
 Créez des fichiers markdown dans le répertoire `commands/` pour définir des commandes personnalisées.
 
-Créez `.opencode/commands/test.md` :
+Créez `.sumocode/commands/test.md` :
 
-```md title=".opencode/commands/test.md"
+```md title=".sumocode/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -80,7 +80,7 @@ Vous pouvez maintenant exécuter cette commande dans le TUI :
 Vous pouvez également définir des commandes à l'aide de fichiers markdown. Placez-les dans :
 
 - Global : `~/.config/opencode/commands/`
-- Par projet : `.opencode/commands/`
+- Par projet : `.sumocode/commands/`
 
 ```markdown title="~/.config/opencode/commands/test.md"
 ---
@@ -111,7 +111,7 @@ Les prompts pour les commandes personnalisées prennent en charge plusieurs espa
 
 Transmettez les arguments aux commandes à l’aide de l’espace réservé `$ARGUMENTS`.
 
-```md title=".opencode/commands/component.md"
+```md title=".sumocode/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -137,7 +137,7 @@ Vous pouvez également accéder à des arguments individuels à l'aide de param�
 
 Par exemple:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".sumocode/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -166,7 +166,7 @@ Utilisez _!`command`_ pour injecter la sortie [bash command](/docs/tui#bash-comm
 
 Par exemple, pour créer une commande personnalisée qui analyse la couverture des tests :
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".sumocode/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -179,7 +179,7 @@ Based on these results, suggest improvements to increase coverage.
 
 Ou pour consulter les modifications récentes :
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".sumocode/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -198,7 +198,7 @@ Les commandes s'exécutent dans le répertoire racine de votre projet et leur so
 
 Incluez les fichiers dans votre commande en utilisant `@` suivi du nom du fichier.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".sumocode/commands/review-component.md"
 ---
 description: Review component
 ---

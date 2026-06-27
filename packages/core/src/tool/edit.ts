@@ -6,8 +6,8 @@
  */
 export * as EditTool from "./edit"
 
-import { ToolFailure } from "@opencode-ai/llm"
-import { FileDiff } from "@opencode-ai/schema/file-diff"
+import { ToolFailure } from "@sumocode-ai/llm"
+import { FileDiff } from "@sumocode-ai/schema/file-diff"
 import { createTwoFilesPatch, diffLines } from "diff"
 import { Effect, Layer, Schema } from "effect"
 import { FileMutation } from "../file-mutation"

@@ -2,8 +2,8 @@ import { describe, expect } from "bun:test"
 import fs from "fs/promises"
 import path from "path"
 import { Effect } from "effect"
-import { Ripgrep } from "@opencode-ai/core/ripgrep"
-import { RelativePath } from "@opencode-ai/core/schema"
+import { Ripgrep } from "@sumocode-ai/core/ripgrep"
+import { RelativePath } from "@sumocode-ai/core/schema"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
@@ -42,7 +42,7 @@ describe("Ripgrep", () => {
           const ripgrep = yield* Ripgrep.Service
 
           const files = yield* ripgrep.find({ cwd: tmp.path, pattern: "**/*", limit: 10 })
-          expect(files.map((item) => item.path)).toContain(RelativePath.make(".opencode/config"))
+          expect(files.map((item) => item.path)).toContain(RelativePath.make(".sumocode/config"))
           expect(files.map((item) => item.path)).not.toContain(RelativePath.make(".git/config"))
 
           const observed: string[] = []
@@ -55,7 +55,7 @@ describe("Ripgrep", () => {
           expect(observed).toEqual(limited.map((item) => item.path))
 
           const matches = yield* ripgrep.grep({ cwd: tmp.path, pattern: "needle", include: "config", limit: 10 })
-          expect(matches.map((item) => item.entry.path)).toContain(RelativePath.make(".opencode/config"))
+          expect(matches.map((item) => item.entry.path)).toContain(RelativePath.make(".sumocode/config"))
           expect(matches.map((item) => item.entry.path)).not.toContain(RelativePath.make(".git/config"))
         }),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),

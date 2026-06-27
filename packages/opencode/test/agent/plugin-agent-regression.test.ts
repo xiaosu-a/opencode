@@ -1,6 +1,6 @@
 import { expect } from "bun:test"
-import { FSUtil } from "@opencode-ai/core/fs-util"
-import { LocationServiceMap, locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { LocationServiceMap, locationServiceMapLayer } from "@sumocode-ai/core/location-services"
 import { Effect, Layer } from "effect"
 import { FetchHttpClient } from "effect/unstable/http"
 import path from "path"

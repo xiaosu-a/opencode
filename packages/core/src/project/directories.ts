@@ -7,7 +7,7 @@ import { makeGlobalNode } from "../effect/node"
 import { AbsolutePath, optional } from "../schema"
 import { ProjectSchema } from "./schema"
 import { ProjectDirectoryTable } from "./sql"
-import type { EffectDrizzleSqlite } from "@opencode-ai/effect-drizzle-sqlite"
+import type { EffectDrizzleSqlite } from "@sumocode-ai/effect-drizzle-sqlite"
 
 export interface Directory {
   readonly directory: AbsolutePath

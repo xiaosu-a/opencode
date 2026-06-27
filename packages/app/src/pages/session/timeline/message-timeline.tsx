@@ -16,9 +16,9 @@ import { Dynamic } from "solid-js/web"
 import { useNavigate } from "@solidjs/router"
 import { useMutation } from "@tanstack/solid-query"
 import { createVirtualizer, defaultRangeExtractor, elementScroll, type VirtualItem } from "@tanstack/solid-virtual"
-import { Accordion } from "@opencode-ai/ui/accordion"
-import { Button } from "@opencode-ai/ui/button"
-import { Card } from "@opencode-ai/ui/card"
+import { Accordion } from "@sumocode-ai/ui/accordion"
+import { Button } from "@sumocode-ai/ui/button"
+import { Card } from "@sumocode-ai/ui/card"
 import {
   ContextToolGroup,
   Message,
@@ -26,35 +26,35 @@ import {
   Part as MessagePart,
   partDefaultOpen,
   type UserActions,
-} from "@opencode-ai/session-ui/message-part"
-import { DiffChanges } from "@opencode-ai/ui/diff-changes"
-import { FileIcon } from "@opencode-ai/ui/file-icon"
-import { Icon } from "@opencode-ai/ui/icon"
-import { IconButton } from "@opencode-ai/ui/icon-button"
-import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
-import { Dialog } from "@opencode-ai/ui/dialog"
-import { InlineInput } from "@opencode-ai/ui/inline-input"
-import { SessionRetry } from "@opencode-ai/session-ui/session-retry"
-import { ScrollView } from "@opencode-ai/ui/scroll-view"
-import { StickyAccordionHeader } from "@opencode-ai/ui/sticky-accordion-header"
-import { TextField } from "@opencode-ai/ui/text-field"
-import { TextReveal } from "@opencode-ai/ui/text-reveal"
-import { TextShimmer } from "@opencode-ai/ui/text-shimmer"
+} from "@sumocode-ai/session-ui/message-part"
+import { DiffChanges } from "@sumocode-ai/ui/diff-changes"
+import { FileIcon } from "@sumocode-ai/ui/file-icon"
+import { Icon } from "@sumocode-ai/ui/icon"
+import { IconButton } from "@sumocode-ai/ui/icon-button"
+import { DropdownMenu } from "@sumocode-ai/ui/dropdown-menu"
+import { Dialog } from "@sumocode-ai/ui/dialog"
+import { InlineInput } from "@sumocode-ai/ui/inline-input"
+import { SessionRetry } from "@sumocode-ai/session-ui/session-retry"
+import { ScrollView } from "@sumocode-ai/ui/scroll-view"
+import { StickyAccordionHeader } from "@sumocode-ai/ui/sticky-accordion-header"
+import { TextField } from "@sumocode-ai/ui/text-field"
+import { TextReveal } from "@sumocode-ai/ui/text-reveal"
+import { TextShimmer } from "@sumocode-ai/ui/text-shimmer"
 import type {
   AssistantMessage,
   Message as MessageType,
   Part as PartType,
   ToolPart,
   UserMessage,
-} from "@opencode-ai/sdk/v2"
+} from "@sumocode-ai/sdk/v2"
 import { showToast } from "@/utils/toast"
-import { getDirectory, getFilename } from "@opencode-ai/core/util/path"
+import { getDirectory, getFilename } from "@sumocode-ai/core/util/path"
 import { Popover as KobaltePopover } from "@kobalte/core/popover"
-import { normalize } from "@opencode-ai/session-ui/session-diff"
-import { useFileComponent } from "@opencode-ai/ui/context/file"
+import { normalize } from "@sumocode-ai/session-ui/session-diff"
+import { useFileComponent } from "@sumocode-ai/ui/context/file"
 import { shouldMarkBoundaryGesture, normalizeWheelDelta } from "@/pages/session/message-gesture"
 import { SessionContextUsage } from "@/components/session-context-usage"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { useDialog } from "@sumocode-ai/ui/context/dialog"
 import { useLanguage } from "@/context/language"
 import { useSessionKey } from "@/pages/session/session-layout"
 import { useServerSDK } from "@/context/server-sdk"
