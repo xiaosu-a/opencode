@@ -82,10 +82,10 @@ type ExportData = { info: SDKSession; messages: Array<{ info: Message; parts: Pa
 
 export const ImportCommand = effectCmd({
   command: "import <file>",
-  describe: "import session data from JSON file or URL",
+  describe: "从 JSON 文件或 URL 导入会话数据",
   builder: (yargs) =>
     yargs.positional("file", {
-      describe: "path to JSON file or share URL",
+      describe: "JSON 文件路径或分享 URL",
       type: "string",
       demandOption: true,
     }),
