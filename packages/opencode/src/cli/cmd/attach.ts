@@ -6,7 +6,7 @@ import { ServerAuth } from "@/server/auth"
 
 export const AttachCommand = cmd({
   command: "attach <url>",
-  describe: "attach to a running sumocode server",
+  describe: "连接到正在运行的 SumoCode 服务器",
   builder: (yargs) =>
     yargs
       .positional("url", {
@@ -16,35 +16,35 @@ export const AttachCommand = cmd({
       })
       .option("dir", {
         type: "string",
-        description: "directory to run in",
+        description: "运行目录",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "继续上一个会话",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "session id to continue",
+        describe: "要继续的会话 ID",
       })
       .option("fork", {
         type: "boolean",
-        describe: "fork the session when continuing (use with --continue or --session)",
+        describe: "继续时分叉会话（与 --continue 或 --session 一起使用）",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "basic auth password (defaults to OPENCODE_SERVER_PASSWORD)",
+        describe: "基本认证密码（默认为 OPENCODE_SERVER_PASSWORD）",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "basic auth username (defaults to SUMOCODE_SERVER_USERNAME or 'opencode')",
+        describe: "基本认证用户名（默认为 SUMOCODE_SERVER_USERNAME 或 'opencode'）",
       })
       .option("mini", {
         type: "boolean",
-        describe: "start the minimal interactive interface",
+        describe: "启动最小化交互界面",
         default: false,
       })
       .option("replay", {
@@ -53,15 +53,15 @@ export const AttachCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "disable mini session history replay on resume and after resize",
+        describe: "禁用迷你会话历史重放（恢复时和调整大小后）",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "cap visible mini replay to the newest N messages",
+        describe: "将可见的迷你重放限制为最新的 N 条消息",
       }),
   handler: async (args) => {
     if (args.replay === true) {
-      UI.error("--replay is not supported; replay is enabled by default")
+      UI.error("--replay 不受支持；重放默认已启用")
       process.exitCode = 1
       return
     }
@@ -99,14 +99,14 @@ export const AttachCommand = cmd({
       ["--replay-limit", args.replayLimit !== undefined],
     ].find((entry) => entry[1])?.[0]
     if (unsupported) {
-      UI.error(`${unsupported} requires --mini`)
+      UI.error(`${unsupported} 需要 --mini`)
       process.exitCode = 1
       return
     }
 
     const { TuiConfig } = await import("@/config/tui")
     if (args.fork && !args.continue && !args.session) {
-      UI.error("--fork requires --continue or --session")
+      UI.error("--fork 需要 --continue 或 --session")
       process.exitCode = 1
       return
     }

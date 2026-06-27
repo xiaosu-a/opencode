@@ -239,7 +239,7 @@ export function resolvePluginProviders(input: {
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
-  describe: "manage AI providers and credentials",
+  describe: "管理 AI 提供商和凭据",
   builder: (yargs) =>
     yargs.command(ProvidersListCommand).command(ProvidersLoginCommand).command(ProvidersLogoutCommand).demandCommand(),
   async handler() {},
@@ -248,7 +248,7 @@ export const ProvidersCommand = cmd({
 export const ProvidersListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list providers and credentials",
+  describe: "列出提供商和凭据",
   // Lists global credentials + provider env vars; no project instance needed.
   instance: false,
   handler: Effect.fn("Cli.providers.list")(function* (_args) {
@@ -259,7 +259,7 @@ export const ProvidersListCommand = effectCmd({
     const authPath = path.join(Global.Path.data, "auth.json")
     const homedir = os.homedir()
     const displayPath = authPath.startsWith(homedir) ? authPath.replace(homedir, "~") : authPath
-    yield* Prompt.intro(`Credentials ${UI.Style.TEXT_DIM}${displayPath}`)
+    yield* Prompt.intro(`凭据 ${UI.Style.TEXT_DIM}${displayPath}`)
     const results = Object.entries(yield* Effect.orDie(authSvc.all()))
     const database = yield* modelsDev.get()
 
@@ -268,7 +268,7 @@ export const ProvidersListCommand = effectCmd({
       yield* Prompt.log.info(`${name} ${UI.Style.TEXT_DIM}${result.type}`)
     }
 
-    yield* Prompt.outro(`${results.length} credentials`)
+    yield* Prompt.outro(`${results.length} 个凭据`)
 
     const activeEnvVars: Array<{ provider: string; envVar: string }> = []
 
@@ -285,69 +285,69 @@ export const ProvidersListCommand = effectCmd({
 
     if (activeEnvVars.length > 0) {
       UI.empty()
-      yield* Prompt.intro("Environment")
+      yield* Prompt.intro("环境变量")
 
       for (const { provider, envVar } of activeEnvVars) {
         yield* Prompt.log.info(`${provider} ${UI.Style.TEXT_DIM}${envVar}`)
       }
 
-      yield* Prompt.outro(`${activeEnvVars.length} environment variable` + (activeEnvVars.length === 1 ? "" : "s"))
+      yield* Prompt.outro(`${activeEnvVars.length} 个环境变量`)
     }
   }),
 })
 
 export const ProvidersLoginCommand = effectCmd({
   command: "login [url]",
-  describe: "log in to a provider",
+  describe: "登录到提供商",
   // URL login skips instance bootstrap, which would load remote config with the stale token and crash before re-auth.
   instance: (args) => !args.url,
   builder: (yargs: Argv) =>
     yargs
       .positional("url", {
-        describe: "opencode auth provider",
+        describe: "sumocode 认证提供商",
         type: "string",
       })
       .option("provider", {
         alias: ["p"],
-        describe: "provider id or name to log in to (skips provider selection)",
+        describe: "提供商 ID 或名称（跳过提供商选择）",
         type: "string",
       })
       .option("method", {
         alias: ["m"],
-        describe: "login method label (skips method selection)",
+        describe: "登录方法标签（跳过方法选择）",
         type: "string",
       }),
   handler: Effect.fn("Cli.providers.login")(function* (args) {
     const authSvc = yield* Auth.Service
 
     UI.empty()
-    yield* Prompt.intro("Add credential")
+    yield* Prompt.intro("添加凭据")
     if (args.url) {
       const url = args.url.replace(/\/+$/, "")
-      const wellknown = (yield* cliTry(`Failed to load auth provider metadata from ${url}: `, () =>
+      const wellknown = (yield* cliTry(`从 ${url} 加载认证提供商元数据失败: `, () =>
         fetch(`${url}/.well-known/sumocode`).then((x) => x.json()),
       )) as {
         auth: { command: string[]; env: string }
       }
-      yield* Prompt.log.info(`Running \`${wellknown.auth.command.join(" ")}\``)
+      yield* Prompt.log.info(`运行 \`${wellknown.auth.command.join(" ")}\``)
       const abort = new AbortController()
       const proc = Process.spawn(wellknown.auth.command, { stdout: "pipe", stderr: "inherit", abort: abort.signal })
       if (!proc.stdout) {
-        yield* Prompt.log.error("Failed")
-        yield* Prompt.outro("Done")
+        yield* Prompt.log.error("失败")
+        yield* Prompt.outro("完成")
         return
       }
-      const [exit, token] = yield* cliTry("Failed to run auth provider command: ", () =>
+      const [exit, token] = yield* cliTry("运行认证提供商命令失败: ", () =>
         Promise.all([proc.exited, text(proc.stdout!)]),
       ).pipe(Effect.ensuring(Effect.sync(() => abort.abort())))
       if (exit !== 0) {
-        yield* Prompt.log.error("Failed")
-        yield* Prompt.outro("Done")
+        yield* Prompt.log.error("失败")
+        yield* Prompt.outro("完成")
         return
       }
       yield* Effect.orDie(authSvc.set(url, { type: "wellknown", key: wellknown.auth.env, token: token.trim() }))
-      yield* Prompt.log.success("Logged into " + url)
-      yield* Prompt.outro("Done")
+      yield* Prompt.log.success("已登录到 " + url)
+      yield* Prompt.outro("完成")
       return
     }
 
@@ -396,15 +396,15 @@ export const ProvidersLoginCommand = effectCmd({
           label: x.name,
           value: x.id,
           hint: {
-            opencode: "recommended",
-            openai: "ChatGPT Plus/Pro or API key",
+            opencode: "推荐",
+            openai: "ChatGPT Plus/Pro 或 API 密钥",
           }[x.id],
         })),
       ),
       ...pluginProviders.map((x) => ({
         label: x.name,
         value: x.id,
-        hint: "plugin",
+        hint: "插件",
       })),
     ]
 
@@ -415,15 +415,15 @@ export const ProvidersLoginCommand = effectCmd({
       const byName = options.find((x) => x.label.toLowerCase() === input.toLowerCase())
       const match = byID ?? byName
       if (!match) {
-        return yield* fail(`Unknown provider "${input}"`)
+        return yield* fail(`未知提供商 "${input}"`)
       }
       provider = match.value
     } else {
       provider = yield* promptValue(
         yield* Prompt.autocomplete({
-          message: "Select provider",
+          message: "选择提供商",
           maxItems: 8,
-          options: [...options, { value: "other", label: "Other" }],
+          options: [...options, { value: "other", label: "其他" }],
         }),
       )
     }
@@ -437,8 +437,8 @@ export const ProvidersLoginCommand = effectCmd({
     if (provider === "other") {
       provider = (yield* promptValue(
         yield* Prompt.text({
-          message: "Enter provider id",
-          validate: (x) => (x && x.match(/^[0-9a-z-]+$/) ? undefined : "a-z, 0-9 and hyphens only"),
+          message: "输入提供商 ID",
+          validate: (x) => (x && x.match(/^[0-9a-z-]+$/) ? undefined : "仅限小写字母、数字和连字符"),
         }),
       )).replace(/^@ai-sdk\//, "")
 
@@ -449,51 +449,51 @@ export const ProvidersLoginCommand = effectCmd({
       }
 
       yield* Prompt.log.warn(
-        `This only stores a credential for ${provider} - you will need configure it in sumocode.json, check the docs for examples.`,
+        `这仅为 ${provider} 存储凭据 - 你需要在 sumocode.json 中配置它，请查看文档中的示例。`,
       )
     }
 
     if (provider === "amazon-bedrock") {
       yield* Prompt.log.info(
-        "Amazon Bedrock authentication priority:\n" +
-          "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK or /connect)\n" +
-          "  2. AWS credential chain (profile, access keys, IAM roles, EKS IRSA)\n\n" +
-          "Configure via sumocode.json options (profile, region, endpoint) or\n" +
-          "AWS environment variables (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
+        "Amazon Bedrock 认证优先级:\n" +
+          "  1. Bearer 令牌 (AWS_BEARER_TOKEN_BEDROCK 或 /connect)\n" +
+          "  2. AWS 凭据链 (配置文件、访问密钥、IAM 角色、EKS IRSA)\n\n" +
+          "通过 sumocode.json 选项 (profile, region, endpoint) 或\n" +
+          "AWS 环境变量 (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE) 配置。",
       )
     }
 
     if (provider === "opencode") {
-      yield* Prompt.log.info("Create an api key at https://sumocode.ai/auth")
+      yield* Prompt.log.info("在 https://sumocode.ai/auth 创建 API 密钥")
     }
 
     if (provider === "vercel") {
-      yield* Prompt.log.info("You can create an api key at https://vercel.link/ai-gateway-token")
+      yield* Prompt.log.info("你可以在 https://vercel.link/ai-gateway-token 创建 API 密钥")
     }
 
     if (["cloudflare", "cloudflare-ai-gateway"].includes(provider)) {
       yield* Prompt.log.info(
-        "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://sumocode.ai/docs/providers/#cloudflare-ai-gateway",
+        "Cloudflare AI Gateway 可以通过 CLOUDFLARE_GATEWAY_ID、CLOUDFLARE_ACCOUNT_ID 和 CLOUDFLARE_API_TOKEN 环境变量配置。了解更多: https://sumocode.ai/docs/providers/#cloudflare-ai-gateway",
       )
     }
 
     const key = yield* Prompt.password({
-      message: "Enter your API key",
-      validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+      message: "输入你的 API 密钥",
+      validate: (x) => (x && x.length > 0 ? undefined : "必填"),
     })
     const apiKey = yield* promptValue(key)
     yield* Effect.orDie(authSvc.set(provider, { type: "api", key: apiKey }))
 
-    yield* Prompt.outro("Done")
+    yield* Prompt.outro("完成")
   }),
 })
 
 export const ProvidersLogoutCommand = effectCmd({
   command: "logout [provider]",
-  describe: "log out from a configured provider",
+  describe: "从已配置的提供商登出",
   builder: (yargs) =>
     yargs.positional("provider", {
-      describe: "provider id or name to log out from",
+      describe: "要登出的提供商 ID 或名称",
       type: "string",
     }),
   // Removes a global auth credential; no project instance needed.
@@ -504,9 +504,9 @@ export const ProvidersLogoutCommand = effectCmd({
 
     UI.empty()
     const credentials: Array<[string, Auth.Info]> = Object.entries(yield* Effect.orDie(authSvc.all()))
-    yield* Prompt.intro("Remove credential")
+    yield* Prompt.intro("移除凭据")
     if (credentials.length === 0) {
-      yield* Prompt.log.error("No credentials found")
+      yield* Prompt.log.error("未找到凭据")
       return
     }
     const database = yield* modelsDev.get()
@@ -522,13 +522,13 @@ export const ProvidersLogoutCommand = effectCmd({
         )?.value
       : yield* promptValue(
           yield* Prompt.autocomplete({
-            message: "Select provider",
+            message: "选择提供商",
             maxItems: 8,
             options,
           }),
         )
-    if (!provider) return yield* fail(`Unknown configured provider "${args.provider}"`)
+    if (!provider) return yield* fail(`未知已配置提供商 "${args.provider}"`)
     yield* Effect.orDie(authSvc.remove(provider))
-    yield* Prompt.outro("Logout successful")
+    yield* Prompt.outro("登出成功")
   }),
 })

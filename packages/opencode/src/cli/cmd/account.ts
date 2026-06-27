@@ -41,15 +41,15 @@ const isActiveOrgChoice = (
 const loginEffect = Effect.fn("login")(function* (url: string) {
   const service = yield* Account.Service
 
-  yield* Prompt.intro("Log in")
+  yield* Prompt.intro("登录")
   const login = yield* service.login(url)
 
-  yield* Prompt.log.info("Go to: " + login.url)
-  yield* Prompt.log.info("Enter code: " + login.user)
+  yield* Prompt.log.info("访问: " + login.url)
+  yield* Prompt.log.info("输入代码: " + login.user)
   yield* openBrowser(login.url)
 
   const s = Prompt.spinner()
-  yield* s.start("Waiting for authorization...")
+  yield* s.start("等待授权...")
 
   const poll = (wait: Duration.Duration): Effect.Effect<PollResult, AccountError> =>
     Effect.gen(function* () {
@@ -68,34 +68,34 @@ const loginEffect = Effect.fn("login")(function* (url: string) {
   yield* Match.valueTags(result, {
     PollSuccess: (r) =>
       Effect.gen(function* () {
-        yield* s.stop("Logged in as " + r.email)
-        yield* Prompt.outro("Done")
+        yield* s.stop("已登录为 " + r.email)
+        yield* Prompt.outro("完成")
       }),
-    PollExpired: () => s.stop("Device code expired", 1),
-    PollDenied: () => s.stop("Authorization denied", 1),
-    PollError: (r) => s.stop("Error: " + String(r.cause), 1),
-    PollPending: () => s.stop("Unexpected state", 1),
-    PollSlow: () => s.stop("Unexpected state", 1),
+    PollExpired: () => s.stop("设备代码已过期", 1),
+    PollDenied: () => s.stop("授权被拒绝", 1),
+    PollError: (r) => s.stop("错误: " + String(r.cause), 1),
+    PollPending: () => s.stop("意外状态", 1),
+    PollSlow: () => s.stop("意外状态", 1),
   })
 })
 
 const logoutEffect = Effect.fn("logout")(function* (email?: string) {
   const service = yield* Account.Service
   const accounts = yield* service.list()
-  if (accounts.length === 0) return yield* println("Not logged in")
+  if (accounts.length === 0) return yield* println("未登录")
 
   if (email) {
     const match = accounts.find((a) => a.email === email)
-    if (!match) return yield* println("Account not found: " + email)
+    if (!match) return yield* println("未找到账号: " + email)
     yield* service.remove(match.id)
-    yield* Prompt.outro("Logged out from " + email)
+    yield* Prompt.outro("已从 " + email + " 登出")
     return
   }
 
   const active = yield* service.active()
   const activeID = Option.map(active, (a) => a.id)
 
-  yield* Prompt.intro("Log out")
+  yield* Prompt.intro("登出")
 
   const opts = accounts.map((a) => {
     const isActive = Option.isSome(activeID) && activeID.value === a.id
@@ -105,11 +105,11 @@ const logoutEffect = Effect.fn("logout")(function* (email?: string) {
     }
   })
 
-  const selected = yield* Prompt.select({ message: "Select account to log out", options: opts })
+  const selected = yield* Prompt.select({ message: "选择要登出的账号", options: opts })
   if (Option.isNone(selected)) return
 
   yield* service.remove(selected.value.id)
-  yield* Prompt.outro("Logged out from " + selected.value.email)
+  yield* Prompt.outro("已从 " + selected.value.email + " 登出")
 })
 
 interface OrgChoice {
@@ -122,7 +122,7 @@ const switchEffect = Effect.fn("switch")(function* () {
   const service = yield* Account.Service
 
   const groups = yield* service.orgsByAccount()
-  if (groups.length === 0) return yield* println("Not logged in")
+  if (groups.length === 0) return yield* println("未登录")
 
   const active = yield* service.active()
 
@@ -135,24 +135,24 @@ const switchEffect = Effect.fn("switch")(function* () {
       }
     }),
   )
-  if (opts.length === 0) return yield* println("No orgs found")
+  if (opts.length === 0) return yield* println("未找到组织")
 
-  yield* Prompt.intro("Switch org")
+  yield* Prompt.intro("切换组织")
 
-  const selected = yield* Prompt.select<OrgChoice>({ message: "Select org", options: opts })
+  const selected = yield* Prompt.select<OrgChoice>({ message: "选择组织", options: opts })
   if (Option.isNone(selected)) return
 
   const choice = selected.value
   yield* service.use(choice.accountID, Option.some(choice.orgID))
-  yield* Prompt.outro("Switched to " + choice.label)
+  yield* Prompt.outro("已切换到 " + choice.label)
 })
 
 const orgsEffect = Effect.fn("orgs")(function* () {
   const service = yield* Account.Service
 
   const groups = yield* service.orgsByAccount()
-  if (groups.length === 0) return yield* println("No accounts found")
-  if (!groups.some((group) => group.orgs.length > 0)) return yield* println("No orgs found")
+  if (groups.length === 0) return yield* println("未找到账号")
+  if (!groups.some((group) => group.orgs.length > 0)) return yield* println("未找到组织")
 
   const active = yield* service.active()
 
@@ -167,11 +167,11 @@ const orgsEffect = Effect.fn("orgs")(function* () {
 const openEffect = Effect.fn("open")(function* () {
   const service = yield* Account.Service
   const active = yield* service.active()
-  if (Option.isNone(active)) return yield* println("No active account")
+  if (Option.isNone(active)) return yield* println("没有活动账号")
 
   const url = active.value.url
   yield* openBrowser(url)
-  yield* Prompt.outro("Opened " + url)
+  yield* Prompt.outro("已打开 " + url)
 })
 
 export const LoginCommand = effectCmd({
@@ -241,23 +241,23 @@ export const ConsoleCommand = cmd({
     yargs
       .command({
         ...LoginCommand,
-        describe: "log in to console",
+        describe: "登录到控制台",
       })
       .command({
         ...LogoutCommand,
-        describe: "log out from console",
+        describe: "从控制台登出",
       })
       .command({
         ...SwitchCommand,
-        describe: "switch active org",
+        describe: "切换活动组织",
       })
       .command({
         ...OrgsCommand,
-        describe: "list orgs",
+        describe: "列出组织",
       })
       .command({
         ...OpenCommand,
-        describe: "open active console account",
+        describe: "打开活动控制台账号",
       })
       .demandCommand(),
   async handler() {},

@@ -40,8 +40,8 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
         success: "#7fd88f",
       }
 
-  const message = props.error.message || "An unknown error occurred."
-  const stack = props.error.stack || "No stack trace available."
+  const message = props.error.message || "发生未知错误。"
+  const stack = props.error.stack || "没有可用的堆栈跟踪。"
   const issueURL = buildIssueURL(message, stack)
 
   const copyReport = () => {
@@ -49,9 +49,9 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
   }
 
   const actions = [
-    { key: "c", label: () => (copied() ? "✓ Copied" : "Copy report"), copy: true, onUse: copyReport },
-    { key: "r", label: () => "Restart", onUse: props.reset },
-    { key: "q", label: () => "Quit", onUse: () => exit() },
+    { key: "c", label: () => (copied() ? "✓ 已复制" : "复制报告"), copy: true, onUse: copyReport },
+    { key: "r", label: () => "重启", onUse: props.reset },
+    { key: "q", label: () => "退出", onUse: () => exit() },
   ]
   const [selected, setSelected] = createSignal(0)
   const move = (delta: number) => setSelected((prev) => (prev + delta + actions.length) % actions.length)
@@ -108,10 +108,10 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
         {/* Headline */}
         <box flexDirection="column" alignItems="center" flexShrink={0}>
           <text attributes={TextAttributes.BOLD} fg={colors.text}>
-            opencode crashed
+            SumoCode 崩溃了
           </text>
           <Show when={showSubtext()}>
-            <text fg={colors.muted}>An unexpected error stopped the session.</text>
+            <text fg={colors.muted}>意外错误停止了会话。</text>
           </Show>
         </box>
 
@@ -121,7 +121,7 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
           border
           borderStyle="rounded"
           borderColor={colors.error}
-          title=" Error "
+          title=" 错误 "
           titleColor={colors.error}
           paddingLeft={2}
           paddingRight={2}
@@ -168,9 +168,9 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
           border
           borderStyle="rounded"
           borderColor={colors.borderSubtle}
-          title=" Stack trace "
+          title=" 堆栈跟踪 "
           titleColor={colors.muted}
-          bottomTitle=" ↑↓ scroll "
+          bottomTitle=" ↑↓ 滚动 "
           bottomTitleAlignment="right"
           paddingLeft={1}
           paddingRight={1}
@@ -189,10 +189,10 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
           <box flexDirection="column" alignItems="center" flexShrink={0}>
             <text fg={colors.muted}>
               {copied()
-                ? "Report copied — paste it into a new GitHub issue."
-                : "Copy the report and open a GitHub issue to help us fix this."}
+                ? "报告已复制 — 将其粘贴到新的 GitHub issue 中。"
+                : "复制报告并打开 GitHub issue 以帮助我们修复此问题。"}
             </text>
-            <text fg={colors.muted}>opencode {InstallationVersion}</text>
+            <text fg={colors.muted}>SumoCode {InstallationVersion}</text>
           </box>
         </Show>
       </box>
@@ -211,7 +211,7 @@ function buildIssueURL(message: string, stack: string) {
   url.searchParams.set("terminal", describeTerminal())
   url.searchParams.set(
     "reproduce",
-    "Reported automatically from the opencode crash screen. If you can, describe what you were doing when it crashed.",
+    "自动报告。如果可以，请描述崩溃时您正在执行的操作。",
   )
 
   // Budget the stack against the fully URL-encoded length (not the raw length) so
@@ -220,7 +220,7 @@ function buildIssueURL(message: string, stack: string) {
   // so measuring url.toString() is both correct and safe on any input.
   const MAX_URL_LENGTH = 6000
   const marker = "\n... (truncated)"
-  const head = `The opencode TUI crashed with an unexpected error.\n\n**Error:** ${message}\n\n**Stack trace:**\n`
+  const head = `SumoCode TUI 遇到意外错误崩溃.\n\n**Error:** ${message}\n\n**Stack trace:**\n`
   const setBody = (body: string) => url.searchParams.set("description", head + "```\n" + body + "\n```")
 
   setBody(stack)

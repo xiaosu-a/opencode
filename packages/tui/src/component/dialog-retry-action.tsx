@@ -123,7 +123,7 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
               bg={selected() === "dismiss" ? undefined : textBg()}
               attributes={selected() === "dismiss" ? TextAttributes.BOLD : undefined}
             >
-              don't show again
+              不再显示
             </text>
           </box>
           <box

@@ -221,15 +221,15 @@ function sanitize(data: { info: Session.Info; messages: SessionV1.WithParts[] })
 
 export const ExportCommand = effectCmd({
   command: "export [sessionID]",
-  describe: "export session data as JSON",
+  describe: "将会话数据导出为 JSON",
   builder: (yargs) =>
     yargs
       .positional("sessionID", {
-        describe: "session id to export",
+        describe: "要导出的会话 ID",
         type: "string",
       })
       .option("sanitize", {
-        describe: "redact sensitive transcript and file data",
+        describe: "脱敏敏感的对话记录和文件数据",
         type: "boolean",
       }),
   handler: Effect.fn("Cli.export")(function* (args) {
