@@ -59,20 +59,20 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
         value: provider.id,
         providerID: provider.id,
         description: {
-          opencode: "(Recommended)",
-          anthropic: "(API key)",
-          openai: "(ChatGPT Plus/Pro or API key)",
-          "opencode-go": "Low cost subscription for everyone",
+          opencode: "(推荐)",
+          anthropic: "(API 密钥)",
+          openai: "(ChatGPT Plus/Pro 或 API 密钥)",
+          "opencode-go": "适合所有人的低成本订阅",
         }[provider.id],
-        category: provider.id in PROVIDER_PRIORITY ? "Popular" : "Providers",
+        category: provider.id in PROVIDER_PRIORITY ? "常用" : "提供商",
       })),
     ),
     {
       type: "custom",
-      title: "Other",
+      title: "其他",
       value: CUSTOM_PROVIDER_OPTION_VALUE,
-      description: "Custom provider",
-      category: "Providers",
+      description: "自定义提供商",
+      category: "提供商",
     },
   ]
 }
@@ -92,11 +92,11 @@ export function createDialogProviderOptions() {
   const onboarded = useConnected()
 
   async function promptCustomProviderID(): Promise<string | undefined> {
-    const value = await DialogPrompt.show(dialog, "Other", {
-      placeholder: "Provider id",
+    const value = await DialogPrompt.show(dialog, "其他", {
+      placeholder: "提供商 ID",
       description: () => (
         <text fg={theme.textMuted}>
-          This only stores a credential. Configure the provider in sumocode.json to use it.
+          此处仅存储凭据。在 sumocode.json 中配置提供商以使用。
         </text>
       ),
     })
@@ -108,7 +108,7 @@ export function createDialogProviderOptions() {
     toast.show({
       variant: "error",
       message:
-        "Provider ids must start with a lowercase letter or number and only use lowercase letters, numbers, hyphens, and underscores",
+        "提供商 ID 必须以小写字母或数字开头，且只能使用小写字母、数字、连字符和下划线",
     })
     return promptCustomProviderID()
   }
@@ -227,7 +227,7 @@ export function createDialogProviderOptions() {
 
 export function DialogProvider() {
   const options = createDialogProviderOptions()
-  return <DialogSelect title="Connect a provider" options={options()} />
+  return <DialogSelect title="连接提供商" options={options()} />
 }
 
 interface AutoMethodProps {
@@ -248,14 +248,14 @@ function AutoMethod(props: AutoMethodProps) {
     bindings: [
       {
         key: "c",
-        desc: "Copy provider code",
+        desc: "复制提供商代码",
         group: "Dialog",
         cmd: () => {
           const code =
             props.authorization.instructions.match(/[A-Z0-9]{4}-[A-Z0-9]{4,5}/)?.[0] ?? props.authorization.url
           clipboard
             .write?.(code)
-            .then(() => toast.show({ message: "Copied to clipboard", variant: "info" }))
+            .then(() => toast.show({ message: "已复制到剪贴板", variant: "info" }))
             .catch(toast.error)
         },
       },
@@ -272,7 +272,7 @@ function AutoMethod(props: AutoMethodProps) {
         variant: "error",
         message:
           "name" in result.error && result.error.name === "ProviderAuthOauthCallbackFailed"
-            ? "OAuth authorization failed. Try /connect again."
+            ? "OAuth 授权失败。请再次尝试 /connect。"
             : JSON.stringify(result.error),
       })
       dialog.clear()
@@ -297,9 +297,9 @@ function AutoMethod(props: AutoMethodProps) {
         <Link href={props.authorization.url} fg={theme.primary} />
         <text fg={theme.textMuted}>{props.authorization.instructions}</text>
       </box>
-      <text fg={theme.textMuted}>Waiting for authorization...</text>
+      <text fg={theme.textMuted}>等待授权...</text>
       <text fg={theme.text}>
-        c <span style={{ fg: theme.textMuted }}>copy</span>
+        c <span style={{ fg: theme.textMuted }}>复制</span>
       </text>
     </box>
   )
@@ -341,7 +341,7 @@ function CodeMethod(props: CodeMethodProps) {
           <text fg={theme.textMuted}>{props.authorization.instructions}</text>
           <Link href={props.authorization.url} fg={theme.primary} />
           <Show when={error()}>
-            <text fg={theme.error}>Invalid code</text>
+            <text fg={theme.error}>无效代码</text>
           </Show>
         </box>
       )}
@@ -365,28 +365,26 @@ function ApiMethod(props: ApiMethodProps) {
   return (
     <DialogPrompt
       title={props.title}
-      placeholder="API key"
+      placeholder="API 密钥"
       description={
         {
           opencode: (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                SumoCode Zen gives you access to all the best coding models at the cheapest prices with a single API
-                key.
+                SumoCode Zen 让您通过单个 API 密钥以最优惠的价格访问所有最佳编码模型。
               </text>
               <text fg={theme.text}>
-                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/zen</span> to get a key
+                前往 <span style={{ fg: theme.primary }}>https://opencode.ai/zen</span> 获取密钥
               </text>
             </box>
           ),
           "opencode-go": (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                SumoCode Go is a $10 per month subscription that provides reliable access to popular open coding models
-                with generous usage limits.
+                SumoCode Go 是每月 10 美元的订阅服务，提供对流行开源编码模型的可靠访问和慷慨的使用限制。
               </text>
               <text fg={theme.text}>
-                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/go</span> and enable SumoCode Go
+                前往 <span style={{ fg: theme.primary }}>https://opencode.ai/go</span> 启用 SumoCode Go
               </text>
             </box>
           ),
@@ -407,7 +405,7 @@ function ApiMethod(props: ApiMethodProps) {
         if (props.custom && !sync.data.provider_next.all.some((provider) => provider.id === props.providerID)) {
           toast.show({
             variant: "info",
-            message: `Saved credential for ${props.providerID}. Configure it in sumocode.json to use it.`,
+            message: `已保存 ${props.providerID} 的凭据。在 sumocode.json 中配置它以使用。`,
           })
           dialog.clear()
           return
