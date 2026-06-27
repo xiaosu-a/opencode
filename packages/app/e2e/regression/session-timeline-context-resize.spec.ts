@@ -1,8 +1,8 @@
 import { expect, test, type Page } from "@playwright/test"
-import { mockSumoCodeServer } from "../utils/mock-server"
+import { mockOpenCodeServer } from "../utils/mock-server"
 import { expectAppVisible, expectSessionTitle } from "../utils/waits"
 
-const directory = "C:/SumoCode/ContextResizeRegression"
+const directory = "C:/OpenCode/ContextResizeRegression"
 const projectID = "proj_context_resize_regression"
 const sessionID = "ses_context_resize_regression"
 const title = "Context resize regression"
@@ -47,7 +47,6 @@ async function configurePage(page: Page) {
           editToolPartsExpanded: true,
           shellToolPartsExpanded: true,
           showReasoningSummaries: true,
-          showSessionProgressBar: true,
         },
       }),
     )
@@ -209,7 +208,7 @@ function contextTool(partID: string, messageID: string, tool: string, input: Rec
 }
 
 async function mockServer(page: Page) {
-  await mockSumoCodeServer(page, {
+  await mockOpenCodeServer(page, {
     directory,
     project: project(),
     provider: provider(),
@@ -254,7 +253,7 @@ function provider() {
     all: [
       {
         id: "opencode",
-        name: "SumoCode",
+        name: "OpenCode",
         models: { "claude-opus-4-6": { id: "claude-opus-4-6", name: "Claude Opus 4.6", limit: { context: 200_000 } } },
       },
     ],

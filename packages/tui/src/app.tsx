@@ -1,14 +1,14 @@
 import { render, TimeToFirstDraw, useRenderer, useTerminalDimensions } from "@opentui/solid"
 import { createDefaultOpenTuiKeymap } from "@opentui/keymap/opentui"
 import { Deferred, Effect } from "effect"
-import { Global } from "@sumocode-ai/core/global"
-import { Flag } from "@sumocode-ai/core/flag/flag"
-import { InstallationVersion } from "@sumocode-ai/core/installation/version"
+import { Global } from "@opencode-ai/core/global"
+import { Flag } from "@opencode-ai/core/flag/flag"
+import { InstallationVersion } from "@opencode-ai/core/installation/version"
 import { ClipboardProvider, useClipboard } from "./context/clipboard"
 import { ExitProvider, useExit } from "./context/exit"
 import { EpilogueProvider } from "./context/epilogue"
 import * as Selection from "./util/selection"
-import { createCliRenderer, MouseButton, type CliRenderer } from "@opentui/core"
+import { createCliRenderer, MouseButton } from "@opentui/core"
 import { RouteProvider, useRoute } from "./context/route"
 import {
   Switch,
@@ -69,7 +69,7 @@ import { createPluginRuntime, PluginRuntimeProvider, usePluginRuntime, type TuiP
 import { CommandPaletteDialog } from "./component/command-palette"
 import {
   COMMAND_PALETTE_COMMAND,
-  SUMOCODE_BASE_MODE,
+  OPENCODE_BASE_MODE,
   OpencodeKeymapProvider,
   registerOpencodeKeymap,
   useBindings,
@@ -119,6 +119,7 @@ const appBindingCommands = [
   "theme.mode.lock",
   "help.show",
   "docs.open",
+  "diff.open",
   "workspace.list",
   "app.debug",
   "app.console",
@@ -182,21 +183,23 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
   const result = yield* Effect.scoped(
     Effect.gen(function* () {
       const renderer = yield* Effect.acquireRelease(
-        Effect.tryPromise(() =>
-          createCliRenderer({
-            externalOutputMode: "passthrough",
-            targetFps: 60,
-            gatherStats: false,
-            exitOnCtrlC: false,
-            useKittyKeyboard: {},
-            autoFocus: false,
-            openConsoleOnError: false,
-            useMouse: !Flag.SUMOCODE_DISABLE_MOUSE && input.config.mouse,
-            consoleOptions: {
-              keyBindings: [{ name: "y", ctrl: true, action: "copy-selection" }],
-            },
-          }),
-        ),
+        Effect.tryPromise({
+          try: () =>
+            createCliRenderer({
+              externalOutputMode: "passthrough",
+              targetFps: 60,
+              gatherStats: false,
+              exitOnCtrlC: false,
+              useKittyKeyboard: {},
+              autoFocus: false,
+              openConsoleOnError: false,
+              useMouse: !Flag.OPENCODE_DISABLE_MOUSE && input.config.mouse,
+              consoleOptions: {
+                keyBindings: [{ name: "y", ctrl: true, action: "copy-selection" }],
+              },
+            }),
+          catch: (error) => (error instanceof Error ? error : new Error(String(error))),
+        }),
         (renderer) =>
           Effect.sync(() => {
             destroyRenderer(renderer)
@@ -265,8 +268,8 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
                     >
                       <TuiStartupProvider
                         value={{
-                          initialRoute: process.env.SUMOCODE_ROUTE ? JSON.parse(process.env.SUMOCODE_ROUTE) : undefined,
-                          skipInitialLoading: Boolean(process.env.SUMOCODE_FAST_BOOT),
+                          initialRoute: process.env.OPENCODE_ROUTE ? JSON.parse(process.env.OPENCODE_ROUTE) : undefined,
+                          skipInitialLoading: Boolean(process.env.OPENCODE_FAST_BOOT),
                         }}
                       >
                         <ClipboardProvider>
@@ -412,7 +415,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
   const offSelectionKeys = keymap.intercept(
     "key",
     ({ event }) => {
-      if (!Flag.SUMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
+      if (!Flag.OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
       Selection.handleSelectionKey(renderer, toast, event, clipboard)
     },
     { priority: 1 },
@@ -428,7 +431,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     await clipboard
       .write?.(text)
-      .then(() => toast.show({ message: "已复制到剪贴板", variant: "info" }))
+      .then(() => toast.show({ message: "Copied to clipboard", variant: "info" }))
       .catch(toast.error)
 
     renderer.clearSelection()
@@ -440,17 +443,17 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
   // Update terminal window title based on current route and session
   createEffect(() => {
-    if (!terminalTitleEnabled() || Flag.SUMOCODE_DISABLE_TERMINAL_TITLE) return
+    if (!terminalTitleEnabled() || Flag.OPENCODE_DISABLE_TERMINAL_TITLE) return
 
     if (route.data.type === "home") {
-      renderer.setTerminalTitle("SumoCode")
+      renderer.setTerminalTitle("OpenCode")
       return
     }
 
     if (route.data.type === "session") {
       const session = sync.session.get(route.data.sessionID)
       if (!session || isDefaultTitle(session.title)) {
-        renderer.setTerminalTitle("SumoCode")
+        renderer.setTerminalTitle("OpenCode")
         return
       }
 
@@ -473,7 +476,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         if (!providerID || !modelID)
           return toast.show({
             variant: "warning",
-            message: `无效的模型格式: ${args.model}`,
+            message: `Invalid model format: ${args.model}`,
             duration: 3000,
           })
         local.model.set({ providerID, modelID }, { recent: true })
@@ -501,7 +504,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           if (result.data?.id) {
             route.navigate({ type: "session", sessionID: result.data.id })
           } else {
-            toast.show({ message: "分叉会话失败", variant: "error" })
+            toast.show({ message: "Failed to fork session", variant: "error" })
           }
         })
       } else {
@@ -549,7 +552,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
     [
       {
         name: COMMAND_PALETTE_COMMAND,
-        title: "显示命令面板",
+        title: "Show command palette",
         category: "System",
         hidden: true,
         run: () => {
@@ -558,7 +561,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "session.list",
-        title: "切换会话",
+        title: "Switch session",
         category: "Session",
         suggested: sync.data.session.length > 0,
         slashName: "sessions",
@@ -569,7 +572,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "session.new",
-        title: "新建会话",
+        title: "New session",
         suggested: route.data.type === "session",
         category: "Session",
         slashName: "new",
@@ -583,7 +586,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "workspace.copy_path",
-        title: "复制 worktree 路径",
+        title: "Copy worktree path",
         category: "Workspace",
         enabled: () => currentWorktreeWorkspace() !== undefined,
         run: async () => {
@@ -591,16 +594,16 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           if (!workspace?.directory) return
           await clipboard
             .write?.(workspace.directory)
-            .then(() => toast.show({ message: "已复制 worktree 路径", variant: "info" }))
+            .then(() => toast.show({ message: "Copied worktree path", variant: "info" }))
             .catch(toast.error)
           dialog.clear()
         },
       },
       {
         name: "workspace.list",
-        title: "管理工作区",
+        title: "Manage workspaces",
         category: "Workspace",
-        hidden: !Flag.SUMOCODE_EXPERIMENTAL_WORKSPACES,
+        hidden: !Flag.OPENCODE_EXPERIMENTAL_WORKSPACES,
         slashName: "workspaces",
         run: () => {
           dialog.replace(() => <DialogWorkspaceList />)
@@ -608,7 +611,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       ...Array.from({ length: 9 }, (_, i) => ({
         name: `session.quick_switch.${i + 1}`,
-        title: `切换到快捷槽位 ${i + 1} 的会话`,
+        title: `Switch to session in quick slot ${i + 1}`,
         category: "Session",
         hidden: true,
         run: () => {
@@ -617,7 +620,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       })),
       {
         name: "model.list",
-        title: "切换模型",
+        title: "Switch model",
         suggested: true,
         category: "Agent",
         slashName: "models",
@@ -629,7 +632,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_recent",
-        title: "模型切换",
+        title: "Model cycle",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -638,7 +641,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_recent_reverse",
-        title: "模型反向切换",
+        title: "Model cycle reverse",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -647,7 +650,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_favorite",
-        title: "收藏切换",
+        title: "Favorite cycle",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -656,7 +659,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_favorite_reverse",
-        title: "收藏反向切换",
+        title: "Favorite cycle reverse",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -665,7 +668,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "agent.list",
-        title: "切换智能体",
+        title: "Switch agent",
         category: "Agent",
         slashName: "agents",
         run: () => {
@@ -674,7 +677,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "mcp.list",
-        title: "切换 MCP",
+        title: "Toggle MCPs",
         category: "Agent",
         slashName: "mcps",
         run: () => {
@@ -683,7 +686,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "agent.cycle",
-        title: "智能体切换",
+        title: "Agent cycle",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -692,7 +695,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "variant.cycle",
-        title: "变体切换",
+        title: "Variant cycle",
         category: "Agent",
         run: () => {
           local.model.variant.cycle()
@@ -700,15 +703,15 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "variant.list",
-        title: "切换模型变体",
+        title: "Switch model variant",
         category: "Agent",
         hidden: local.model.variant.list().length === 0,
         slashName: "variants",
         run: () => {
           if (local.model.variant.list().length === 0) {
             return toast.show({
-              title: "无可用变体",
-              message: "当前模型不支持任何变体。",
+              title: "No variants available",
+              message: "The current model does not support any variants.",
               variant: "info",
             })
           }
@@ -717,7 +720,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "agent.cycle.reverse",
-        title: "智能体反向切换",
+        title: "Agent cycle reverse",
         category: "Agent",
         hidden: true,
         run: () => {
@@ -726,7 +729,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "provider.connect",
-        title: "连接提供商",
+        title: "Connect provider",
         suggested: !connected(),
         slashName: "connect",
         run: () => {
@@ -738,7 +741,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         ? [
             {
               name: "console.org.switch",
-              title: "切换组织",
+              title: "Switch org",
               suggested: Boolean(sync.data.console_state.activeOrgName),
               slashName: "org",
               slashAliases: ["orgs", "switch-org"],
@@ -751,7 +754,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         : []),
       {
         name: "opencode.status",
-        title: "查看状态",
+        title: "View status",
         slashName: "status",
         run: () => {
           dialog.replace(() => <DialogStatus />)
@@ -760,7 +763,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "theme.switch",
-        title: "切换主题",
+        title: "Switch theme",
         slashName: "themes",
         run: () => {
           dialog.replace(() => <DialogThemeList />)
@@ -769,7 +772,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "theme.switch_mode",
-        title: mode() === "dark" ? "切换到浅色模式" : "切换到深色模式",
+        title: mode() === "dark" ? "Switch to light mode" : "Switch to dark mode",
         run: () => {
           setMode(mode() === "dark" ? "light" : "dark")
           dialog.clear()
@@ -778,7 +781,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "theme.mode.lock",
-        title: locked() ? "解锁主题模式" : "锁定主题模式",
+        title: locked() ? "Unlock theme mode" : "Lock theme mode",
         run: () => {
           if (locked()) unlock()
           else lock()
@@ -788,7 +791,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "help.show",
-        title: "帮助",
+        title: "Help",
         slashName: "help",
         run: () => {
           dialog.replace(() => <DialogHelp />)
@@ -797,16 +800,16 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "docs.open",
-        title: "打开文档",
+        title: "Open docs",
         run: () => {
-          open("https://sumocode.ai/docs").catch(() => {})
+          open("https://opencode.ai/docs").catch(() => {})
           dialog.clear()
         },
         category: "System",
       },
       {
         name: "app.exit",
-        title: "退出应用",
+        title: "Exit the app",
         slashName: "exit",
         slashAliases: ["quit", "q"],
         run: () => exit(),
@@ -814,7 +817,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.debug",
-        title: "切换调试面板",
+        title: "Toggle debug panel",
         category: "System",
         run: () => {
           renderer.toggleDebugOverlay()
@@ -823,7 +826,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.console",
-        title: "切换控制台",
+        title: "Toggle console",
         category: "System",
         run: () => {
           renderer.console.toggle()
@@ -832,13 +835,13 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.heap_snapshot",
-        title: "写入堆快照",
+        title: "Write heap snapshot",
         category: "System",
         run: async () => {
           const files = await props.onSnapshot?.()
           toast.show({
             variant: "info",
-            message: `堆快照已写入到 ${files?.join(", ")}`,
+            message: `Heap snapshot written to ${files?.join(", ")}`,
             duration: 5000,
           })
           dialog.clear()
@@ -846,7 +849,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "terminal.suspend",
-        title: "暂停终端",
+        title: "Suspend terminal",
         category: "System",
         hidden: true,
         enabled: process.platform !== "win32",
@@ -858,7 +861,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "terminal.title.toggle",
-        title: terminalTitleEnabled() ? "禁用终端标题" : "启用终端标题",
+        title: terminalTitleEnabled() ? "Disable terminal title" : "Enable terminal title",
         category: "System",
         run: () => {
           setTerminalTitleEnabled((prev) => {
@@ -872,7 +875,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.toggle.animations",
-        title: kv.get("animations_enabled", true) ? "禁用动画" : "启用动画",
+        title: kv.get("animations_enabled", true) ? "Disable animations" : "Enable animations",
         category: "System",
         run: () => {
           kv.set("animations_enabled", !kv.get("animations_enabled", true))
@@ -881,7 +884,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.toggle.file_context",
-        title: kv.get("file_context_enabled", true) ? "禁用文件上下文" : "启用文件上下文",
+        title: kv.get("file_context_enabled", true) ? "Disable file context" : "Enable file context",
         category: "System",
         run: () => {
           kv.set("file_context_enabled", !kv.get("file_context_enabled", true))
@@ -890,7 +893,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.toggle.diffwrap",
-        title: kv.get("diff_wrap_mode", "word") === "word" ? "禁用 diff 换行" : "启用 diff 换行",
+        title: kv.get("diff_wrap_mode", "word") === "word" ? "Disable diff wrapping" : "Enable diff wrapping",
         category: "System",
         run: () => {
           const current = kv.get("diff_wrap_mode", "word")
@@ -900,7 +903,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "app.toggle.paste_summary",
-        title: pasteSummaryEnabled() ? "禁用粘贴摘要" : "启用粘贴摘要",
+        title: pasteSummaryEnabled() ? "Disable paste summary" : "Enable paste summary",
         category: "System",
         run: () => {
           setPasteSummaryEnabled((prev) => {
@@ -914,8 +917,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       {
         name: "app.toggle.session_directory_filter",
         title: kv.get("session_directory_filter_enabled", true)
-          ? "禁用会话目录过滤"
-          : "启用会话目录过滤",
+          ? "Disable session directory filtering"
+          : "Enable session directory filtering",
         category: "System",
         run: async () => {
           kv.set("session_directory_filter_enabled", !kv.get("session_directory_filter_enabled", true))
@@ -934,7 +937,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     bindings: tuiConfig.keybinds.gather("app", appBindingCommands),
   }))
 
@@ -943,7 +946,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     enabled: () => {
       const current = promptRef.current
       if (!current?.focused) return true
@@ -980,7 +983,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       route.navigate({ type: "home" })
       toast.show({
         variant: "info",
-        message: "当前会话已被删除",
+        message: "The current session was deleted",
       })
     }
   })
@@ -1007,8 +1010,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     const choice = await DialogConfirm.show(
       dialog,
-      `有可用更新`,
-      `新版本 v${version} 可用。是否立即更新？`,
+      `Update Available`,
+      `A new release v${version} is available. Would you like to update now?`,
       "skip",
     )
 
@@ -1021,7 +1024,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     toast.show({
       variant: "info",
-      message: `正在更新到 v${version}...`,
+      message: `Updating to v${version}...`,
       duration: 30000,
     })
 
@@ -1030,8 +1033,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
     if (result.error || !result.data?.success) {
       toast.show({
         variant: "error",
-        title: "更新失败",
-        message: "更新失败",
+        title: "Update Failed",
+        message: "Update failed",
         duration: 10000,
       })
       return
@@ -1039,8 +1042,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     await DialogAlert.show(
       dialog,
-      "更新完成",
-      `已成功更新到 SumoCode v${result.data.version}。请重启应用程序。`,
+      "Update Complete",
+      `Successfully updated to OpenCode v${result.data.version}. Please restart the application.`,
     )
 
     void exit()
@@ -1061,7 +1064,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       flexDirection="column"
       backgroundColor={theme.background}
       onMouseDown={(evt) => {
-        if (!Flag.SUMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
+        if (!Flag.OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
         if (evt.button !== MouseButton.RIGHT) return
 
         if (!Selection.copy(renderer, toast, clipboard)) return
@@ -1069,12 +1072,12 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         evt.stopPropagation()
       }}
       onMouseUp={
-        !Flag.SUMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT
+        !Flag.OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT
           ? () => Selection.copy(renderer, toast, clipboard)
           : undefined
       }
     >
-      <Show when={Flag.SUMOCODE_SHOW_TTFD}>
+      <Show when={Flag.OPENCODE_SHOW_TTFD}>
         <TimeToFirstDraw />
       </Show>
       <Show when={ready()}>

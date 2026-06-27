@@ -1,5 +1,12 @@
 # V2 Schema Changelog
 
+## 2026-06-26: Add Finite Session History
+
+- Add `GET /api/session/:sessionID/history` and generated Promise, Effect, and legacy JavaScript client methods.
+- Page public durable Session events after an optional exclusive aggregate sequence, with an explicit `hasMore` exhaustion signal.
+- Keep aggregate gaps legal, cap pages at 100 events, and preserve the existing durable replay-and-tail `sessions.events()` stream unchanged.
+- Add no migration or durable-event version; this is a finite read API over the existing event manifest.
+
 ## 2026-06-22: Simplify Session Input Promotion
 
 - Keep `session.next.prompt.admitted.1` as the durable, client-visible record of pending Session input.
@@ -83,26 +90,6 @@ Compatibility:
 - The `session.next.*` lifecycle event family predates this branch; this branch refines its experimental V2 durability and replay contracts.
 - Durable replay cursors are per-aggregate event sequences; ephemeral deltas are intentionally absent after reconnect.
 
-### Deterministic IDs From External Keys
-
-Affected schema:
-
-- Session and Event ID construction helpers.
-
-Change:
-
-- Add deterministic `SessionSchema.ID.fromExternal(...)` and `EventV2.ID.fromExternal(...)` constructors for trusted external keys.
-
-Reason:
-
-- Embedded adapters need stable local identities when the same external conversation or stimulus is delivered more than once.
-- Deterministic IDs let durable admission and event publication retain their idempotency boundaries across retries.
-
-Compatibility:
-
-- Existing generated Session and Event IDs retain their current prefixes and generation behavior.
-- Deterministic constructors are additive internal helpers; public ID schemas remain strings with their existing prefixes.
-
 ### Durable Step Settlement Ownership
 
 Affected schema:
@@ -175,7 +162,7 @@ Affected schema:
 
 - Core-owned typed tool registry contract.
 - Canonical tool output content and structured settlement schemas.
-- Canonical tagged tool file sources in `@sumocode-ai/llm`.
+- Canonical tagged tool file sources in `@opencode-ai/llm`.
 - Durable tool called, progress, success, and failure events and projected assistant-tool states.
 
 Change:
@@ -205,7 +192,7 @@ Affected schema:
 
 Change:
 
-- Spill oversized model-facing tool text into globally unique files under SumoCode's shared tool-output directory.
+- Spill oversized model-facing tool text into globally unique files under OpenCode's shared tool-output directory.
 - Include the absolute file path in the bounded preview so ordinary `read`, `grep`, and `bash` operations can inspect it.
 
 Reason:
@@ -806,7 +793,7 @@ Change:
 - Retry Context Epoch preparation until stable after optimistic revision mismatches.
 - Clear the active Context Epoch when a Session moves so the destination initializes a complete baseline before promoting more input.
 - Fence Context Epoch initialization against the authoritative Session Location so a concurrent old-Location runner cannot recreate stale privileged context after a move.
-- Canonicalize ambient instruction traversal boundaries, honor `SUMOCODE_DISABLE_PROJECT_CONFIG`, and make non-empty aggregate updates explicitly supersede previously loaded instructions.
+- Canonicalize ambient instruction traversal boundaries, honor `OPENCODE_DISABLE_PROJECT_CONFIG`, and make non-empty aggregate updates explicitly supersede previously loaded instructions.
 
 Compatibility:
 

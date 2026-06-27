@@ -2,16 +2,17 @@ import { Popover as Kobalte } from "@kobalte/core/popover"
 import { Component, ComponentProps, createMemo, JSX, Show, ValidComponent } from "solid-js"
 import { createStore } from "solid-js/store"
 import { useLocal } from "@/context/local"
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { popularProviders } from "@/hooks/use-providers"
-import { Button } from "@sumocode-ai/ui/button"
-import { IconButton } from "@sumocode-ai/ui/icon-button"
-import { Tag } from "@sumocode-ai/ui/tag"
-import { Dialog } from "@sumocode-ai/ui/dialog"
-import { List } from "@sumocode-ai/ui/list"
-import { Tooltip } from "@sumocode-ai/ui/tooltip"
+import { Button } from "@opencode-ai/ui/button"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { Tag } from "@opencode-ai/ui/tag"
+import { Dialog } from "@opencode-ai/ui/dialog"
+import { List } from "@opencode-ai/ui/list"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
 import { ModelTooltip } from "./model-tooltip"
 import { useLanguage } from "@/context/language"
+import { decode64 } from "@/utils/base64"
 
 const isFree = (provider: string, cost: { input: number } | undefined) =>
   provider === "opencode" && (!cost || cost.input === 0)
@@ -58,6 +59,7 @@ const ModelList: Component<{
           class="w-full"
           placement="right-start"
           gutter={12}
+          openDelay={0}
           value={<ModelTooltip model={item} latest={item.latest} free={isFree(item.provider.id, item.cost)} />}
         >
           {node}
@@ -104,6 +106,8 @@ export function ModelSelectorPopover(props: {
     dismiss: null,
   })
   const dialog = useDialog()
+  const local = useLocal()
+  const directory = () => decode64(local.slug())
 
   const close = (dismiss: Dismiss) => {
     setStore("dismiss", dismiss)
@@ -120,7 +124,7 @@ export function ModelSelectorPopover(props: {
   const handleConnectProvider = () => {
     close("provider")
     void import("./dialog-select-provider").then((x) => {
-      dialog.show(() => <x.DialogSelectProvider />)
+      dialog.show(() => <x.DialogSelectProvider directory={directory} />)
     })
   }
   const language = useLanguage()
@@ -199,10 +203,12 @@ export function ModelSelectorPopover(props: {
 export const DialogSelectModel: Component<{ provider?: string; model?: ModelState }> = (props) => {
   const dialog = useDialog()
   const language = useLanguage()
+  const local = useLocal()
+  const directory = () => decode64(local.slug())
 
   const provider = () => {
     void import("./dialog-select-provider").then((x) => {
-      dialog.show(() => <x.DialogSelectProvider />)
+      dialog.show(() => <x.DialogSelectProvider directory={directory} />)
     })
   }
 

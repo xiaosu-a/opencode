@@ -1,5 +1,5 @@
-import type { PermissionV1 } from "@sumocode-ai/core/v1/permission"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import type { PermissionV1 } from "@opencode-ai/core/v1/permission"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 // CLI entry point for `opencode run` and `opencode --mini`.
 //
 // Handles three modes:
@@ -22,7 +22,7 @@ import { UI } from "../ui"
 import { effectCmd } from "../effect-cmd"
 import { EOL } from "os"
 import { Filesystem } from "@/util/filesystem"
-import { createOpencodeClient, type OpencodeClient, type ToolPart } from "@sumocode-ai/sdk/v2"
+import { createOpencodeClient, type OpencodeClient, type ToolPart } from "@opencode-ai/sdk/v2"
 import { FormatError, FormatUnknownError } from "../error"
 import { INTERACTIVE_INPUT_ERROR, resolveInteractiveStdin } from "./run/runtime.stdin"
 
@@ -125,7 +125,7 @@ async function toolError(part: ToolPart) {
 
 export const RunCommand = effectCmd({
   command: "run [message..]",
-  describe: "运行 SumoCode 并发送消息",
+  describe: "run opencode with a message",
   // --attach connects to a remote server (no local instance needed); the
   // default path runs an in-process server and needs the project instance.
   instance: (args) => !args.attach,
@@ -135,87 +135,87 @@ export const RunCommand = effectCmd({
   builder: (yargs: Argv) =>
     yargs
       .positional("message", {
-        describe: "要发送的消息",
+        describe: "message to send",
         type: "string",
         array: true,
         default: [],
       })
       .option("command", {
-        describe: "要运行的命令，消息作为参数",
+        describe: "the command to run, use message for args",
         type: "string",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "继续上一个会话",
+        describe: "continue the last session",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
-        describe: "要继续的会话 ID",
+        describe: "session id to continue",
         type: "string",
       })
       .option("fork", {
-        describe: "在继续之前分叉会话（需要 --continue 或 --session）",
+        describe: "fork the session before continuing (requires --continue or --session)",
         type: "boolean",
       })
       .option("share", {
         type: "boolean",
-        describe: "分享会话",
+        describe: "share the session",
       })
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "使用的模型，格式为 provider/model",
+        describe: "model to use in the format of provider/model",
       })
       .option("agent", {
         type: "string",
-        describe: "使用的智能体",
+        describe: "agent to use",
       })
       .option("format", {
         type: "string",
         choices: ["default", "json"],
         default: "default",
-        describe: "格式：default（格式化）或 json（原始 JSON 事件）",
+        describe: "format: default (formatted) or json (raw JSON events)",
       })
       .option("file", {
         alias: ["f"],
         type: "string",
         array: true,
-        describe: "附加到消息的文件",
+        describe: "file(s) to attach to message",
       })
       .option("title", {
         type: "string",
-        describe: "会话标题（不提供值时使用截断的提示）",
+        describe: "title for the session (uses truncated prompt if no value provided)",
       })
       .option("attach", {
         type: "string",
-        describe: "连接到运行中的 SumoCode 服务器（例如：http://localhost:4096）",
+        describe: "attach to a running opencode server (e.g., http://localhost:4096)",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "基本认证密码（默认为 SUMOCODE_SERVER_PASSWORD）",
+        describe: "basic auth password (defaults to OPENCODE_SERVER_PASSWORD)",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "基本认证用户名（默认为 SUMOCODE_SERVER_USERNAME 或 'sumocode'）",
+        describe: "basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')",
       })
       .option("dir", {
         type: "string",
-        describe: "运行目录，连接时为远程服务器路径",
+        describe: "directory to run in, path on remote server if attaching",
       })
       .option("port", {
         type: "number",
-        describe: "本地服务器端口（不提供值时使用随机端口）",
+        describe: "port for the local server (defaults to random port if no value provided)",
       })
       .option("variant", {
         type: "string",
-        describe: "模型变体（特定提供商的推理强度，如 high、max、minimal）",
+        describe: "model variant (provider-specific reasoning effort, e.g., high, max, minimal)",
       })
       .option("thinking", {
         type: "boolean",
-        describe: "显示思考块",
+        describe: "show thinking blocks",
       })
       .option("mini", {
         type: "boolean",
@@ -226,23 +226,23 @@ export const RunCommand = effectCmd({
         type: "boolean",
         default: true,
         hidden: true,
-        describe: "在恢复和调整窗口大小后回放交互式会话历史（使用 --no-replay 禁用）",
+        describe: "replay interactive session history on resume and after resize (use --no-replay to disable)",
       })
       .option("replay-limit", {
         type: "number",
         hidden: true,
-        describe: "将可见的交互回放限制为最近的 N 条消息",
+        describe: "cap visible interactive replay to the newest N messages",
       })
       .option("dangerously-skip-permissions", {
         type: "boolean",
-        describe: "自动批准未明确拒绝的权限（危险！）",
+        describe: "auto-approve permissions that are not explicitly denied (dangerous!)",
         default: false,
       })
       .option("demo", {
         type: "boolean",
         default: false,
         hidden: true,
-        describe: "启用直接交互式演示斜杠命令；将一个作为消息传入即可立即运行",
+        describe: "enable direct interactive demo slash commands; pass one as the message to run it immediately",
       }),
   handler: Effect.fn("Cli.run")(function* (args) {
     const { Agent } = yield* Effect.promise(() => import("@/agent/agent"))
@@ -273,34 +273,34 @@ export const RunCommand = effectCmd({
         .join(" ")
 
       if (interactive && args.command) {
-        die("--mini 不能与 --command 同时使用")
+        die("--mini cannot be used with --command")
       }
 
       if (interactive && args._?.[0] !== "mini") {
-        die("--mini 必须在不使用 run 子命令时使用")
+        die("--mini must be used without the run subcommand")
       }
 
       if (args.demo && !interactive) {
-        die("--demo 需要 --mini")
+        die("--demo requires --mini")
       }
 
       if (interactive && args.format === "json") {
-        die("--mini 不能与 --format json 同时使用")
+        die("--mini cannot be used with --format json")
       }
 
       if (args["replay-limit"] !== undefined && !interactive) {
-        die("--replay-limit 需要 --mini")
+        die("--replay-limit requires --mini")
       }
 
       if (
         args["replay-limit"] !== undefined &&
         (!Number.isInteger(args["replay-limit"]) || args["replay-limit"] <= 0)
       ) {
-        die("--replay-limit 必须为正整数")
+        die("--replay-limit must be a positive integer")
       }
 
       if (interactive && !process.stdout.isTTY) {
-        die("--mini 需要 TTY 标准输出")
+        die("--mini requires a TTY stdout")
       }
 
       if (interactive) {
@@ -322,7 +322,7 @@ export const RunCommand = effectCmd({
           process.chdir(path.isAbsolute(args.dir) ? args.dir : path.join(root, args.dir))
           return process.cwd()
         } catch {
-          UI.error("无法切换到目录 " + args.dir)
+          UI.error("Failed to change directory to " + args.dir)
           process.exit(1)
         }
       })()
@@ -344,14 +344,14 @@ export const RunCommand = effectCmd({
         for (const filePath of list) {
           const resolvedPath = path.resolve(args.attach ? root : (directory ?? root), filePath)
           if (!(await Filesystem.exists(resolvedPath))) {
-            UI.error(`未找到文件：${filePath}`)
+            UI.error(`File not found: ${filePath}`)
             process.exit(1)
           }
 
           const stat = Filesystem.stat(resolvedPath)
           const isDirectory = stat?.isDirectory() ?? false
           if (args.attach && isDirectory) {
-            UI.error(`没有共享文件系统无法附加本地目录：${filePath}`)
+            UI.error(`Cannot attach local directory without a shared filesystem: ${filePath}`)
             process.exit(1)
           }
 
@@ -361,7 +361,7 @@ export const RunCommand = effectCmd({
             try {
               const opened = await handle.stat()
               if (!opened.isFile() || Number(opened.size) > ATTACH_FILE_MAX_BYTES) {
-                UI.error(`无法附加大于 10 MiB 的文件或特殊文件：${filePath}`)
+                UI.error(`Cannot attach local file larger than 10 MiB or a special file: ${filePath}`)
                 process.exit(1)
               }
               if (opened.size === 0) return Buffer.alloc(0)
@@ -401,12 +401,12 @@ export const RunCommand = effectCmd({
       const initialInput = resolveRunInput(rawMessage, piped)
 
       if (message.trim().length === 0 && !args.command && !interactive) {
-        UI.error("您必须提供消息或命令")
+        UI.error("You must provide a message or a command")
         process.exit(1)
       }
 
       if (args.fork && !args.continue && !args.session) {
-        UI.error("--fork 需要 --continue 或 --session")
+        UI.error("--fork requires --continue or --session")
         process.exit(1)
       }
 
@@ -445,7 +445,7 @@ export const RunCommand = effectCmd({
             .catch(() => undefined)
 
           if (!current?.data) {
-            UI.error("未找到会话")
+            UI.error("Session not found")
             process.exit(1)
           }
 
@@ -548,7 +548,7 @@ export const RunCommand = effectCmd({
         })
         const id = result.data?.id
         if (!id) {
-          throw new Error("创建会话失败")
+          throw new Error("Failed to create session")
         }
 
         void share(sdk, id).catch(() => {})
@@ -571,7 +571,7 @@ export const RunCommand = effectCmd({
           return next
         }
 
-        UI.error("无法解析远程目录")
+        UI.error("Failed to resolve remote directory")
         process.exit(1)
       }
 
@@ -586,7 +586,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `未找到智能体 "${name}"。将使用默认智能体`,
+            `agent "${name}" not found. Falling back to default agent`,
           )
           return undefined
         }
@@ -594,7 +594,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `智能体 "${name}" 是子智能体，不是主智能体。将使用默认智能体`,
+            `agent "${name}" is a subagent, not a primary agent. Falling back to default agent`,
           )
           return undefined
         }
@@ -614,7 +614,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `从 ${args.attach} 获取智能体列表失败。将使用默认智能体`,
+            `failed to list agents from ${args.attach}. Falling back to default agent`,
           )
           return undefined
         }
@@ -624,7 +624,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `未找到智能体 "${name}"。将使用默认智能体`,
+            `agent "${name}" not found. Falling back to default agent`,
           )
           return undefined
         }
@@ -633,7 +633,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `智能体 "${name}" 是子智能体，不是主智能体。将使用默认智能体`,
+            `agent "${name}" is a subagent, not a primary agent. Falling back to default agent`,
           )
           return undefined
         }
@@ -653,7 +653,7 @@ export const RunCommand = effectCmd({
       async function execute(sdk: OpencodeClient) {
         const sess = await session(sdk)
         if (!sess?.id) {
-          UI.error("未找到会话")
+          UI.error("Session not found")
           process.exit(1)
         }
         const sessionID = sess.id
@@ -745,7 +745,7 @@ export const RunCommand = effectCmd({
                 if (emit("reasoning", { part })) continue
                 const text = part.text.trim()
                 if (!text) continue
-                const line = `思考：${text}`
+                const line = `Thinking: ${text}`
                 if (process.stdout.isTTY) {
                   UI.empty()
                   UI.println(`${UI.Style.TEXT_DIM}\u001b[3m${line}\u001b[0m${UI.Style.TEXT_NORMAL}`)
@@ -789,7 +789,7 @@ export const RunCommand = effectCmd({
                 UI.println(
                   UI.Style.TEXT_WARNING_BOLD + "!",
                   UI.Style.TEXT_NORMAL +
-                    `请求权限：${permission.permission} (${permission.patterns.join(", ")})；自动拒绝`,
+                    `permission requested: ${permission.permission} (${permission.patterns.join(", ")}); auto-rejecting`,
                 )
                 await client.permission.reply({
                   requestID: permission.id,
@@ -932,7 +932,7 @@ export const RunCommand = effectCmd({
         return Server.Default().app.fetch(new Request(request, { headers }))
       }) as typeof globalThis.fetch
       const sdk = createOpencodeClient({
-        baseUrl: "http://sumocode.internal",
+        baseUrl: "http://opencode.internal",
         fetch: fetchFn,
         directory,
       })
@@ -958,9 +958,9 @@ type MiniCommandInput = {
 }
 
 export async function runMini(input: MiniCommandInput) {
-  if (!RunCommand.handler) throw new Error("Mini 命令处理器不可用")
+  if (!RunCommand.handler) throw new Error("Mini command handler is unavailable")
   await RunCommand.handler({
-    $0: "sumocode",
+    $0: "opencode",
     _: ["mini"],
     message: input.prompt ? [input.prompt] : [],
     command: undefined,

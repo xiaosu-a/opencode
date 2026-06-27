@@ -5,7 +5,7 @@ import { tmpdir } from "node:os"
 import path from "node:path"
 import { Effect, Exit, Fiber, Stream } from "effect"
 import { ChildProcess } from "effect/unstable/process"
-import { AppProcess } from "@sumocode-ai/core/process"
+import { AppProcess } from "@opencode-ai/core/process"
 import { testEffect } from "../lib/effect"
 
 const it = testEffect(AppProcess.defaultLayer)
@@ -36,6 +36,22 @@ describe("AppProcess", () => {
         expect(result.stdout.toString("utf8")).toBe("hi\n")
         expect(result.stdoutTruncated).toBe(false)
         expect(result.stderrTruncated).toBe(false)
+      }),
+    )
+
+    it.effect(
+      "captures stdout and stderr in emission order",
+      Effect.gen(function* () {
+        const svc = yield* AppProcess.Service
+        const script = [
+          'process.stdout.write("out 1\\n")',
+          'setTimeout(() => process.stderr.write("err 1\\n"), 10)',
+          'setTimeout(() => process.stdout.write("out 2\\n"), 20)',
+        ].join(";")
+        const result = yield* svc.run(cmd("-e", script), { combineOutput: true })
+        expect(result.output?.toString("utf8")).toBe("out 1\nerr 1\nout 2\n")
+        expect(result.stdout.toString("utf8")).toBe("")
+        expect(result.stderr.toString("utf8")).toBe("")
       }),
     )
 

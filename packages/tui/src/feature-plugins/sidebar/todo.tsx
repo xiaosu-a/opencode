@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi } from "@sumocode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi } from "@opencode-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Show, createSignal } from "solid-js"
 import { TodoItem } from "../../component/todo-item"
@@ -19,7 +19,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
             <text fg={theme().text}>{open() ? "▼" : "▶"}</text>
           </Show>
           <text fg={theme().text}>
-            <b>待办</b>
+            <b>Todo</b>
           </text>
         </box>
         <Show when={list().length <= 2 || open()}>

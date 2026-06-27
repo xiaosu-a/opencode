@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test"
 import path from "path"
 import { Server } from "../../src/server/server"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import { resetDatabase } from "../fixture/db"
 import { disposeAllInstances, tmpdir } from "../fixture/fixture"
 import { Effect } from "effect"
@@ -44,26 +44,18 @@ describe("reference HttpApi", () => {
       {
         name: "docs",
         path: path.join(tmp.path, "docs"),
-        description: null,
-        hidden: null,
         source: {
           type: "local",
           path: path.join(tmp.path, "docs"),
-          description: null,
-          hidden: null,
         },
       },
       {
         name: "effect",
         path: path.join(Global.Path.repos, "github.com", "Effect-TS", "effect"),
-        description: null,
-        hidden: null,
         source: {
           type: "git",
           repository: "Effect-TS/effect",
           branch: "main",
-          description: null,
-          hidden: null,
         },
       },
     ])

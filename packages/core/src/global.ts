@@ -5,7 +5,7 @@ import os from "os"
 import { Context, Effect, Layer } from "effect"
 import { Flock } from "./util/flock"
 import { Flag } from "./flag/flag"
-import { LayerNode } from "./effect/layer-node"
+import { makeGlobalNode } from "./effect/node"
 
 const app = "opencode"
 const data = path.join(xdgData!, app)
@@ -16,7 +16,7 @@ const tmp = path.join(os.tmpdir(), app)
 
 const paths = {
   get home() {
-    return process.env.SUMOCODE_TEST_HOME ?? os.homedir()
+    return process.env.OPENCODE_TEST_HOME ?? os.homedir()
   },
   data,
   bin: path.join(cache, "bin"),
@@ -61,7 +61,7 @@ export function make(input: Partial<Interface> = {}): Interface {
     home: Path.home,
     data: Path.data,
     cache: Path.cache,
-    config: Flag.SUMOCODE_CONFIG_DIR ?? Path.config,
+    config: Flag.OPENCODE_CONFIG_DIR ?? Path.config,
     state: Path.state,
     tmp: Path.tmp,
     bin: Path.bin,
@@ -77,7 +77,7 @@ export const layer = Layer.effect(
 )
 
 export const defaultLayer = layer
-export const node = LayerNode.make(layer, [])
+export const node = makeGlobalNode({ service: Service, layer: layer, deps: [] })
 
 export const layerWith = (input: Partial<Interface>) =>
   Layer.effect(

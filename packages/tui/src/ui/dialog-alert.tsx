@@ -17,7 +17,7 @@ export function DialogAlert(props: DialogAlertProps) {
     bindings: [
       {
         key: "return",
-        desc: "确认警告",
+        desc: "Confirm alert",
         group: "Dialog",
         cmd: () => {
           props.onConfirm?.()
@@ -49,7 +49,7 @@ export function DialogAlert(props: DialogAlertProps) {
             dialog.clear()
           }}
         >
-          <text fg={theme.selectedListItemText}>确定</text>
+          <text fg={theme.selectedListItemText}>ok</text>
         </box>
       </box>
     </box>

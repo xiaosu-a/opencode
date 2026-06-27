@@ -21,14 +21,14 @@ export function DialogSessionDeleteFailed(props: {
   const options = [
     {
       id: "delete" as const,
-      title: "删除工作区",
-      description: "删除工作区及其所有关联的会话。",
+      title: "Delete workspace",
+      description: "Delete the workspace and all sessions attached to it.",
       run: props.onDelete,
     },
     {
       id: "restore" as const,
-      title: "恢复到新工作区",
-      description: "尝试将此会话恢复到新工作区中。",
+      title: "Restore to new workspace",
+      description: "Try to restore this session into a new workspace.",
       run: props.onRestore,
     },
   ]
@@ -42,11 +42,11 @@ export function DialogSessionDeleteFailed(props: {
 
   useBindings(() => ({
     bindings: [
-      { key: "return", desc: "确认恢复选项", group: "Dialog", cmd: () => void confirm() },
-      { key: "left", desc: "删除损坏的会话", group: "Dialog", cmd: () => setStore("active", "delete") },
-      { key: "up", desc: "删除损坏的会话", group: "Dialog", cmd: () => setStore("active", "delete") },
-      { key: "right", desc: "恢复损坏的会话", group: "Dialog", cmd: () => setStore("active", "restore") },
-      { key: "down", desc: "恢复损坏的会话", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "return", desc: "Confirm recovery option", group: "Dialog", cmd: () => void confirm() },
+      { key: "left", desc: "Delete broken session", group: "Dialog", cmd: () => setStore("active", "delete") },
+      { key: "up", desc: "Delete broken session", group: "Dialog", cmd: () => setStore("active", "delete") },
+      { key: "right", desc: "Restore broken session", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "down", desc: "Restore broken session", group: "Dialog", cmd: () => setStore("active", "restore") },
     ],
   }))
 
@@ -54,17 +54,17 @@ export function DialogSessionDeleteFailed(props: {
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          删除会话失败
+          Failed to Delete Session
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
         </text>
       </box>
       <text fg={theme.textMuted} wrapMode="word">
-        {`会话 "${props.session}" 无法删除，因为工作区 "${props.workspace}" 不可用。`}
+        {`The session "${props.session}" could not be deleted because the workspace "${props.workspace}" is not available.`}
       </text>
       <text fg={theme.textMuted} wrapMode="word">
-        选择您想要如何恢复此损坏的工作区会话。
+        Choose how you want to recover this broken workspace session.
       </text>
       <box flexDirection="column" paddingBottom={1} gap={1}>
         <For each={options}>

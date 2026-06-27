@@ -1,31 +1,47 @@
 import { Argument, Flag } from "effect/unstable/cli"
 import { Spec } from "../framework/spec"
 
-declare const SUMOCODE_CLI_NAME: string | undefined
+declare const OPENCODE_CLI_NAME: string | undefined
 
-export const Commands = Spec.make(typeof SUMOCODE_CLI_NAME === "string" ? SUMOCODE_CLI_NAME : "opencode", {
-  description: "SumoCode 2.0 预览版命令行界面",
+export const Commands = Spec.make(typeof OPENCODE_CLI_NAME === "string" ? OPENCODE_CLI_NAME : "opencode", {
+  description: "OpenCode 2.0 preview command line interface",
   commands: [
-    Spec.make("debug", {
-      description: "调试与故障排除工具",
-      commands: [Spec.make("agents", { description: "列出所有智能体" })],
+    Spec.make("api", {
+      description: "Make a request to the running server",
+      params: {
+        request: Argument.string("operation | method path").pipe(
+          Argument.withDescription("OpenAPI operation ID, or an HTTP method followed by a path"),
+          Argument.variadic({ min: 1, max: 2 }),
+        ),
+        data: Flag.string("data").pipe(Flag.withAlias("d"), Flag.withDescription("Request body"), Flag.optional),
+        header: Flag.string("header").pipe(
+          Flag.withAlias("H"),
+          Flag.withDescription("Request header in name:value form"),
+          Flag.atMost(100),
+        ),
+        param: Flag.keyValuePair("param").pipe(Flag.withDescription("OpenAPI path or query parameter"), Flag.optional),
+      },
     }),
-    Spec.make("migrate", { description: "将 v1 数据迁移到 v2" }),
+    Spec.make("debug", {
+      description: "Debugging and troubleshooting tools",
+      commands: [Spec.make("agents", { description: "List all agents" })],
+    }),
+    Spec.make("migrate", { description: "Migrate v1 data to v2" }),
     Spec.make("service", {
-      description: "管理后台服务器",
+      description: "Manage the background server",
       commands: [
-        Spec.make("start", { description: "启动后台服务器" }),
-        Spec.make("restart", { description: "重启后台服务器" }),
-        Spec.make("status", { description: "显示后台服务器状态" }),
-        Spec.make("stop", { description: "停止后台服务器" }),
+        Spec.make("start", { description: "Start the background server" }),
+        Spec.make("restart", { description: "Restart the background server" }),
+        Spec.make("status", { description: "Show background server status" }),
+        Spec.make("stop", { description: "Stop the background server" }),
         Spec.make("password", {
-          description: "获取或设置服务器密码",
+          description: "Get or set the server password",
           params: { value: Argument.string("value").pipe(Argument.optional) },
         }),
       ],
     }),
     Spec.make("serve", {
-      description: "启动 v2 API 服务器",
+      description: "Start the v2 API server",
       params: {
         hostname: Flag.string("hostname").pipe(Flag.withDefault("127.0.0.1")),
         port: Flag.integer("port").pipe(Flag.optional),

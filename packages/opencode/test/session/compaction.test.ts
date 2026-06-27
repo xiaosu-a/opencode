@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, mock, test } from "bun:test"
-import { ConfigV1 } from "@sumocode-ai/core/v1/config/config"
-import { SessionV1 } from "@sumocode-ai/core/v1/session"
-import { Database } from "@sumocode-ai/core/database/database"
+import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
+import { SessionV1 } from "@opencode-ai/core/v1/session"
+import { Database } from "@opencode-ai/core/database/database"
 import { EventV2Bridge } from "@/event-v2-bridge"
 import { APICallError } from "ai"
 import { Cause, Deferred, Effect, Exit, Fiber, Layer, Schema } from "effect"
@@ -20,20 +20,21 @@ import { MessageV2 } from "../../src/session/message-v2"
 import { MessageID, PartID, SessionID } from "../../src/session/schema"
 import { SessionStatus } from "../../src/session/status"
 import { SessionSummary } from "../../src/session/summary"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { SessionExecution } from "@sumocode-ai/core/session/execution"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { SessionExecution } from "@opencode-ai/core/session/execution"
 
 import type { Provider } from "@/provider/provider"
 import * as SessionProcessorModule from "../../src/session/processor"
 import { Snapshot } from "../../src/snapshot"
 import { ProviderTest } from "../fake/provider"
 import { testEffect } from "../lib/effect"
-import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
+import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
 import { TestConfig } from "../fixture/config"
 import { RuntimeFlags } from "@/effect/runtime-flags"
-import { LLMEvent, Usage } from "@sumocode-ai/llm"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
-import { ModelV2 } from "@sumocode-ai/core/model"
+import { LLMEvent, Usage } from "@opencode-ai/llm"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
 
 const summary = Layer.succeed(
   SessionSummary.Service,
@@ -613,8 +614,9 @@ describe("session.compaction.create", () => {
         })
 
         const v2 = yield* SessionV2.Service.use((svc) => svc.messages({ sessionID: info.id })).pipe(
-          Effect.provide(SessionExecution.noopLayer),
           Effect.provide(SessionV2.defaultLayer),
+          Effect.provide(SessionExecution.noopLayer),
+          Effect.provide(locationServiceMapLayer),
         )
         expect(v2.at(-1)).toMatchObject({
           type: "compaction",
@@ -854,12 +856,12 @@ describe("session.compaction.process", () => {
       const msg = yield* createUserMessage(session.id, "hello")
       const msgs = yield* ssn.messages({ sessionID: session.id })
       const done = yield* Deferred.make<void, Error>()
-      let seen = false
+      const seen: string[] = []
       const unsub = yield* events.listen((evt) => {
+        seen.push(evt.type)
         if (evt.type !== SessionCompaction.Event.Compacted.type) return Effect.void
         if ((evt.data as typeof SessionCompaction.Event.Compacted.data.Type).sessionID !== session.id)
           return Effect.void
-        seen = true
         Deferred.doneUnsafe(done, Effect.void)
         return Effect.void
       })
@@ -874,7 +876,8 @@ describe("session.compaction.process", () => {
 
       yield* Deferred.await(done).pipe(Effect.timeout("500 millis"))
       expect(result).toBe("continue")
-      expect(seen).toBe(true)
+      expect(seen).toContain(SessionCompaction.Event.Compacted.type)
+      expect(seen.filter((type) => type.startsWith("session.next."))).toEqual([])
     }),
   )
 

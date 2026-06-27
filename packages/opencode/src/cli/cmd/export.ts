@@ -1,5 +1,5 @@
 import { Session } from "@/session/session"
-import { SessionV1 } from "@sumocode-ai/core/v1/session"
+import { SessionV1 } from "@opencode-ai/core/v1/session"
 import { MessageV2 } from "../../session/message-v2"
 import { SessionID } from "../../session/schema"
 import { effectCmd, fail } from "../effect-cmd"
@@ -221,15 +221,15 @@ function sanitize(data: { info: Session.Info; messages: SessionV1.WithParts[] })
 
 export const ExportCommand = effectCmd({
   command: "export [sessionID]",
-  describe: "导出会话数据为 JSON",
+  describe: "export session data as JSON",
   builder: (yargs) =>
     yargs
       .positional("sessionID", {
-        describe: "要导出的会话 ID",
+        describe: "session id to export",
         type: "string",
       })
       .option("sanitize", {
-        describe: "脱敏处理会话记录和文件数据",
+        describe: "redact sensitive transcript and file data",
         type: "boolean",
       }),
   handler: Effect.fn("Cli.export")(function* (args) {

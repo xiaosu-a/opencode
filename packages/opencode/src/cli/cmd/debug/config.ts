@@ -4,7 +4,7 @@ import { effectCmd } from "../../effect-cmd"
 
 export const ConfigCommand = effectCmd({
   command: "config",
-  describe: "以 JSON 格式显示解析后的配置",
+  describe: "show resolved configuration",
   builder: (yargs) => yargs,
   handler: Effect.fn("Cli.debug.config")(function* () {
     const { Config } = yield* Effect.promise(() => import("@/config/config"))

@@ -9,7 +9,7 @@ import { UpgradeCommand } from "./cli/cmd/upgrade"
 import { UninstallCommand } from "./cli/cmd/uninstall"
 import { ModelsCommand } from "./cli/cmd/models"
 import { UI } from "./cli/ui"
-import { InstallationVersion } from "@sumocode-ai/core/installation/version"
+import { InstallationVersion } from "@opencode-ai/core/installation/version"
 import { FormatError } from "./cli/error"
 import { ServeCommand } from "./cli/cmd/serve"
 import { DebugCommand } from "./cli/cmd/debug"
@@ -34,7 +34,7 @@ const args = hideBin(process.argv)
 
 function show(out: string) {
   const text = out.trimStart()
-  if (!text.startsWith("sumocode ")) {
+  if (!text.startsWith("opencode ")) {
     process.stderr.write(UI.logo() + EOL + EOL)
     process.stderr.write(text + EOL)
     return
@@ -44,40 +44,40 @@ function show(out: string) {
 
 const cli = yargs(args)
   .parserConfiguration({ "populate--": true })
-  .scriptName("sumocode")
+  .scriptName("opencode")
   .wrap(100)
-  .help("help", "显示帮助")
+  .help("help", "show help")
   .alias("help", "h")
-  .version("version", "显示版本号", InstallationVersion)
+  .version("version", "show version number", InstallationVersion)
   .alias("version", "v")
   .option("print-logs", {
-    describe: "将日志输出到 stderr",
+    describe: "print logs to stderr",
     type: "boolean",
   })
   .option("log-level", {
-    describe: "日志级别",
+    describe: "log level",
     type: "string",
     choices: ["DEBUG", "INFO", "WARN", "ERROR"],
   })
   .option("pure", {
-    describe: "不加载外部插件运行",
+    describe: "run without external plugins",
     type: "boolean",
   })
   .middleware(async (opts) => {
-    if (opts.printLogs) process.env.SUMOCODE_PRINT_LOGS = "1"
-    if (opts.logLevel) process.env.SUMOCODE_LOG_LEVEL = opts.logLevel
+    if (opts.printLogs) process.env.OPENCODE_PRINT_LOGS = "1"
+    if (opts.logLevel) process.env.OPENCODE_LOG_LEVEL = opts.logLevel
     if (opts.pure) {
-      process.env.SUMOCODE_PURE = "1"
+      process.env.OPENCODE_PURE = "1"
     }
 
     Heap.start()
 
     process.env.AGENT = "1"
     process.env.OPENCODE = "1"
-    process.env.SUMOCODE_PID = String(process.pid)
+    process.env.OPENCODE_PID = String(process.pid)
   })
   .usage("")
-  .completion("completion", "生成 shell 自动补全脚本")
+  .completion("completion", "generate shell completion script")
   .command(AcpCommand)
   .command(McpCommand)
   .command(TuiThreadCommand)

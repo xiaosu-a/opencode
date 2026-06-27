@@ -1,8 +1,8 @@
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { Location } from "@sumocode-ai/core/location"
-import { Policy } from "@sumocode-ai/core/policy"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { Location } from "@opencode-ai/core/location"
+import { Policy } from "@opencode-ai/core/policy"
+import { AbsolutePath } from "@opencode-ai/core/schema"
 import { location } from "./fixture/location"
 import { testEffect } from "./lib/effect"
 

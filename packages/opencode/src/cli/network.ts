@@ -1,33 +1,33 @@
 import type { Argv, InferredOptionTypes } from "yargs"
-import { ConfigV1 } from "@sumocode-ai/core/v1/config/config"
+import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
 import type { Config } from "@/config/config"
 import { Effect } from "effect"
 
 const options = {
   port: {
     type: "number" as const,
-    describe: "监听端口",
+    describe: "port to listen on",
     default: 0,
   },
   hostname: {
     type: "string" as const,
-    describe: "监听主机名",
+    describe: "hostname to listen on",
     default: "127.0.0.1",
   },
   mdns: {
     type: "boolean" as const,
-    describe: "启用 mDNS 服务发现（默认主机名设为 0.0.0.0）",
+    describe: "enable mDNS service discovery (defaults hostname to 0.0.0.0)",
     default: false,
   },
   "mdns-domain": {
     type: "string" as const,
-    describe: "mDNS 服务的自定义域名（默认：sumocode.local）",
-    default: "sumocode.local",
+    describe: "custom domain name for mDNS service (default: opencode.local)",
+    default: "opencode.local",
   },
   cors: {
     type: "string" as const,
     array: true,
-    describe: "允许 CORS 的额外域名",
+    describe: "additional domains to allow for CORS",
     default: [] as string[],
   },
 }

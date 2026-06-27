@@ -3,7 +3,7 @@ import { Provider } from "../../src/provider/provider"
 
 import { Effect } from "effect"
 import { testEffect } from "../lib/effect"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 
 const DIGITALOCEAN = ProviderV2.ID.make("digitalocean")
 const it = testEffect(Provider.defaultLayer)
@@ -28,7 +28,7 @@ const withEnv = <A, E, R>(values: Record<string, string>, effect: Effect.Effect<
 const withAuth = <A, E, R>(metadata: Record<string, string> | undefined, effect: Effect.Effect<A, E, R>) =>
   withEnv(
     {
-      SUMOCODE_AUTH_CONTENT: JSON.stringify({
+      OPENCODE_AUTH_CONTENT: JSON.stringify({
         digitalocean: {
           type: "api",
           key: "sk_do_test",

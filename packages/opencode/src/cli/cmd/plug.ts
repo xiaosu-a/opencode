@@ -2,7 +2,7 @@ import { intro, log, outro, spinner } from "@clack/prompts"
 import { Effect } from "effect"
 
 import { ConfigPaths } from "@/config/paths"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import { installPlugin, patchPluginConfig, readPluginManifest } from "../../plugin/install"
 import { resolvePluginTarget } from "../../plugin/shared"
 import { errorMessage } from "../../util/error"
@@ -178,24 +178,24 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
 export const PluginCommand = effectCmd({
   command: "plugin <module>",
   aliases: ["plug"],
-  describe: "安装插件并更新配置",
+  describe: "install plugin and update config",
   builder: (yargs) =>
     yargs
       .positional("module", {
         type: "string",
-        describe: "npm 模块名称",
+        describe: "npm module name",
       })
       .option("global", {
         alias: ["g"],
         type: "boolean",
         default: false,
-        describe: "安装到全局配置",
+        describe: "install in global config",
       })
       .option("force", {
         alias: ["f"],
         type: "boolean",
         default: false,
-        describe: "替换已安装的插件版本",
+        describe: "replace existing plugin version",
       }),
   handler: Effect.fn("Cli.plug")(function* (args) {
     const mod = String(args.module ?? "").trim()

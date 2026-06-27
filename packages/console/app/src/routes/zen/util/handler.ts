@@ -1,19 +1,19 @@
 import type { APIEvent } from "@solidjs/start/server"
-import { and, Database, eq, isNull, lt, or, sql } from "@sumocode-ai/console-core/drizzle/index.js"
-import { KeyTable } from "@sumocode-ai/console-core/schema/key.sql.js"
-import { BillingTable, LiteTable, SubscriptionTable, UsageTable } from "@sumocode-ai/console-core/schema/billing.sql.js"
-import { centsToMicroCents } from "@sumocode-ai/console-core/util/price.js"
-import { getMonthlyBounds, getWeekBounds } from "@sumocode-ai/console-core/util/date.js"
-import { Identifier } from "@sumocode-ai/console-core/identifier.js"
-import { Billing } from "@sumocode-ai/console-core/billing.js"
-import { Actor } from "@sumocode-ai/console-core/actor.js"
-import { WorkspaceTable } from "@sumocode-ai/console-core/schema/workspace.sql.js"
-import { ZenData } from "@sumocode-ai/console-core/model.js"
-import { Subscription } from "@sumocode-ai/console-core/subscription.js"
-import { BlackData } from "@sumocode-ai/console-core/black.js"
-import { UserTable } from "@sumocode-ai/console-core/schema/user.sql.js"
-import { ModelTable } from "@sumocode-ai/console-core/schema/model.sql.js"
-import { ProviderTable } from "@sumocode-ai/console-core/schema/provider.sql.js"
+import { and, Database, eq, isNull, lt, or, sql } from "@opencode-ai/console-core/drizzle/index.js"
+import { KeyTable } from "@opencode-ai/console-core/schema/key.sql.js"
+import { BillingTable, LiteTable, SubscriptionTable, UsageTable } from "@opencode-ai/console-core/schema/billing.sql.js"
+import { centsToMicroCents } from "@opencode-ai/console-core/util/price.js"
+import { getMonthlyBounds, getWeekBounds } from "@opencode-ai/console-core/util/date.js"
+import { Identifier } from "@opencode-ai/console-core/identifier.js"
+import { Billing } from "@opencode-ai/console-core/billing.js"
+import { Actor } from "@opencode-ai/console-core/actor.js"
+import { WorkspaceTable } from "@opencode-ai/console-core/schema/workspace.sql.js"
+import { ZenData } from "@opencode-ai/console-core/model.js"
+import { Subscription } from "@opencode-ai/console-core/subscription.js"
+import { BlackData } from "@opencode-ai/console-core/black.js"
+import { UserTable } from "@opencode-ai/console-core/schema/user.sql.js"
+import { ModelTable } from "@opencode-ai/console-core/schema/model.sql.js"
+import { ProviderTable } from "@opencode-ai/console-core/schema/provider.sql.js"
 import { logger } from "./logger"
 import {
   AuthError,
@@ -41,8 +41,8 @@ import { createRateLimiter as createIpRateLimiter } from "./ipRateLimiter"
 import { createRateLimiter as createKeyRateLimiter } from "./keyRateLimiter"
 import { createTrialLimiter } from "./trialLimiter"
 import { createStickyTracker } from "./stickyProviderTracker"
-import { LiteData } from "@sumocode-ai/console-core/lite.js"
-import { Resource } from "@sumocode-ai/console-resource"
+import { LiteData } from "@opencode-ai/console-core/lite.js"
+import { Resource } from "@opencode-ai/console-resource"
 import { i18n, type Key } from "~/i18n"
 import { localeFromRequest } from "~/lib/language"
 import { createModelTpmLimiter } from "./modelTpmLimiter"
@@ -196,10 +196,12 @@ export async function handler(
           providerInfo.modifyHeaders(headers, providerInfo.apiKey, stickyId)
           Object.entries(providerInfo.headerModifier ?? {}).forEach(([k, v]) => {
             if (v === "$ip") return headers.set(k, ip)
+            if (v === "$caller") return headers.set(k, stickyId)
             if (v === "$session") return headers.set(k, sessionId)
             if (v === "$model") return headers.set(k, model)
             if (v === "$request") return headers.set(k, requestId)
             if (v === "$project") return headers.set(k, projectId)
+            if (v === "$workspace" && authInfo?.workspaceID) return headers.set(k, authInfo.workspaceID)
             headers.set(k, v)
           })
           headers.delete("host")
@@ -212,6 +214,16 @@ export async function handler(
         })(),
         body: reqBody,
       })
+
+      if (providerInfo.id.startsWith("console.")) {
+        const resEndpointId = res.headers.get("x-opencode-endpoint-id")
+        const resEndpointModelId = res.headers.get("x-opencode-upstream-model-id")
+        if (resEndpointId && resEndpointModelId)
+          logger.metric({
+            provider: resEndpointId,
+            "provider.model": resEndpointModelId,
+          })
+      }
 
       if (res.status !== 200) {
         logger.metric({
@@ -354,7 +366,7 @@ export async function handler(
               responseLength += value.length
               buffer += decoder.decode(value, { stream: true })
 
-              const parts = buffer.split(providerInfo.streamSeparator)
+              const parts = buffer.split(/\r\n\r\n|\n\n|\r\r/)
               buffer = parts.pop() ?? ""
 
               for (let part of parts) {
@@ -477,7 +489,7 @@ export async function handler(
       throw new ModelError(
         `${t("zen.api.error.trialEnded", {
           model: modelData.name,
-          link: "https://sumocode.ai/go",
+          link: "https://opencode.ai/go",
         })}`,
       )
 
@@ -789,7 +801,7 @@ export async function handler(
     // Validate lite subscription billing
     if (opts.modelList === "lite" && authInfo.billing.lite && authInfo.lite) {
       try {
-        const consoleGoUrl = `https://sumocode.ai/workspace/${authInfo.workspaceID}/go`
+        const consoleGoUrl = `https://opencode.ai/workspace/${authInfo.workspaceID}/go`
         const sub = authInfo.lite
         const liteData = LiteData.getLimits()
 
@@ -860,8 +872,8 @@ export async function handler(
 
     // Validate pay as you go billing
     const billing = authInfo.billing
-    const billingUrl = `https://sumocode.ai/workspace/${authInfo.workspaceID}/billing`
-    const membersUrl = `https://sumocode.ai/workspace/${authInfo.workspaceID}/members`
+    const billingUrl = `https://opencode.ai/workspace/${authInfo.workspaceID}/billing`
+    const membersUrl = `https://opencode.ai/workspace/${authInfo.workspaceID}/members`
     if (!billing.paymentMethodID && billing.balance <= 0)
       throw new CreditsError(t("zen.api.error.noPaymentMethod", { billingUrl }))
     if (billing.balance <= 0) throw new CreditsError(t("zen.api.error.insufficientBalance", { billingUrl }))

@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import { createGroq } from "@ai-sdk/groq"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { GroqPlugin } from "@sumocode-ai/core/plugin/provider/groq"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { GroqPlugin } from "@opencode-ai/core/plugin/provider/groq"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -26,7 +26,7 @@ describe("GroqPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("groq"), ModelV2.ID.make("llama")),
           api: { id: ModelV2.ID.make("llama"), type: "aisdk", package: "@ai-sdk/groq" },
         }),
@@ -43,7 +43,7 @@ describe("GroqPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("groq"), ModelV2.ID.make("llama")),
           api: { id: ModelV2.ID.make("llama"), type: "aisdk", package: "@ai-sdk/groq" },
         }),
@@ -60,7 +60,7 @@ describe("GroqPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("groq"), ModelV2.ID.make("llama")),
           api: { id: ModelV2.ID.make("llama"), type: "aisdk", package: "@ai-sdk/groq" },
         }),
@@ -77,7 +77,7 @@ describe("GroqPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom-groq"), ModelV2.ID.make("llama")),
           api: { id: ModelV2.ID.make("llama"), type: "aisdk", package: "@ai-sdk/groq" },
         }),
@@ -102,7 +102,7 @@ describe("GroqPlugin", () => {
         name: string
       })
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("groq"), ModelV2.ID.make("alias")),
           api: {
             id: ModelV2.ID.make("llama-api"),

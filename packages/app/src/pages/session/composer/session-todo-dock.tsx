@@ -1,11 +1,11 @@
-import type { Todo } from "@sumocode-ai/sdk/v2"
-import { AnimatedNumber } from "@sumocode-ai/ui/animated-number"
-import { Checkbox } from "@sumocode-ai/ui/checkbox"
-import { DockTray } from "@sumocode-ai/ui/dock-surface"
-import { IconButton } from "@sumocode-ai/ui/icon-button"
-import { useSpring } from "@sumocode-ai/ui/motion-spring"
-import { TextReveal } from "@sumocode-ai/ui/text-reveal"
-import { TextStrikethrough } from "@sumocode-ai/ui/text-strikethrough"
+import type { Todo } from "@opencode-ai/sdk/v2"
+import { AnimatedNumber } from "@opencode-ai/ui/animated-number"
+import { Checkbox } from "@opencode-ai/ui/checkbox"
+import { DockTray } from "@opencode-ai/ui/dock-surface"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { useSpring } from "@opencode-ai/ui/motion-spring"
+import { TextReveal } from "@opencode-ai/ui/text-reveal"
+import { TextStrikethrough } from "@opencode-ai/ui/text-strikethrough"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { Index, createEffect, createMemo } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -40,7 +40,6 @@ function dot(status: Todo["status"]) {
 }
 
 export function SessionTodoDock(props: {
-  sessionID?: string
   todos: Todo[]
   collapsed: boolean
   onToggle: () => void
@@ -50,7 +49,7 @@ export function SessionTodoDock(props: {
 }) {
   const language = useLanguage()
   const [store, setStore] = createStore({
-    height: 320,
+    height: 78,
   })
 
   const total = createMemo(() => props.todos.length)
@@ -85,7 +84,7 @@ export function SessionTodoDock(props: {
     const el = contentRef
     if (!el) return
     const update = () => {
-      setStore("height", el.getBoundingClientRect().height)
+      setStore("height", (height) => Math.max(height, el.scrollHeight))
     }
     update()
     createResizeObserver(el, update)

@@ -1,11 +1,11 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { OpenAICompatiblePlugin } from "@sumocode-ai/core/plugin/provider/openai-compatible"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { OpenAICompatiblePlugin } from "@opencode-ai/core/plugin/provider/openai-compatible"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -25,7 +25,7 @@ describe("OpenAICompatiblePlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const defaulted = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "test-provider" },
         }),
@@ -33,7 +33,7 @@ describe("OpenAICompatiblePlugin", () => {
         options: { name: "custom" },
       })
       const disabled = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "test-provider" },
         }),
@@ -51,7 +51,7 @@ describe("OpenAICompatiblePlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "test-provider" },
         }),
@@ -74,7 +74,7 @@ describe("OpenAICompatiblePlugin", () => {
         }),
       )
       yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom-provider"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "test-provider" },
         }),
@@ -94,7 +94,7 @@ describe("OpenAICompatiblePlugin", () => {
       })
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "test-provider" },
         }),

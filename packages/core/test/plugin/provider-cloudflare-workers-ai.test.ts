@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { CloudflareWorkersAIPlugin } from "@sumocode-ai/core/plugin/provider/cloudflare-workers-ai"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { CloudflareWorkersAIPlugin } from "@opencode-ai/core/plugin/provider/cloudflare-workers-ai"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import type { LanguageModelV3 } from "@ai-sdk/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
@@ -93,7 +93,7 @@ describe("CloudflareWorkersAIPlugin", () => {
         yield* addPlugin()
         const provider = required(yield* catalog.provider.get(ProviderV2.ID.make("cloudflare-workers-ai")))
         const sdk = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("@cf/model")),
             api: { id: ModelV2.ID.make("@cf/model"), ...provider.api },
           }),
@@ -136,7 +136,7 @@ describe("CloudflareWorkersAIPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("@cf/model")),
             api: {
               id: ModelV2.ID.make("@cf/model"),
@@ -180,7 +180,7 @@ describe("CloudflareWorkersAIPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("@cf/model")),
             api: {
               id: ModelV2.ID.make("@cf/model"),
@@ -212,7 +212,7 @@ describe("CloudflareWorkersAIPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("@cf/model")),
             api: {
               id: ModelV2.ID.make("@cf/model"),
@@ -241,7 +241,7 @@ describe("CloudflareWorkersAIPlugin", () => {
       const calls: string[] = []
       yield* addPlugin()
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("alias")),
           api: { id: ModelV2.ID.make("@cf/api-model"), type: "aisdk", package: "test-provider" },
         }),
@@ -260,7 +260,7 @@ describe("CloudflareWorkersAIPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("cloudflare-workers-ai"), ModelV2.ID.make("@cf/model")),
             api: {
               id: ModelV2.ID.make("@cf/model"),

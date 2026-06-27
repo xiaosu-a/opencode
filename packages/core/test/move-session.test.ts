@@ -4,20 +4,21 @@ import fs from "fs/promises"
 import path from "path"
 import { eq } from "drizzle-orm"
 import { Effect, Layer } from "effect"
-import { MoveSession } from "@sumocode-ai/core/control-plane/move-session"
-import { Database } from "@sumocode-ai/core/database/database"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { Git } from "@sumocode-ai/core/git"
-import { EventV2 } from "@sumocode-ai/core/event"
-import { Project } from "@sumocode-ai/core/project"
-import { ProjectTable } from "@sumocode-ai/core/project/sql"
-import { ProjectDirectories } from "@sumocode-ai/core/project/directories"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { SessionExecution } from "@sumocode-ai/core/session/execution"
-import { SessionProjector } from "@sumocode-ai/core/session/projector"
-import { SessionTable } from "@sumocode-ai/core/session/sql"
-import { SessionStore } from "@sumocode-ai/core/session/store"
+import { MoveSession } from "@opencode-ai/core/control-plane/move-session"
+import { Database } from "@opencode-ai/core/database/database"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Git } from "@opencode-ai/core/git"
+import { EventV2 } from "@opencode-ai/core/event"
+import { Project } from "@opencode-ai/core/project"
+import { ProjectTable } from "@opencode-ai/core/project/sql"
+import { ProjectDirectories } from "@opencode-ai/core/project/directories"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { SessionExecution } from "@opencode-ai/core/session/execution"
+import { SessionProjector } from "@opencode-ai/core/session/projector"
+import { SessionTable } from "@opencode-ai/core/session/sql"
+import { SessionStore } from "@opencode-ai/core/session/store"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
@@ -28,6 +29,7 @@ const project = Project.layer.pipe(
   Layer.provide(ProjectDirectories.defaultLayer),
 )
 const sessions = SessionV2.layer.pipe(
+  Layer.provide(locationServiceMapLayer),
   Layer.provide(Database.defaultLayer),
   Layer.provide(EventV2.defaultLayer),
   Layer.provide(project),
@@ -40,7 +42,7 @@ const layer = MoveSession.layer.pipe(
   Layer.provide(Git.defaultLayer),
   Layer.provide(EventV2.defaultLayer),
   Layer.provide(project),
-  Layer.provide(sessions),
+  Layer.provide(SessionStore.defaultLayer),
 )
 const it = testEffect(
   Layer.mergeAll(
@@ -51,7 +53,6 @@ const it = testEffect(
     project,
     SessionProjector.defaultLayer,
     SessionStore.defaultLayer,
-    SessionExecution.noopLayer,
     sessions,
   ),
 )

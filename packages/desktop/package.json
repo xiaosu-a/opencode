@@ -1,13 +1,13 @@
 {
-  "name": "@sumocode-ai/desktop",
+  "name": "@opencode-ai/desktop",
   "private": true,
-  "version": "1.17.9",
+  "version": "1.17.11",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://sumocode.ai",
+  "homepage": "https://opencode.ai",
   "author": {
-    "name": "SumoCode",
-    "email": "hello@sumocode.ai"
+    "name": "OpenCode",
+    "email": "hello@opencode.ai"
   },
   "scripts": {
     "typecheck": "tsgo -b",
@@ -36,8 +36,8 @@
   "devDependencies": {
     "@actions/artifact": "4.0.0",
     "@lydell/node-pty": "catalog:",
-    "@sumocode-ai/app": "workspace:*",
-    "@sumocode-ai/ui": "workspace:*",
+    "@opencode-ai/app": "workspace:*",
+    "@opencode-ai/ui": "workspace:*",
     "@sentry/solid": "catalog:",
     "@sentry/vite-plugin": "catalog:",
     "@solid-primitives/i18n": "2.2.1",

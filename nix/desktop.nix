@@ -83,7 +83,7 @@ stdenv.mkDerivation (finalAttrs: {
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
       mkdir -p $out/Applications
       mv dist/mac*/*.app $out/Applications
-      makeWrapper "$out/Applications/SumoCode.app/Contents/MacOS/SumoCode" $out/bin/opencode-desktop
+      makeWrapper "$out/Applications/OpenCode.app/Contents/MacOS/OpenCode" $out/bin/opencode-desktop
     ''
     + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/opt/opencode-desktop
@@ -103,7 +103,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta = {
-    description = "SumoCode Desktop App";
+    description = "OpenCode Desktop App";
     mainProgram = "opencode-desktop";
     inherit (opencode.meta) homepage license platforms;
   };

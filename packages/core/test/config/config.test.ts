@@ -3,16 +3,16 @@ import fs from "fs/promises"
 import { describe, expect } from "bun:test"
 import { Effect, Layer, Schema } from "effect"
 import { FastCheck } from "effect/testing"
-import { Config } from "@sumocode-ai/core/config"
-import { ConfigProvider } from "@sumocode-ai/core/config/provider"
-import { ConfigMigrateV1 } from "@sumocode-ai/core/v1/config/migrate"
-import { ConfigV1 } from "@sumocode-ai/core/v1/config/config"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { Global } from "@sumocode-ai/core/global"
-import { Location } from "@sumocode-ai/core/location"
-import { Policy } from "@sumocode-ai/core/policy"
-import { Project } from "@sumocode-ai/core/project"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { Config } from "@opencode-ai/core/config"
+import { ConfigProvider } from "@opencode-ai/core/config/provider"
+import { ConfigMigrateV1 } from "@opencode-ai/core/v1/config/migrate"
+import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Global } from "@opencode-ai/core/global"
+import { Location } from "@opencode-ai/core/location"
+import { Policy } from "@opencode-ai/core/policy"
+import { Project } from "@opencode-ai/core/project"
+import { AbsolutePath } from "@opencode-ai/core/schema"
 import { location } from "../fixture/location"
 import { tmpdir } from "../fixture/tmpdir"
 import { testEffect } from "../lib/effect"
@@ -106,7 +106,6 @@ describe("Config", () => {
       expect(migrated.providers?.bedrock?.api).toEqual({
         type: "aisdk",
         package: "@ai-sdk/amazon-bedrock",
-        url: undefined,
         settings: { region: "us-east-1", profile: "dev" },
       })
       expect(migrated.providers?.bedrock?.request).toEqual({
@@ -176,11 +175,11 @@ describe("Config", () => {
                 JSON.stringify({ $schema: "base", providers: { base: provider } }),
               ),
               fs.writeFile(
-                path.join(tmp.path, "sumocode.json"),
+                path.join(tmp.path, "opencode.json"),
                 JSON.stringify({ $schema: "middle", providers: { middle: provider } }),
               ),
               fs.writeFile(
-                path.join(tmp.path, "sumocode.jsonc"),
+                path.join(tmp.path, "opencode.jsonc"),
                 `{
                   // Later global files override scalar fields while retaining providers.
                   "$schema": "last",
@@ -201,7 +200,7 @@ describe("Config", () => {
             expect(documents[2]?.info.providers?.last).toBeInstanceOf(ConfigProvider.Info)
 
             yield* Effect.promise(() =>
-              fs.writeFile(path.join(tmp.path, "sumocode.jsonc"), JSON.stringify({ $schema: "changed" })),
+              fs.writeFile(path.join(tmp.path, "opencode.jsonc"), JSON.stringify({ $schema: "changed" })),
             )
             expect(
               (yield* config.entries())
@@ -221,7 +220,7 @@ describe("Config", () => {
     ).pipe(
       Effect.flatMap((tmp) =>
         Effect.gen(function* () {
-          const file = path.join(tmp.path, "sumocode.json")
+          const file = path.join(tmp.path, "opencode.json")
           const contents = JSON.stringify({
             shell: "/bin/zsh",
             experimental: { policies: [{ effect: "deny", action: "provider.use", resource: "openai" }] },
@@ -256,7 +255,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "sumocode.json"),
+              path.join(tmp.path, "opencode.json"),
               JSON.stringify({
                 shell: "/bin/bash",
                 model: "anthropic/claude",
@@ -299,14 +298,14 @@ describe("Config", () => {
                 },
                 tool_output: { max_lines: 1000, max_bytes: 32768 },
                 mcp: {
-                  timeout: 5000,
+                  timeout: { startup: 5000, request: 60000 },
                   servers: {
                     local: {
                       type: "local",
                       command: ["node", "./mcp/server.js"],
                       environment: { API_KEY: "secret" },
                       disabled: false,
-                      timeout: 10000,
+                      timeout: { request: 10000 },
                     },
                     remote: {
                       type: "remote",
@@ -314,6 +313,7 @@ describe("Config", () => {
                       headers: { Authorization: "Bearer token" },
                       oauth: { client_id: "client", scope: "read write", callback_port: 19876 },
                       disabled: true,
+                      timeout: { startup: 15000 },
                     },
                   },
                 },
@@ -384,14 +384,14 @@ describe("Config", () => {
             })
             expect(documents[0]?.info.tool_output).toEqual({ max_lines: 1000, max_bytes: 32768 })
             expect(documents[0]?.info.mcp).toEqual({
-              timeout: 5000,
+              timeout: { startup: 5000, request: 60000 },
               servers: {
                 local: {
                   type: "local",
                   command: ["node", "./mcp/server.js"],
                   environment: { API_KEY: "secret" },
                   disabled: false,
-                  timeout: 10000,
+                  timeout: { request: 10000 },
                 },
                 remote: {
                   type: "remote",
@@ -399,6 +399,7 @@ describe("Config", () => {
                   headers: { Authorization: "Bearer token" },
                   oauth: { client_id: "client", scope: "read write", callback_port: 19876 },
                   disabled: true,
+                  timeout: { startup: 15000 },
                 },
               },
             })
@@ -442,7 +443,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "sumocode.json"),
+              path.join(tmp.path, "opencode.json"),
               JSON.stringify({
                 reference: {
                   local: { path: "../library" },
@@ -478,7 +479,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "sumocode.json"),
+              path.join(tmp.path, "opencode.json"),
               JSON.stringify({
                 shell: "/bin/zsh",
                 default_agent: "reviewer",
@@ -542,11 +543,12 @@ describe("Config", () => {
                 compaction: { auto: true, tail_turns: 3, preserve_recent_tokens: 2000, reserved: 10000 },
                 experimental: { mcp_timeout: 5000 },
                 mcp: {
-                  local: { type: "local", command: ["node", "server.js"], enabled: false },
+                  local: { type: "local", command: ["node", "server.js"], enabled: false, timeout: 10000 },
                   remote: {
                     type: "remote",
                     url: "https://mcp.example.com",
                     oauth: { clientId: "client", callbackPort: 19876 },
+                    timeout: 20000,
                   },
                 },
               }),
@@ -599,9 +601,9 @@ describe("Config", () => {
               models: {
                 model: {
                   request: {
-                    body: { temperature: 0.3, reasoningEffort: "high", serviceTier: "priority" },
+                    body: { temperature: 0.3, reasoning: { effort: "high" }, service_tier: "priority" },
                   },
-                  variants: [{ id: "high", body: { reasoningEffort: "high", reasoningSummary: "auto" } }],
+                  variants: [{ id: "high", body: { reasoning: { effort: "high", summary: "auto" } } }],
                 },
               },
             })
@@ -624,13 +626,19 @@ describe("Config", () => {
               buffer: 10000,
             })
             expect(documents[0]?.info.mcp).toMatchObject({
-              timeout: 5000,
+              timeout: { request: 5000 },
               servers: {
-                local: { type: "local", command: ["node", "server.js"], disabled: true },
+                local: {
+                  type: "local",
+                  command: ["node", "server.js"],
+                  disabled: true,
+                  timeout: { request: 10000 },
+                },
                 remote: {
                   type: "remote",
                   url: "https://mcp.example.com",
                   oauth: { client_id: "client", callback_port: 19876 },
+                  timeout: { request: 20000 },
                 },
               },
             })
@@ -650,8 +658,8 @@ describe("Config", () => {
           yield* Effect.promise(() =>
             Promise.all([
               fs.writeFile(path.join(tmp.path, "config.json"), JSON.stringify({ $schema: "base" })),
-              fs.writeFile(path.join(tmp.path, "sumocode.json"), "{ invalid"),
-              fs.writeFile(path.join(tmp.path, "sumocode.jsonc"), JSON.stringify({ providers: { invalid: true } })),
+              fs.writeFile(path.join(tmp.path, "opencode.json"), "{ invalid"),
+              fs.writeFile(path.join(tmp.path, "opencode.jsonc"), JSON.stringify({ providers: { invalid: true } })),
             ]),
           )
           return yield* Effect.gen(function* () {
@@ -676,13 +684,13 @@ describe("Config", () => {
           yield* Effect.promise(async () => {
             await fs.mkdir(global, { recursive: true })
             await fs.writeFile(
-              path.join(global, "sumocode.json"),
+              path.join(global, "opencode.json"),
               JSON.stringify({
                 experimental: { policies: [{ effect: "deny", action: "provider.use", resource: "openai" }] },
               }),
             )
             await fs.writeFile(
-              path.join(tmp.path, "sumocode.json"),
+              path.join(tmp.path, "opencode.json"),
               JSON.stringify({
                 experimental: { policies: [{ effect: "allow", action: "provider.use", resource: "openai" }] },
               }),
@@ -713,17 +721,17 @@ describe("Config", () => {
           yield* Effect.promise(async () => {
             await fs.mkdir(global, { recursive: true })
             await fs.mkdir(directory, { recursive: true })
-            await fs.mkdir(path.join(root, ".sumocode"), { recursive: true })
-            await fs.mkdir(path.join(directory, ".sumocode"), { recursive: true })
+            await fs.mkdir(path.join(root, ".opencode"), { recursive: true })
+            await fs.mkdir(path.join(directory, ".opencode"), { recursive: true })
             await Promise.all([
-              fs.writeFile(path.join(tmp.path, "sumocode.json"), JSON.stringify({ $schema: "outside" })),
-              fs.writeFile(path.join(global, "sumocode.json"), JSON.stringify({ $schema: "global" })),
-              fs.writeFile(path.join(root, "sumocode.json"), JSON.stringify({ $schema: "root" })),
-              fs.writeFile(path.join(parent, "sumocode.jsonc"), JSON.stringify({ $schema: "parent" })),
+              fs.writeFile(path.join(tmp.path, "opencode.json"), JSON.stringify({ $schema: "outside" })),
+              fs.writeFile(path.join(global, "opencode.json"), JSON.stringify({ $schema: "global" })),
+              fs.writeFile(path.join(root, "opencode.json"), JSON.stringify({ $schema: "root" })),
+              fs.writeFile(path.join(parent, "opencode.jsonc"), JSON.stringify({ $schema: "parent" })),
               fs.writeFile(path.join(directory, "config.json"), JSON.stringify({ $schema: "directory" })),
-              fs.writeFile(path.join(root, ".sumocode", "sumocode.json"), JSON.stringify({ $schema: "root-dot" })),
+              fs.writeFile(path.join(root, ".opencode", "opencode.json"), JSON.stringify({ $schema: "root-dot" })),
               fs.writeFile(
-                path.join(directory, ".sumocode", "sumocode.jsonc"),
+                path.join(directory, ".opencode", "opencode.jsonc"),
                 JSON.stringify({ $schema: "directory-dot" }),
               ),
             ])
@@ -736,8 +744,8 @@ describe("Config", () => {
 
             expect(entries.filter((entry) => entry.type === "directory").map((entry) => entry.path)).toEqual([
               AbsolutePath.make(global),
-              AbsolutePath.make(path.join(root, ".sumocode")),
-              AbsolutePath.make(path.join(directory, ".sumocode")),
+              AbsolutePath.make(path.join(root, ".opencode")),
+              AbsolutePath.make(path.join(directory, ".opencode")),
             ])
             expect(documents.map((document) => document.info.$schema)).toEqual([
               "global",
@@ -754,9 +762,9 @@ describe("Config", () => {
               "parent",
               "directory",
               "root-dot",
-              AbsolutePath.make(path.join(root, ".sumocode")),
+              AbsolutePath.make(path.join(root, ".opencode")),
               "directory-dot",
-              AbsolutePath.make(path.join(directory, ".sumocode")),
+              AbsolutePath.make(path.join(directory, ".opencode")),
             ])
           }).pipe(
             Effect.provide(

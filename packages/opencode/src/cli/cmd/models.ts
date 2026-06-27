@@ -1,33 +1,33 @@
 import { EOL } from "os"
 import { Effect } from "effect"
-import { ModelsDev } from "@sumocode-ai/core/models-dev"
+import { ModelsDev } from "@opencode-ai/core/models-dev"
 import { effectCmd, fail } from "../effect-cmd"
 import { UI } from "../ui"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 
 export const ModelsCommand = effectCmd({
   command: "models [provider]",
-  describe: "列出所有可用模型",
+  describe: "list all available models",
   builder: (yargs) =>
     yargs
       .positional("provider", {
-        describe: "按提供商 ID 筛选模型",
+        describe: "provider ID to filter models by",
         type: "string",
         array: false,
       })
       .option("verbose", {
-        describe: "显示更详细的模型信息（包括费用等元数据）",
+        describe: "use more verbose model output (includes metadata like costs)",
         type: "boolean",
       })
       .option("refresh", {
-        describe: "从 models.dev 刷新模型缓存",
+        describe: "refresh the models cache from models.dev",
         type: "boolean",
       }),
   handler: Effect.fn("Cli.models")(function* (args) {
     const { Provider } = yield* Effect.promise(() => import("@/provider/provider"))
     if (args.refresh) {
       yield* ModelsDev.Service.use((s) => s.refresh(true))
-      UI.println(UI.Style.TEXT_SUCCESS_BOLD + "模型缓存已刷新" + UI.Style.TEXT_NORMAL)
+      UI.println(UI.Style.TEXT_SUCCESS_BOLD + "Models cache refreshed" + UI.Style.TEXT_NORMAL)
     }
 
     const provider = yield* Provider.Service
@@ -48,7 +48,7 @@ export const ModelsCommand = effectCmd({
 
     if (args.provider) {
       const providerID = ProviderV2.ID.make(args.provider)
-      if (!providers[providerID]) return yield* fail(`未找到提供商：${args.provider}`)
+      if (!providers[providerID]) return yield* fail(`Provider not found: ${args.provider}`)
       print(providerID, args.verbose)
       return
     }

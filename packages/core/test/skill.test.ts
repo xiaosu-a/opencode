@@ -2,11 +2,11 @@ import fs from "fs/promises"
 import path from "path"
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { AgentV2 } from "@sumocode-ai/core/agent"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { SkillV2 } from "@sumocode-ai/core/skill"
-import { SkillDiscovery } from "@sumocode-ai/core/skill/discovery"
+import { AgentV2 } from "@opencode-ai/core/agent"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SkillV2 } from "@opencode-ai/core/skill"
+import { SkillDiscovery } from "@opencode-ai/core/skill/discovery"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
@@ -74,7 +74,7 @@ describe("SkillV2", () => {
             { type: "directory", path: AbsolutePath.make(second) },
           ])
           expect(yield* skill.list()).toEqual([
-            new SkillV2.Info({
+            SkillV2.Info.make({
               name: "foo",
               slash: true,
               location: AbsolutePath.make(path.join(first, "foo.md")),

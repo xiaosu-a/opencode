@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect } from "bun:test"
 import { Effect, Exit, Layer, Option } from "effect"
-import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
-import { httpClient } from "@sumocode-ai/core/effect/layer-node-platform"
-import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
-import { SessionProjector } from "@sumocode-ai/core/session/projector"
+import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNodeTree } from "@opencode-ai/core/effect/layer-node"
+import { httpClient } from "@opencode-ai/core/effect/layer-node-platform"
+import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
+import { SessionProjector } from "@opencode-ai/core/session/projector"
 
 import { AccessToken, AccountID, OrgID, RefreshToken } from "../../src/account/schema"
 import { AccountRepo } from "../../src/account/repo"
@@ -12,14 +13,14 @@ import { EventV2Bridge } from "../../src/event-v2-bridge"
 import { Session } from "@/session/session"
 import type { SessionID } from "../../src/session/schema"
 import { ShareNext } from "@/share/share-next"
-import { SessionShareTable } from "@sumocode-ai/core/share/sql"
-import { Database } from "@sumocode-ai/core/database/database"
+import { SessionShareTable } from "@opencode-ai/core/share/sql"
+import { Database } from "@opencode-ai/core/database/database"
 import { eq } from "drizzle-orm"
 import { provideTmpdirInstance } from "../fixture/fixture"
 import { resetDatabase } from "../fixture/db"
 import { pollWithTimeout, testEffect } from "../lib/effect"
 
-const env = LayerNode.buildLayer(CrossSpawnSpawner.node)
+const env = LayerNodeTree.compile(LayerNode.group([CrossSpawnSpawner.node]))
 const it = testEffect(env)
 
 const json = (req: Parameters<typeof HttpClientResponse.fromWeb>[0], body: unknown, status = 200) =>
@@ -34,13 +35,16 @@ const json = (req: Parameters<typeof HttpClientResponse.fromWeb>[0], body: unkno
 const none = HttpClient.make(() => Effect.die("unexpected http call"))
 
 function requestLayer(client: HttpClient.HttpClient) {
-  return LayerNode.buildLayer(LayerNode.group([ShareNext.node, AccountRepo.node]), {
-    replacements: [LayerNode.replace(httpClient, Layer.succeed(HttpClient.HttpClient, client))],
-  })
+  const replacement = LayerNode.replace(FetchHttpClient.layer, Layer.succeed(HttpClient.HttpClient, client))
+  return LayerNodeTree.compile(
+    LayerNode.group([ShareNext.node, AccountRepo.node]),
+    new Map([[replacement.source, replacement.replacement]]),
+  )
 }
 
 function integrationLayer(client: HttpClient.HttpClient) {
-  return LayerNode.buildLayer(
+  const replacement = LayerNode.replace(FetchHttpClient.layer, Layer.succeed(HttpClient.HttpClient, client))
+  return LayerNodeTree.compile(
     LayerNode.group([
       ShareNext.node,
       EventV2Bridge.node,
@@ -49,9 +53,7 @@ function integrationLayer(client: HttpClient.HttpClient) {
       AccountRepo.node,
       Database.node,
     ]),
-    {
-      replacements: [LayerNode.replace(httpClient, Layer.succeed(HttpClient.HttpClient, client))],
-    },
+    new Map([[replacement.source, replacement.replacement]]),
   )
 }
 

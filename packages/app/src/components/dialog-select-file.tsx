@@ -1,11 +1,11 @@
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
-import { Dialog } from "@sumocode-ai/ui/dialog"
-import { FileIcon } from "@sumocode-ai/ui/file-icon"
-import { Icon } from "@sumocode-ai/ui/icon"
-import { Keybind } from "@sumocode-ai/ui/keybind"
-import { List } from "@sumocode-ai/ui/list"
-import { base64Encode } from "@sumocode-ai/core/util/encode"
-import { getDirectory, getFilename } from "@sumocode-ai/core/util/path"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { Dialog } from "@opencode-ai/ui/dialog"
+import { FileIcon } from "@opencode-ai/ui/file-icon"
+import { Icon } from "@opencode-ai/ui/icon"
+import { Keybind } from "@opencode-ai/ui/keybind"
+import { List } from "@opencode-ai/ui/list"
+import { base64Encode } from "@opencode-ai/core/util/encode"
+import { getDirectory, getFilename } from "@opencode-ai/core/util/path"
 import { useNavigate } from "@solidjs/router"
 import { createMemo, createSignal, lazy, Match, onCleanup, Show, Switch } from "solid-js"
 import { formatKeybind, useCommand, type CommandOption } from "@/context/command"
@@ -15,7 +15,6 @@ import { useLayout } from "@/context/layout"
 import { useFile } from "@/context/file"
 import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
-import { useServer } from "@/context/server"
 import { useSettings } from "@/context/settings"
 import { useSessionLayout } from "@/pages/session/session-layout"
 import { createSessionTabs } from "@/pages/session/helpers"
@@ -272,7 +271,6 @@ export function DialogSelectFile(props: { mode?: DialogSelectFileMode; onOpenFil
   const command = useCommand()
   const language = useLanguage()
   const platform = usePlatform()
-  const server = useServer()
   const settings = useSettings()
   const layout = useLayout()
   const file = useFile()
@@ -393,10 +391,10 @@ export function DialogSelectFile(props: { mode?: DialogSelectFileMode; onOpenFil
     state.cleanup?.()
   })
 
-  if (filesOnly() && platform.platform === "desktop" && settings.general.newLayoutDesigns() && server.current) {
+  if (filesOnly() && platform.platform === "desktop" && settings.general.newLayoutDesigns()) {
     return (
       <DialogSelectFileV2
-        server={server.current}
+        server={serverSDK().server}
         mode="file"
         start={projectDirectory()}
         title={language.t("session.header.searchFiles")}

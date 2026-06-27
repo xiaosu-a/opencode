@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { Npm } from "@sumocode-ai/core/npm"
-import { SapAICorePlugin } from "@sumocode-ai/core/plugin/provider/sap-ai-core"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { Npm } from "@opencode-ai/core/npm"
+import { SapAICorePlugin } from "@opencode-ai/core/plugin/provider/sap-ai-core"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -47,7 +47,7 @@ function withEnv<A, E, R>(vars: Record<string, string | undefined>, effect: () =
 }
 
 function model(providerID: string) {
-  return new ModelV2.Info({
+  return ModelV2.Info.make({
     ...ModelV2.Info.empty(ProviderV2.ID.make(providerID), ModelV2.ID.make("sap-model")),
     api: { id: ModelV2.ID.make("sap-model"), type: "aisdk", package: fixtureProvider },
   })

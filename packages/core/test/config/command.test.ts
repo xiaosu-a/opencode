@@ -2,13 +2,13 @@ import fs from "fs/promises"
 import path from "path"
 import { describe, expect } from "bun:test"
 import { Effect, Layer, Schema } from "effect"
-import { CommandV2 } from "@sumocode-ai/core/command"
-import { Config } from "@sumocode-ai/core/config"
-import { ConfigCommandPlugin } from "@sumocode-ai/core/config/plugin/command"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { CommandV2 } from "@opencode-ai/core/command"
+import { Config } from "@opencode-ai/core/config"
+import { ConfigCommandPlugin } from "@opencode-ai/core/config/plugin/command"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { AbsolutePath } from "@opencode-ai/core/schema"
 import { tmpdir } from "../fixture/tmpdir"
 import { testEffect } from "../lib/effect"
 import { host } from "../plugin/host"
@@ -59,7 +59,7 @@ Review files`,
           )
 
           expect(yield* command.list()).toEqual([
-            new CommandV2.Info({
+            CommandV2.Info.make({
               name: "review",
               template: "Review files",
               description: "File review",
@@ -71,8 +71,8 @@ Review files`,
               },
               subtask: true,
             }),
-            new CommandV2.Info({ name: "empty", template: "" }),
-            new CommandV2.Info({ name: "nested/docs", template: "Write docs" }),
+            CommandV2.Info.make({ name: "empty", template: "" }),
+            CommandV2.Info.make({ name: "nested/docs", template: "Write docs" }),
           ])
         }),
       ),

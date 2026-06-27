@@ -1,13 +1,13 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { ProviderPlugins } from "@sumocode-ai/core/plugin/provider"
-import { OpenRouterPlugin } from "@sumocode-ai/core/plugin/provider/openrouter"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { ProviderPlugins } from "@opencode-ai/core/plugin/provider"
+import { OpenRouterPlugin } from "@opencode-ai/core/plugin/provider/openrouter"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -39,7 +39,7 @@ describe("OpenRouterPlugin", () => {
 
       expect((yield* catalog.provider.get(ProviderV2.ID.openrouter))?.request.headers).toEqual({
         Existing: "value",
-        "HTTP-Referer": "https://sumocode.ai/",
+        "HTTP-Referer": "https://opencode.ai/",
         "X-Title": "opencode",
       })
       expect((yield* catalog.provider.get(ProviderV2.ID.make("nvidia")))?.request.headers).toEqual({})
@@ -53,7 +53,7 @@ describe("OpenRouterPlugin", () => {
       yield* addPlugin()
 
       const ignored = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.openrouter, ModelV2.ID.make("openai/gpt-5")),
           api: { id: ModelV2.ID.make("openai/gpt-5"), type: "aisdk", package: "test-provider" },
         }),
@@ -63,7 +63,7 @@ describe("OpenRouterPlugin", () => {
       expect(ignored.sdk).toBeUndefined()
 
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom"), ModelV2.ID.make("openai/gpt-5")),
           api: { id: ModelV2.ID.make("openai/gpt-5"), type: "aisdk", package: "test-provider" },
         }),

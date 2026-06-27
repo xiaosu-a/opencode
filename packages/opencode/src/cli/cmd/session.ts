@@ -6,13 +6,13 @@ import { Session } from "@/session/session"
 import { SessionID } from "../../session/schema"
 import { UI } from "../ui"
 import { Locale } from "@/util/locale"
-import { Flag } from "@sumocode-ai/core/flag/flag"
+import { Flag } from "@opencode-ai/core/flag/flag"
 import { Filesystem } from "@/util/filesystem"
 import { Process } from "@/util/process"
 import { NotFoundError } from "@/storage/storage"
 import { EOL } from "os"
 import path from "path"
-import { which } from "@sumocode-ai/core/util/which"
+import { which } from "@opencode-ai/core/util/which"
 
 function pagerCmd(): string[] {
   const lessOptions = ["-R", "-S"]
@@ -26,8 +26,8 @@ function pagerCmd(): string[] {
     if (Filesystem.stat(lessOnPath)?.size) return [lessOnPath, ...lessOptions]
   }
 
-  if (Flag.SUMOCODE_GIT_BASH_PATH) {
-    const less = path.join(Flag.SUMOCODE_GIT_BASH_PATH, "..", "..", "usr", "bin", "less.exe")
+  if (Flag.OPENCODE_GIT_BASH_PATH) {
+    const less = path.join(Flag.OPENCODE_GIT_BASH_PATH, "..", "..", "usr", "bin", "less.exe")
     if (Filesystem.stat(less)?.size) return [less, ...lessOptions]
   }
 
@@ -43,17 +43,17 @@ function pagerCmd(): string[] {
 
 export const SessionCommand = cmd({
   command: "session",
-  describe: "管理会话",
+  describe: "manage sessions",
   builder: (yargs: Argv) => yargs.command(SessionListCommand).command(SessionDeleteCommand).demandCommand(),
   async handler() {},
 })
 
 export const SessionDeleteCommand = effectCmd({
   command: "delete <sessionID>",
-  describe: "删除会话",
+  describe: "delete a session",
   builder: (yargs) =>
     yargs.positional("sessionID", {
-      describe: "要删除的会话 ID",
+      describe: "session ID to delete",
       type: "string",
       demandOption: true,
     }),
@@ -69,16 +69,16 @@ export const SessionDeleteCommand = effectCmd({
 
 export const SessionListCommand = effectCmd({
   command: "list",
-  describe: "列出会话",
+  describe: "list sessions",
   builder: (yargs) =>
     yargs
       .option("max-count", {
         alias: "n",
-        describe: "仅显示最近 N 条会话",
+        describe: "limit to N most recent sessions",
         type: "number",
       })
       .option("format", {
-        describe: "输出格式",
+        describe: "output format",
         type: "string",
         choices: ["table", "json"],
         default: "table",

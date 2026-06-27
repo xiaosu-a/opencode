@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect, mock } from "bun:test"
 import { Effect } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { GitLabPlugin } from "@sumocode-ai/core/plugin/provider/gitlab"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { GitLabPlugin } from "@opencode-ai/core/plugin/provider/gitlab"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -68,7 +68,7 @@ describe("GitLabPlugin", () => {
           const aisdk = yield* AISDK.Service
           yield* addPlugin()
           yield* aisdk.runSDK({
-            model: new ModelV2.Info({
+            model: ModelV2.Info.make({
               ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("claude")),
               api: { id: ModelV2.ID.make("claude"), type: "aisdk", package: "test-provider" },
             }),
@@ -105,7 +105,7 @@ describe("GitLabPlugin", () => {
           const aisdk = yield* AISDK.Service
           yield* addPlugin()
           yield* aisdk.runSDK({
-            model: new ModelV2.Info({
+            model: ModelV2.Info.make({
               ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("claude")),
               api: { id: ModelV2.ID.make("claude"), type: "aisdk", package: "test-provider" },
             }),
@@ -130,7 +130,7 @@ describe("GitLabPlugin", () => {
           const aisdk = yield* AISDK.Service
           yield* addPlugin()
           yield* aisdk.runSDK({
-            model: new ModelV2.Info({
+            model: ModelV2.Info.make({
               ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("claude")),
               api: { id: ModelV2.ID.make("claude"), type: "aisdk", package: "test-provider" },
             }),
@@ -171,7 +171,7 @@ describe("GitLabPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("claude")),
           api: { id: ModelV2.ID.make("claude"), type: "aisdk", package: "test-provider" },
         }),
@@ -190,7 +190,7 @@ describe("GitLabPlugin", () => {
       const calls: [string, unknown][] = []
       yield* addPlugin()
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("duo-workflow-custom")),
           api: { id: ModelV2.ID.make("duo-workflow-custom"), type: "aisdk", package: "test-provider" },
           request: {
@@ -225,7 +225,7 @@ describe("GitLabPlugin", () => {
       const calls: [string, unknown][] = []
       yield* addPlugin()
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("duo-workflow-exact")),
           api: { id: ModelV2.ID.make("duo-workflow-exact"), type: "aisdk", package: "test-provider" },
         }),
@@ -252,7 +252,7 @@ describe("GitLabPlugin", () => {
       const calls: [string, unknown][] = []
       yield* addPlugin()
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("duo-workflow-custom")),
           api: { id: ModelV2.ID.make("duo-workflow-custom"), type: "aisdk", package: "test-provider" },
           request: {
@@ -280,7 +280,7 @@ describe("GitLabPlugin", () => {
       const calls: [string, unknown][] = []
       yield* addPlugin()
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("gitlab"), ModelV2.ID.make("claude")),
           api: { id: ModelV2.ID.make("claude"), type: "aisdk", package: "test-provider" },
           request: { headers: { h: "v" }, body: {} },

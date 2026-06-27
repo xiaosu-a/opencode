@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi } from "@sumocode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi } from "@opencode-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Show, createSignal } from "solid-js"
 import { Locale } from "../../util/locale"
@@ -24,7 +24,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
             <text fg={theme().text}>{open() ? "▼" : "▶"}</text>
           </Show>
           <text fg={theme().text}>
-            <b>已修改的文件</b>
+            <b>Modified Files</b>
           </text>
         </box>
         <Show when={list().length <= 2 || open()}>

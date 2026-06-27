@@ -1,6 +1,6 @@
 export * as WebSearchTool from "./websearch"
 
-import { ToolFailure } from "@sumocode-ai/llm"
+import { ToolFailure } from "@opencode-ai/llm"
 import { Context, Duration, Effect, Layer, Schema } from "effect"
 import { HttpClient, HttpClientRequest } from "effect/unstable/http"
 import { truthy } from "../flag/flag"
@@ -70,11 +70,11 @@ export class ConfigService extends Context.Service<ConfigService, Config>()("@op
 export const defaultConfigLayer = Layer.sync(ConfigService, () =>
   ConfigService.of({
     provider:
-      process.env.SUMOCODE_WEBSEARCH_PROVIDER === "exa" || process.env.SUMOCODE_WEBSEARCH_PROVIDER === "parallel"
-        ? process.env.SUMOCODE_WEBSEARCH_PROVIDER
+      process.env.OPENCODE_WEBSEARCH_PROVIDER === "exa" || process.env.OPENCODE_WEBSEARCH_PROVIDER === "parallel"
+        ? process.env.OPENCODE_WEBSEARCH_PROVIDER
         : undefined,
-    enableExa: truthy("SUMOCODE_EXPERIMENTAL") || truthy("SUMOCODE_ENABLE_EXA") || truthy("SUMOCODE_EXPERIMENTAL_EXA"),
-    enableParallel: truthy("SUMOCODE_ENABLE_PARALLEL") || truthy("SUMOCODE_EXPERIMENTAL_PARALLEL"),
+    enableExa: truthy("OPENCODE_EXPERIMENTAL") || truthy("OPENCODE_ENABLE_EXA") || truthy("OPENCODE_EXPERIMENTAL_EXA"),
+    enableParallel: truthy("OPENCODE_ENABLE_PARALLEL") || truthy("OPENCODE_EXPERIMENTAL_PARALLEL"),
     exaApiKey: process.env.EXA_API_KEY,
     parallelApiKey: process.env.PARALLEL_API_KEY,
   }),

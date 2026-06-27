@@ -23,11 +23,11 @@ Niektóre serwery MCP, takie jak serwer MCP GitHub, mają szerokie możliwości 
 
 ## Włączać
 
-Dostępny serwery MCP w [opencode Config](https://sumocode.ai/docs/config/) w `mcp`. Dodaj każdy MCP z unikalną nazwą. Możesz zgłosić się do tego MCP po nazwie, pytając LLM.
+Dostępny serwery MCP w [opencode Config](https://opencode.ai/docs/config/) w `mcp`. Dodaj każdy MCP z unikalną nazwą. Możesz zgłosić się do tego MCP po nazwie, pytając LLM.
 
-```jsonc title="sumocode.jsonc" {6}
+```jsonc title="opencode.jsonc" {6}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "name-of-mcp-server": {
       // ...
@@ -50,9 +50,9 @@ Organizacje mogą udostępniać serwery MCP za pośrednictwem punktu końcowego 
 
 Aby włączyć serwer ze zdalnej konfiguracji organizacji, dodaj go do wyłączenia za pomocą `enabled: true`:
 
-```json title="sumocode.json"
+```json title="opencode.json"
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "jira": {
       "type": "remote",
@@ -71,9 +71,9 @@ Lokalne wartości konfiguracyjne za występujące zdalne wartości. Aby uzyskać
 
 Dodaj lokalne serwery MCP za pomocą `type` do `"local"` w obiekcie MCP.
 
-```jsonc title="sumocode.jsonc" {15}
+```jsonc title="opencode.jsonc" {15}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-local-mcp-server": {
       "type": "local",
@@ -92,9 +92,9 @@ Polecenie sposobu uruchamiania lokalnego serwera MCP. Można także zainstalowa�
 
 Oto przykładowy sposób dodania testowego serwera MCP [`@modelcontextprotocol/server-everything`](https://www.npmjs.com/package/@modelcontextprotocol/server-everything).
 
-```jsonc title="sumocode.jsonc"
+```jsonc title="opencode.jsonc"
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "mcp_everything": {
       "type": "local",
@@ -130,9 +130,9 @@ Oto wszystkie opcje lokalnego serwera MCP.
 
 Dodaj zdalne serwery MCP, ustawiając `type` na `"remote"`.
 
-```json title="sumocode.json"
+```json title="opencode.json"
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-remote-mcp": {
       "type": "remote",
@@ -177,9 +177,9 @@ opencode automatyczne uwierzytelnianie OAuth dla zdalnych serwerów MCP. Gdy ser
 
 W innym serwerze MCP z włączoną funkcją OAuth nie jest wymagana specjalna funkcja. Dostępny serwer bezprzewodowy:
 
-```json title="sumocode.json"
+```json title="opencode.json"
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-oauth-server": {
       "type": "remote",
@@ -197,9 +197,9 @@ Jeśli serwer wymaga uwierzytelnienia, opencode poprosi Cię o uwierzytelnienie 
 
 Jeśli posiadasz dostęp do klienta od dostawcy serwera MCP, możesz je udostępnić:
 
-```json title="sumocode.json" {7-11}
+```json title="opencode.json" {7-11}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-oauth-server": {
       "type": "remote",
@@ -246,9 +246,9 @@ Komenda `mcp auth` została udostępniona w celu autoryzacji. Po autoryzacji ope
 
 Jeśli chcesz włączyć automatyczne OAuth dla serwera (np. dla serwerów, które zamiast tego używać kluczy API), ustaw `oauth` na `false`:
 
-```json title="sumocode.json" {7}
+```json title="opencode.json" {7}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-api-key-server": {
       "type": "remote",
@@ -299,9 +299,9 @@ Twoje MCP są dostępne jako narzędzie w opencode, obok narzędzi dodatkowych. 
 
 Możesz to włączyć lub wyłączyć globalnie.
 
-```json title="sumocode.json" {14}
+```json title="opencode.json" {14}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-mcp-foo": {
       "type": "local",
@@ -320,9 +320,9 @@ Możesz to włączyć lub wyłączyć globalnie.
 
 Dostępne są również wzorca globu, aby wyłączyć wszystkie dyski MCP.
 
-```json title="sumocode.json" {14}
+```json title="opencode.json" {14}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-mcp-foo": {
       "type": "local",
@@ -350,9 +350,9 @@ Jeśli masz największe serwery MCP, możesz włączyć je tylko dla poszczegól
 1. Wyłącz go jako narzędzie globalnie.
 2. W [konfiguracji agenta](/docs/agents#tools) włącz serwer MCP jako narzędzie.
 
-```json title="sumocode.json" {11, 14-18}
+```json title="opencode.json" {11, 14-18}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "my-mcp": {
       "type": "local",
@@ -404,9 +404,9 @@ Poniżej znajdują się przykłady niektórych serwerów MCP. Twój prywatny PR,
 
 Dodaj [serwer Sentry MCP](https://mcp.sentry.dev), aby móc wejść w interakcję z projektem i udostępnić Sentry.
 
-```json title="sumocode.json" {4-8}
+```json title="opencode.json" {4-8}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "sentry": {
       "type": "remote",
@@ -437,9 +437,9 @@ Show me the latest unresolved issues in my project. use sentry
 
 Dodaj [serwer Context7 MCP](https://github.com/upstash/context7), aby przeszukać dokumenty.
 
-```json title="sumocode.json" {4-7}
+```json title="opencode.json" {4-7}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "context7": {
       "type": "remote",
@@ -451,9 +451,9 @@ Dodaj [serwer Context7 MCP](https://github.com/upstash/context7), aby przeszuka�
 
 Jeśli założyłeś darmowe konto, możesz użyć klucza API i uzyskać wyższy limit stawek.
 
-```json title="sumocode.json" {7-9}
+```json title="opencode.json" {7-9}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "context7": {
       "type": "remote",
@@ -486,9 +486,9 @@ When you need to search docs, use `context7` tools.
 
 Dodaj serwer MCP [Grep by Vercel](https://grep.app), aby przeszukać fragmenty kodu w serwisie GitHub.
 
-```json title="sumocode.json" {4-7}
+```json title="opencode.json" {4-7}
 {
-  "$schema": "https://sumocode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "gh_grep": {
       "type": "remote",

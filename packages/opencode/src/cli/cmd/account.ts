@@ -15,7 +15,7 @@ const dim = (value: string) => UI.Style.TEXT_DIM + value + UI.Style.TEXT_NORMAL
 
 const activeSuffix = (isActive: boolean) => (isActive ? dim(" (active)") : "")
 
-export const defaultConsoleUrl = "https://console.sumocode.ai"
+export const defaultConsoleUrl = "https://console.opencode.ai"
 
 export const formatAccountLabel = (account: { email: string; url: string }, isActive: boolean) =>
   `${account.email} ${dim(account.url)}${activeSuffix(isActive)}`
@@ -180,7 +180,7 @@ export const LoginCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("url", {
-      describe: "服务器 URL",
+      describe: "server URL",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.login")(function* (args) {
@@ -195,7 +195,7 @@ export const LogoutCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("email", {
-      describe: "要登出的账户邮箱",
+      describe: "account email to log out from",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.logout")(function* (args) {
@@ -241,23 +241,23 @@ export const ConsoleCommand = cmd({
     yargs
       .command({
         ...LoginCommand,
-        describe: "登录到控制台",
+        describe: "log in to console",
       })
       .command({
         ...LogoutCommand,
-        describe: "从控制台登出",
+        describe: "log out from console",
       })
       .command({
         ...SwitchCommand,
-        describe: "切换当前组织",
+        describe: "switch active org",
       })
       .command({
         ...OrgsCommand,
-        describe: "列出组织",
+        describe: "list orgs",
       })
       .command({
         ...OpenCommand,
-        describe: "打开当前控制台账户",
+        describe: "open active console account",
       })
       .demandCommand(),
   async handler() {},

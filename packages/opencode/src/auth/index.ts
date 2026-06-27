@@ -1,9 +1,9 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
 import path from "path"
 import { Effect, Layer, Record, Result, Schema, Context } from "effect"
-import { NonNegativeInt } from "@sumocode-ai/core/schema"
-import { Global } from "@sumocode-ai/core/global"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { NonNegativeInt } from "@opencode-ai/core/schema"
+import { Global } from "@opencode-ai/core/global"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 
 export const OAUTH_DUMMY_KEY = "opencode-oauth-dummy-key"
 
@@ -56,9 +56,9 @@ export const layer = Layer.effect(
     const decode = Schema.decodeUnknownOption(Info)
 
     const all = Effect.fn("Auth.all")(function* () {
-      if (process.env.SUMOCODE_AUTH_CONTENT) {
+      if (process.env.OPENCODE_AUTH_CONTENT) {
         try {
-          return JSON.parse(process.env.SUMOCODE_AUTH_CONTENT)
+          return JSON.parse(process.env.OPENCODE_AUTH_CONTENT)
         } catch (err) {}
       }
 
@@ -94,6 +94,6 @@ export const layer = Layer.effect(
 
 export const defaultLayer = layer.pipe(Layer.provide(FSUtil.defaultLayer))
 
-export const node = LayerNode.make(layer, [FSUtil.node])
+export const node = LayerNode.make({ service: Service, layer: layer, deps: [FSUtil.node] })
 
 export * as Auth from "."

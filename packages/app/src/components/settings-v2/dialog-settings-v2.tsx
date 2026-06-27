@@ -1,7 +1,7 @@
 import { Component } from "solid-js"
-import { Dialog } from "@sumocode-ai/ui/v2/dialog-v2"
-import { TabsV2 } from "@sumocode-ai/ui/v2/tabs-v2"
-import { Icon } from "@sumocode-ai/ui/icon"
+import { Dialog } from "@opencode-ai/ui/v2/dialog-v2"
+import { TabsV2 } from "@opencode-ai/ui/v2/tabs-v2"
+import { Icon } from "@opencode-ai/ui/icon"
 import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
 import { SettingsGeneralV2 } from "./general"
@@ -11,7 +11,9 @@ import { SettingsModelsV2 } from "./models"
 import "./settings-v2.css"
 import { SettingsServersV2 } from "./servers"
 
-export const DialogSettings: Component = () => {
+export const DialogSettings: Component<{
+  sessionID?: string
+}> = (props) => {
   const language = useLanguage()
   const platform = usePlatform()
 
@@ -62,7 +64,7 @@ export const DialogSettings: Component = () => {
           </div>
         </TabsV2.List>
         <TabsV2.Content value="general" class="settings-v2-panel">
-          <SettingsGeneralV2 />
+          <SettingsGeneralV2 sessionID={props.sessionID} />
         </TabsV2.Content>
         <TabsV2.Content value="shortcuts" class="settings-v2-panel">
           <SettingsKeybinds v2 />

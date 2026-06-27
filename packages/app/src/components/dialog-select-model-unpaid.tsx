@@ -1,33 +1,36 @@
-import { Button } from "@sumocode-ai/ui/button"
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
-import { Dialog } from "@sumocode-ai/ui/dialog"
-import { List, type ListRef } from "@sumocode-ai/ui/list"
-import { ProviderIcon } from "@sumocode-ai/ui/provider-icon"
-import { Tag } from "@sumocode-ai/ui/tag"
-import { Tooltip } from "@sumocode-ai/ui/tooltip"
+import { Button } from "@opencode-ai/ui/button"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { Dialog } from "@opencode-ai/ui/dialog"
+import { List, type ListRef } from "@opencode-ai/ui/list"
+import { ProviderIcon } from "@opencode-ai/ui/provider-icon"
+import { Tag } from "@opencode-ai/ui/tag"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
 import { type Component, Show } from "solid-js"
 import { useLocal } from "@/context/local"
 import { popularProviders, useProviders } from "@/hooks/use-providers"
 import { ModelTooltip } from "./model-tooltip"
 import { useLanguage } from "@/context/language"
+import { decode64 } from "@/utils/base64"
 
 type ModelState = ReturnType<typeof useLocal>["model"]
 
 export const DialogSelectModelUnpaid: Component<{ model?: ModelState }> = (props) => {
-  const model = props.model ?? useLocal().model
+  const local = useLocal()
+  const model = props.model ?? local.model
   const dialog = useDialog()
-  const providers = useProviders()
+  const directory = () => decode64(local.slug())
+  const providers = useProviders(directory)
   const language = useLanguage()
 
   const connect = (provider: string) => {
     void import("./dialog-connect-provider").then((x) => {
-      dialog.show(() => <x.DialogConnectProvider provider={provider} />)
+      dialog.show(() => <x.DialogConnectProvider provider={provider} directory={directory} />)
     })
   }
 
   const all = () => {
     void import("./dialog-select-provider").then((x) => {
-      dialog.show(() => <x.DialogSelectProvider />)
+      dialog.show(() => <x.DialogSelectProvider directory={directory} />)
     })
   }
 

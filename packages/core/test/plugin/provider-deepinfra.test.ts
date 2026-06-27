@@ -1,11 +1,11 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect, mock } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { DeepInfraPlugin } from "@sumocode-ai/core/plugin/provider/deepinfra"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { DeepInfraPlugin } from "@opencode-ai/core/plugin/provider/deepinfra"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -46,7 +46,7 @@ describe("DeepInfraPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("deepinfra"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "@ai-sdk/deepinfra" },
         }),
@@ -64,7 +64,7 @@ describe("DeepInfraPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom-deepinfra"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "@ai-sdk/deepinfra" },
         }),
@@ -83,7 +83,7 @@ describe("DeepInfraPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("deepinfra"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "@ai-sdk/deepinfra" },
         }),
@@ -109,7 +109,7 @@ describe("DeepInfraPlugin", () => {
       yield* Effect.forEach(packages, (item) =>
         Effect.gen(function* () {
           const ignored = yield* aisdk.runSDK({
-            model: new ModelV2.Info({
+            model: ModelV2.Info.make({
               ...ModelV2.Info.empty(ProviderV2.ID.make("deepinfra"), ModelV2.ID.make("model")),
               api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "@ai-sdk/deepinfra" },
             }),
@@ -120,7 +120,7 @@ describe("DeepInfraPlugin", () => {
         }),
       )
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("deepinfra"), ModelV2.ID.make("model")),
           api: { id: ModelV2.ID.make("model"), type: "aisdk", package: "@ai-sdk/deepinfra" },
         }),
@@ -139,7 +139,7 @@ describe("DeepInfraPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const sdkEvent = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("deepinfra"), ModelV2.ID.make("meta-llama/Llama-3.3-70B-Instruct")),
           api: {
             id: ModelV2.ID.make("meta-llama/Llama-3.3-70B-Instruct"),

@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi, TuiPluginStatus } from "@sumocode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginStatus } from "@opencode-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { useTerminalDimensions } from "@opentui/solid"
 import { fileURLToPath } from "url"
@@ -10,12 +10,12 @@ const id = "internal:plugin-manager"
 
 function state(api: TuiPluginApi, item: TuiPluginStatus) {
   if (!item.enabled) {
-    return <span style={{ fg: api.theme.current.textMuted }}>已禁用</span>
+    return <span style={{ fg: api.theme.current.textMuted }}>disabled</span>
   }
 
   return (
     <span style={{ fg: item.active ? api.theme.current.success : api.theme.current.error }}>
-      {item.active ? "活跃" : "未活跃"}
+      {item.active ? "active" : "inactive"}
     </span>
   )
 }
@@ -27,8 +27,8 @@ function source(spec: string) {
 
 function meta(item: TuiPluginStatus, width: number) {
   if (item.source === "internal") {
-    if (width >= 120) return "内置插件"
-    return "内置"
+    if (width >= 120) return "Built-in plugin"
+    return "Built-in"
   }
   const next = source(item.spec)
   if (next) return next
@@ -41,23 +41,23 @@ function Install(props: { api: TuiPluginApi }) {
 
   useBindings(() => ({
     enabled: !busy(),
-    bindings: [{ key: "tab", desc: "切换安装范围", group: "Plugins", cmd: () => setGlobal((value) => !value) }],
+    bindings: [{ key: "tab", desc: "Toggle install scope", group: "Plugins", cmd: () => setGlobal((value) => !value) }],
   }))
 
   return (
     <props.api.ui.DialogPrompt
-      title="安装插件"
-      placeholder="npm 包名"
+      title="Install plugin"
+      placeholder="npm package name"
       busy={busy()}
-      busyText="正在安装插件..."
+      busyText="Installing plugin..."
       description={() => (
         <box flexDirection="row" gap={1}>
-          <text fg={props.api.theme.current.textMuted}>范围:</text>
+          <text fg={props.api.theme.current.textMuted}>scope:</text>
           <text fg={busy() ? props.api.theme.current.textMuted : props.api.theme.current.text}>
-            {global() ? "全局" : "本地"}
+            {global() ? "global" : "local"}
           </text>
           <Show when={!busy()}>
-            <text fg={props.api.theme.current.textMuted}>(tab 切换)</text>
+            <text fg={props.api.theme.current.textMuted}>(tab toggle)</text>
           </Show>
         </box>
       )}
@@ -67,7 +67,7 @@ function Install(props: { api: TuiPluginApi }) {
         if (!mod) {
           props.api.ui.toast({
             variant: "error",
-            message: "需要提供插件包名",
+            message: "Plugin package name is required",
           })
           return
         }
@@ -84,7 +84,7 @@ function Install(props: { api: TuiPluginApi }) {
               if (out.missing) {
                 props.api.ui.toast({
                   variant: "info",
-                  message: "请检查 npm registry/auth 设置后重试。",
+                  message: "Check npm registry/auth settings and try again.",
                 })
               }
               show(props.api)
@@ -93,12 +93,12 @@ function Install(props: { api: TuiPluginApi }) {
 
             props.api.ui.toast({
               variant: "success",
-              message: `已安装 ${mod}（${global() ? "全局" : "本地"}: ${out.dir})`,
+              message: `Installed ${mod} (${global() ? "global" : "local"}: ${out.dir})`,
             })
             if (!out.tui) {
               props.api.ui.toast({
                 variant: "info",
-                message: "此包没有可在本应用中加载的 TUI 目标。",
+                message: "Package has no TUI target to load in this app.",
               })
               show(props.api)
               return
@@ -108,7 +108,7 @@ function Install(props: { api: TuiPluginApi }) {
               if (!ok) {
                 props.api.ui.toast({
                   variant: "warning",
-                  message: "插件已安装，但运行时加载失败。请查看控制台/日志；重启 TUI 后重试。",
+                  message: "Installed plugin, but runtime load failed. See console/logs; restart TUI to retry.",
                 })
                 show(props.api)
                 return
@@ -116,7 +116,7 @@ function Install(props: { api: TuiPluginApi }) {
 
               props.api.ui.toast({
                 variant: "success",
-                message: `已在当前会话中加载 ${mod}。`,
+                message: `Loaded ${mod} in current session.`,
               })
               show(props.api)
             })
@@ -136,7 +136,7 @@ function row(api: TuiPluginApi, item: TuiPluginStatus, width: number): DialogSel
   return {
     title: item.id,
     value: item.id,
-    category: item.source === "internal" ? "内置" : "外部",
+    category: item.source === "internal" ? "Internal" : "External",
     description: meta(item, width),
     footer: state(api, item),
     disabled: item.id === id,
@@ -188,7 +188,7 @@ function View(props: { api: TuiPluginApi }) {
         if (!ok) {
           props.api.ui.toast({
             variant: "error",
-            message: `更新插件 ${item.id} 失败`,
+            message: `Failed to update plugin ${item.id}`,
           })
         }
         setList(props.api.plugins.list())
@@ -200,13 +200,13 @@ function View(props: { api: TuiPluginApi }) {
 
   return (
     <DialogSelect
-      title="插件"
+      title="Plugins"
       options={rows()}
       current={cur()}
       onMove={(item) => setCur(item.value)}
       actions={[
         {
-          title: "切换",
+          title: "toggle",
           command: "plugins.toggle",
           hidden: lock(),
           onTrigger: (item) => {
@@ -215,7 +215,7 @@ function View(props: { api: TuiPluginApi }) {
           },
         },
         {
-          title: "安装",
+          title: "install",
           command: "dialog.plugins.install",
           hidden: lock(),
           onTrigger: () => {
@@ -240,7 +240,7 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: "plugins.list",
-        title: "插件",
+        title: "Plugins",
         category: "System",
         namespace: "palette",
         run() {
@@ -249,7 +249,7 @@ const tui: TuiPlugin = async (api) => {
       },
       {
         name: "plugins.install",
-        title: "安装插件",
+        title: "Install plugin",
         category: "System",
         namespace: "palette",
         run() {

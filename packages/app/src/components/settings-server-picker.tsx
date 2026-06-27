@@ -1,6 +1,6 @@
-import { Button } from "@sumocode-ai/ui/button"
-import { DropdownMenu } from "@sumocode-ai/ui/dropdown-menu"
-import { Icon } from "@sumocode-ai/ui/icon"
+import { Button } from "@opencode-ai/ui/button"
+import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
+import { Icon } from "@opencode-ai/ui/icon"
 import { QueryClientProvider } from "@tanstack/solid-query"
 import { createMemo, For, type ParentProps, Show } from "solid-js"
 import { ServerHealthIndicator, ServerRow } from "@/components/server/server-row"
@@ -26,7 +26,7 @@ export function SettingsServerScope(props: ParentProps) {
 
 function SettingsServerDataProviders(props: ParentProps<{ server: ServerConnection.Any }>) {
   const global = useGlobal()
-  const serverCtx = () => global.createServerCtx(props.server)
+  const serverCtx = () => global.ensureServerCtx(props.server)
 
   return (
     <QueryClientProvider client={serverCtx().queryClient}>

@@ -1,7 +1,7 @@
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { Credential } from "@sumocode-ai/core/credential"
-import { Integration } from "@sumocode-ai/core/integration"
+import { Credential } from "@opencode-ai/core/credential"
+import { Integration } from "@opencode-ai/core/integration"
 import { testEffect } from "./lib/effect"
 
 const it = testEffect(Credential.defaultLayer)
@@ -14,7 +14,7 @@ describe("Credential", () => {
       const created = yield* credentials.create({
         integrationID,
         label: "Work",
-        value: new Credential.Key({ type: "key", key: "secret" }),
+        value: Credential.Key.make({ type: "key", key: "secret" }),
       })
 
       expect(yield* credentials.list(integrationID)).toEqual([created])
@@ -24,7 +24,7 @@ describe("Credential", () => {
       const replacement = yield* credentials.create({
         integrationID,
         label: "Replacement",
-        value: new Credential.Key({ type: "key", key: "replacement" }),
+        value: Credential.Key.make({ type: "key", key: "replacement" }),
       })
       expect(yield* credentials.list(integrationID)).toEqual([replacement])
 

@@ -40,7 +40,7 @@ export function DialogSkill(props: DialogSkillProps) {
       title: skill.name.padEnd(maxWidth),
       description: skill.description?.replace(/\s+/g, " ").trim(),
       value: skill.name,
-      category: "技能",
+      category: "Skills",
       onSelect: () => {
         props.onSelect(skill.name)
         dialog.clear()
@@ -50,8 +50,8 @@ export function DialogSkill(props: DialogSkillProps) {
 
   return (
     <DialogSelect
-      title="技能"
-      placeholder="搜索技能..."
+      title="Skills"
+      placeholder="Search skills..."
       options={options()}
       renderFilter={!showError()}
       locked={showError()}
@@ -59,7 +59,7 @@ export function DialogSkill(props: DialogSkillProps) {
         showError() ? (
           <box paddingLeft={4} paddingRight={4}>
             <text fg={theme.error} attributes={TextAttributes.BOLD}>
-              无法加载技能
+              Could not load skills
             </text>
             <text fg={theme.textMuted}>{errorMessage(loadError())}</text>
           </box>

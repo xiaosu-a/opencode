@@ -1,16 +1,16 @@
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { Database } from "@sumocode-ai/core/database/database"
-import { EventV2 } from "@sumocode-ai/core/event"
-import { PermissionV2 } from "@sumocode-ai/core/permission"
-import { Project } from "@sumocode-ai/core/project"
-import { ProjectTable } from "@sumocode-ai/core/project/sql"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { SessionTable } from "@sumocode-ai/core/session/sql"
-import { SessionTodo } from "@sumocode-ai/core/session/todo"
-import { TodoWriteTool } from "@sumocode-ai/core/tool/todowrite"
-import { ToolRegistry } from "@sumocode-ai/core/tool/registry"
+import { Database } from "@opencode-ai/core/database/database"
+import { EventV2 } from "@opencode-ai/core/event"
+import { PermissionV2 } from "@opencode-ai/core/permission"
+import { Project } from "@opencode-ai/core/project"
+import { ProjectTable } from "@opencode-ai/core/project/sql"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { SessionTable } from "@opencode-ai/core/session/sql"
+import { SessionTodo } from "@opencode-ai/core/session/todo"
+import { TodoWriteTool } from "@opencode-ai/core/tool/todowrite"
+import { ToolRegistry } from "@opencode-ai/core/tool/registry"
 import { testEffect } from "./lib/effect"
 import { toolIdentity, executeTool, settleTool, toolDefinitions } from "./lib/tool"
 
@@ -77,7 +77,9 @@ describe("TodoWriteTool", () => {
       yield* setup
       const registry = yield* ToolRegistry.Service
       const service = yield* SessionTodo.Service
-      const todoList = [{ content: "Implement slice", status: "in_progress", priority: "high" }]
+      const todoList: ReadonlyArray<SessionTodo.Info> = [
+        { content: "Implement slice", status: "in_progress", priority: "high" },
+      ]
 
       expect((yield* toolDefinitions(registry)).map((tool) => tool.name)).toEqual([TodoWriteTool.name])
       expect(yield* settleTool(registry, call(todoList))).toEqual({

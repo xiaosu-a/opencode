@@ -15,7 +15,7 @@ import type {
   SessionStatus,
   TextPart,
   Config as SdkConfig,
-} from "@sumocode-ai/sdk/v2"
+} from "@opencode-ai/sdk/v2"
 import type { CliRenderer, KeyEvent, RGBA, Renderable, SlotMode } from "@opentui/core"
 import type { Binding, Keymap } from "@opentui/keymap"
 import {
@@ -382,7 +382,7 @@ export type TuiState = {
     worktree: string
     directory: string
   }
-  readonly vcs: { branch?: string } | undefined
+  readonly vcs: { branch?: string; default_branch?: string } | undefined
   session: {
     count: () => number
     get: (sessionID: string) => Session | undefined

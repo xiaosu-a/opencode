@@ -1,11 +1,11 @@
 import { describe, expect } from "bun:test"
 import { Effect, Exit, Layer, Scope } from "effect"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { Global } from "@sumocode-ai/core/global"
-import { Reference } from "@sumocode-ai/core/reference"
-import { Repository } from "@sumocode-ai/core/repository"
-import { RepositoryCache } from "@sumocode-ai/core/repository-cache"
-import { EventV2 } from "@sumocode-ai/core/event"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Global } from "@opencode-ai/core/global"
+import { Reference } from "@opencode-ai/core/reference"
+import { Repository } from "@opencode-ai/core/repository"
+import { RepositoryCache } from "@opencode-ai/core/repository-cache"
+import { EventV2 } from "@opencode-ai/core/event"
 import { it } from "./lib/effect"
 
 const cache = Layer.mock(RepositoryCache.Service, {
@@ -18,7 +18,7 @@ describe("Reference", () => {
       const references = yield* Reference.Service
       const scope = yield* Scope.make()
       const path = AbsolutePath.make("/docs")
-      const source = new Reference.LocalSource({
+      const source = Reference.LocalSource.make({
         type: "local",
         path,
         description: "Use for API documentation",
@@ -44,7 +44,7 @@ describe("Reference", () => {
     Effect.gen(function* () {
       const references = yield* Reference.Service
       const repository = Repository.parseRemote("owner/repo")
-      const source = new Reference.GitSource({ type: "git", repository: "owner/repo", branch: "main" })
+      const source = Reference.GitSource.make({ type: "git", repository: "owner/repo", branch: "main" })
       yield* references.transform((editor) => editor.add("sdk", source))
 
       expect(yield* references.list()).toEqual([
@@ -67,7 +67,7 @@ describe("Reference", () => {
     Effect.gen(function* () {
       const references = yield* Reference.Service
       const repository = Repository.parseRemote("owner/repo")
-      const source = new Reference.GitSource({
+      const source = Reference.GitSource.make({
         type: "git",
         repository: "owner/repo",
         description: "Use for SDK implementation details",

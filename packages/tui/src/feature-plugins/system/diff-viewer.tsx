@@ -1,6 +1,6 @@
 /** @jsxImportSource @opentui/solid */
-import type { TuiPlugin, TuiPluginApi, TuiRouteCurrent } from "@sumocode-ai/plugin/tui"
-import type { SnapshotFileDiff, VcsFileDiff } from "@sumocode-ai/sdk/v2"
+import type { TuiPlugin, TuiPluginApi, TuiRouteCurrent } from "@opencode-ai/plugin/tui"
+import type { SnapshotFileDiff, VcsFileDiff } from "@opencode-ai/sdk/v2"
 import {
   TextAttributes,
   type BorderSides,
@@ -39,11 +39,11 @@ const ROUTE = "diff"
 const MIN_SPLIT_WIDTH = 100
 const FILE_TREE_WIDTH = 32
 const PLAIN_TEXT_FILETYPE = "opencode-plain-text"
-const WORKING_TREE_DIFF_CONTEXT_LINES = 12
+const VCS_DIFF_CONTEXT_LINES = 12
 const KV_SHOW_FILE_TREE = "diff_viewer_show_file_tree"
 const KV_SINGLE_PATCH = "diff_viewer_single_patch"
 const KV_VIEW = "diff_viewer_view"
-type DiffMode = "git" | "last-turn"
+type DiffMode = "git" | "branch" | "last-turn"
 type DiffViewerFocus = "patches" | "files"
 type DiffView = "split" | "unified"
 type SelectedHunk = { readonly fileIndex: number; readonly hunkIndex: number; readonly scrollTop: number }
@@ -82,6 +82,12 @@ function storedView(value: unknown): DiffView | undefined {
   if (value === "split" || value === "unified") return value
 }
 
+function diffSourceLabel(mode: DiffMode) {
+  if (mode === "last-turn") return "last turn"
+  if (mode === "branch") return "main branch"
+  return "working tree"
+}
+
 function DiffViewer(props: { api: TuiPluginApi }) {
   const dimensions = useTerminalDimensions()
   const themeState = useTheme()
@@ -117,7 +123,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     }
 
     const result = await props.api.client.vcs.diff(
-      { directory: input.directory, mode: "git", context: WORKING_TREE_DIFF_CONTEXT_LINES },
+      { directory: input.directory, mode: input.mode, context: VCS_DIFF_CONTEXT_LINES },
       { throwOnError: true },
     )
     return normalizeDiffs(result.data ?? [])
@@ -427,7 +433,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   const commands = [
     {
       name: "diff.close",
-      title: "关闭 diff 查看器",
+      title: "Close diff viewer",
       category: "VCS",
       run() {
         const returnRoute = params()?.returnRoute
@@ -441,7 +447,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.down",
-      title: "向下移动 diff 查看器",
+      title: "Move diff viewer down",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -455,7 +461,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.up",
-      title: "向上移动 diff 查看器",
+      title: "Move diff viewer up",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -469,7 +475,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.down",
-      title: "向下翻页 diff 查看器",
+      title: "Page diff viewer down",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -483,7 +489,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.up",
-      title: "向上翻页 diff 查看器",
+      title: "Page diff viewer up",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -497,7 +503,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle",
-      title: "切换 diff 查看器项",
+      title: "Toggle diff viewer item",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -508,7 +514,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand",
-      title: "展开 diff 查看器项",
+      title: "Expand diff viewer item",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -526,7 +532,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand_all",
-      title: "展开所有 diff 查看器文件夹",
+      title: "Expand all diff viewer folders",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -537,7 +543,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.collapse",
-      title: "折叠 diff 查看器项",
+      title: "Collapse diff viewer item",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -556,7 +562,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_hunk",
-      title: "跳转到下一个 diff hunk",
+      title: "Jump to next diff hunk",
       category: "VCS",
       run() {
         jumpRelativeHunk(1)
@@ -564,7 +570,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_hunk",
-      title: "跳转到上一个 diff hunk",
+      title: "Jump to previous diff hunk",
       category: "VCS",
       run() {
         jumpRelativeHunk(-1)
@@ -572,7 +578,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_file",
-      title: "跳转到下一个 diff 文件",
+      title: "Jump to next diff file",
       category: "VCS",
       run() {
         jumpRelativePatchFile(1)
@@ -580,7 +586,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_file",
-      title: "跳转到上一个 diff 文件",
+      title: "Jump to previous diff file",
       category: "VCS",
       run() {
         jumpRelativePatchFile(-1)
@@ -588,7 +594,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.mark_reviewed",
-      title: "切换选中 diff 文件的已审查状态",
+      title: "Toggle selected diff file reviewed",
       category: "VCS",
       run() {
         toggleSelectedFileReviewed()
@@ -596,7 +602,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_focus",
-      title: "切换 diff 查看器焦点",
+      title: "Switch diff viewer focus",
       category: "VCS",
       run() {
         if (!showFileTree()) return
@@ -609,7 +615,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle_file_tree",
-      title: "切换 diff 查看器文件树",
+      title: "Toggle diff viewer file tree",
       category: "VCS",
       run() {
         const next = !fileTreeEnabled()
@@ -620,7 +626,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.single_patch",
-      title: "切换单个 patch 视图",
+      title: "Toggle single patch view",
       category: "VCS",
       run() {
         setSelectedHunk(undefined)
@@ -647,7 +653,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_source",
-      title: "切换 diff 查看器来源",
+      title: "Switch diff viewer source",
       category: "VCS",
       run() {
         openSwitchDiffDialog()
@@ -655,7 +661,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle_view",
-      title: "切换 diff 查看器分屏或合并视图",
+      title: "Toggle diff viewer split or unified view",
       category: "VCS",
       run() {
         if (!splitAvailable()) return
@@ -667,7 +673,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.help",
-      title: "显示更多 diff 查看器快捷键",
+      title: "Show more diff viewer shortcuts",
       category: "VCS",
       run() {
         openHelpDialog()
@@ -675,23 +681,35 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
   ]
 
-  const switchDiffOptions = createMemo(() => [
-    {
-      title: "工作区",
-      value: "git" as const,
-      description: "显示当前 git 更改",
-    },
-    {
-      title: "上一轮",
-      value: "last-turn" as const,
-      description: "显示上一轮助手的更改",
-    },
-  ])
+  const switchDiffOptions = createMemo(() => {
+    const vcs = props.api.state.vcs
+    return [
+      {
+        title: "Working tree",
+        value: "git" as const,
+        description: "Show current git changes",
+      },
+      ...(vcs?.branch && vcs.default_branch && vcs.branch !== vcs.default_branch
+        ? [
+            {
+              title: "Main branch",
+              value: "branch" as const,
+              description: "Show changes compared to main branch",
+            },
+          ]
+        : []),
+      {
+        title: "Last turn",
+        value: "last-turn" as const,
+        description: "Show changes from the last assistant turn",
+      },
+    ]
+  })
 
   const openSwitchDiffDialog = () => {
     props.api.ui.dialog.replace(() => (
       <DialogSelect
-        title="切换来源"
+        title="Switch source"
         skipFilter={true}
         renderFilter={false}
         current={mode()}
@@ -719,11 +737,11 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   useBindings(() => ({
     commands,
     bindings: [
-      { key: "j,down", cmd: "diff.down", desc: "向下移动" },
-      { key: "k,up", cmd: "diff.up", desc: "向上移动" },
-      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "向下翻页" },
-      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "向上翻页" },
-      { key: "m", cmd: "diff.mark_reviewed", desc: "标记选中文件为已审查" },
+      { key: "j,down", cmd: "diff.down", desc: "Move diff viewer down" },
+      { key: "k,up", cmd: "diff.up", desc: "Move diff viewer up" },
+      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "Page diff viewer down" },
+      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "Page diff viewer up" },
+      { key: "m", cmd: "diff.mark_reviewed", desc: "Mark selected file reviewed" },
       ...props.api.tuiConfig.keybinds.gather(
         "diff",
         commands.map((command) => command.name),
@@ -735,11 +753,11 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     <box position="absolute" zIndex={2500} left={0} top={0} width={dimensions().width} height={dimensions().height}>
       <PanelGroup axis="y" width="100%" height="100%">
         <Panel border="none" flexShrink={0} padding={0} paddingLeft={1}>
-          <text fg={theme().text}>Diff 差异 </text>
-          <text fg={theme().textMuted}>{mode() === "last-turn" ? "上一轮" : "工作区"}</text>
+          <text fg={theme().text}>Diff </text>
+          <text fg={theme().textMuted}>{diffSourceLabel(mode())}</text>
           <box flexGrow={1} />
           <text fg={theme().textMuted}>
-            {files().length} 个文件
+            {files().length} {files().length === 1 ? "file" : "files"}
           </text>
         </Panel>
 
@@ -748,19 +766,19 @@ function DiffViewer(props: { api: TuiPluginApi }) {
             <Match when={diff.loading}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>正在加载 diff...</text>
+                <text fg={theme().textMuted}>Loading diff...</text>
               </box>
             </Match>
             <Match when={!diff.loading && files().length === 0}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>无差异！</text>
+                <text fg={theme().textMuted}>No diff!</text>
               </box>
             </Match>
             <Match when={!diff.loading && diff.error}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().error}>加载 diff 失败</text>
+                <text fg={theme().error}>Failed to load diff</text>
               </box>
             </Match>
             <Match when={!diff.loading}>
@@ -818,7 +836,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
                             <Separator axis="x" start={showFileTree() ? "edge" : undefined} />
                             <Show
                               when={entry.file.patch}
-                              fallback={<text fg={theme().textMuted}>此文件没有可用的 patch。</text>}
+                              fallback={<text fg={theme().textMuted}>No patch available for this file.</text>}
                             >
                               {(patch) => (
                                 <box border={patchLeftBorder()} borderColor={theme().border}>
@@ -866,56 +884,56 @@ function DiffViewer(props: { api: TuiPluginApi }) {
           <Show when={switchFocusShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>聚焦文件树</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>focus file tree</span>
               </text>
             )}
           </Show>
           <Show when={nextFileShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>下一个文件</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>next file</span>
               </text>
             )}
           </Show>
           <Show when={nextHunkShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>下一个 hunk</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>next hunk</span>
               </text>
             )}
           </Show>
           <Show when={previousHunkShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>上一个 hunk</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>previous hunk</span>
               </text>
             )}
           </Show>
           <Show when={previousFileShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>上一个文件</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>previous file</span>
               </text>
             )}
           </Show>
           <Show when={switchSourceShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>切换来源</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>switch source</span>
               </text>
             )}
           </Show>
           <Show when={markReviewedShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>标记已审查</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>mark reviewed</span>
               </text>
             )}
           </Show>
           <Show when={helpShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>全部</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>all</span>
               </text>
             )}
           </Show>
@@ -930,63 +948,63 @@ function DiffViewerHelpDialog() {
   const rows = [
     {
       shortcut: () => "q",
-      action: "关闭查看器",
-      description: "退出 diff 查看器",
+      action: "Close viewer",
+      description: "Quit the diff viewer",
     },
     {
       shortcut: useCommandShortcut("diff.switch_focus"),
-      action: "聚焦文件树",
-      description: "在文件树和 patch 面板之间切换键盘焦点",
+      action: "Focus file tree",
+      description: "Move keyboard focus between the file tree and patch pane",
     },
     {
       shortcut: useCommandShortcut("diff.next_hunk"),
-      action: "下一个 hunk",
-      description: "跳转到下一个 diff hunk",
+      action: "Next hunk",
+      description: "Jump to the next diff hunk",
     },
     {
       shortcut: useCommandShortcut("diff.previous_hunk"),
-      action: "上一个 hunk",
-      description: "跳转到上一个 diff hunk",
+      action: "Previous hunk",
+      description: "Jump to the previous diff hunk",
     },
     {
       shortcut: useCommandShortcut("diff.next_file"),
-      action: "下一个文件",
-      description: "按文件树顺序选择下一个已更改的文件",
+      action: "Next file",
+      description: "Select the next changed file in file-tree order",
     },
     {
       shortcut: useCommandShortcut("diff.previous_file"),
-      action: "上一个文件",
-      description: "按文件树顺序选择上一个已更改的文件",
+      action: "Previous file",
+      description: "Select the previous changed file in file-tree order",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_file_tree"),
-      action: "切换文件树",
-      description: "显示或隐藏文件树侧边栏",
+      action: "Toggle file tree",
+      description: "Show or hide the file tree sidebar",
     },
     {
       shortcut: useCommandShortcut("diff.single_patch"),
-      action: "切换 patch 模式",
-      description: "在单个选中的 patch 和所有 patch 之间切换",
+      action: "Toggle patches",
+      description: "Switch between one selected patch and all patches",
     },
     {
       shortcut: useCommandShortcut("diff.switch_source"),
-      action: "切换来源",
-      description: "选择工作区或上一轮的更改",
+      action: "Switch source",
+      description: "Choose working tree, main branch, or last-turn changes",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_view"),
-      action: "切换视图",
-      description: "在分屏和合并 diff 布局之间切换",
+      action: "Toggle view",
+      description: "Switch between split and unified diff layout",
     },
     {
       shortcut: useCommandShortcut("diff.expand_all"),
-      action: "展开所有文件夹",
-      description: "打开文件树中的所有文件夹",
+      action: "Expand all folders",
+      description: "Open every folder in the file tree",
     },
     {
       shortcut: useCommandShortcut("diff.mark_reviewed"),
-      action: "标记已审查",
-      description: "切换选中文件的已审查状态",
+      action: "Mark reviewed",
+      description: "Toggle reviewed state for the selected file",
     },
   ]
 
@@ -994,18 +1012,18 @@ function DiffViewerHelpDialog() {
     <box paddingLeft={2} paddingRight={2} paddingBottom={1} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Diff 快捷键
+          Diff shortcuts
         </text>
         <text fg={theme.textMuted}>esc</text>
       </box>
       <box flexDirection="row">
         <text fg={theme.textMuted} width={5} wrapMode="none">
-          按键
+          Key
         </text>
         <text fg={theme.textMuted} width={22} wrapMode="none">
-          操作
+          Action
         </text>
-        <text fg={theme.textMuted}>描述</text>
+        <text fg={theme.textMuted}>Description</text>
       </box>
       <For each={rows}>
         {(row) => (
@@ -1036,7 +1054,7 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: "diff.open",
-        title: "打开 diff 查看器",
+        title: "Open diff viewer",
         slashName: "diff",
         category: "VCS",
         namespace: "palette",

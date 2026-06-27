@@ -1,4 +1,4 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
 import { Plugin } from "../plugin"
 import { Format } from "../format"
 import { LSP } from "@/lsp/lsp"
@@ -62,15 +62,10 @@ export const defaultLayer: Layer.Layer<Service> = layer.pipe(
   ]),
 )
 
-export const node = LayerNode.make(layer, [
-  Config.node,
-  Format.node,
-  LSP.node,
-  Plugin.node,
-  Project.node,
-  ShareNext.node,
-  Snapshot.node,
-  Vcs.node,
-])
+export const node = LayerNode.make({
+  service: Service,
+  layer: layer,
+  deps: [Config.node, Format.node, LSP.node, Plugin.node, Project.node, ShareNext.node, Snapshot.node, Vcs.node],
+})
 
 export * as InstanceBootstrap from "./bootstrap"

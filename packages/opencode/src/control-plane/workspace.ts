@@ -1,29 +1,29 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
-import { httpClient } from "@sumocode-ai/core/effect/layer-node-platform"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { httpClient } from "@opencode-ai/core/effect/layer-node-platform"
 import { Context, Effect, FiberMap, Iterable, Layer, Schema, Stream } from "effect"
-import { serviceUse } from "@sumocode-ai/core/effect/service-use"
+import { serviceUse } from "@opencode-ai/core/effect/service-use"
 import { FetchHttpClient, HttpBody, HttpClient, HttpClientError, HttpClientRequest } from "effect/unstable/http"
-import { Database } from "@sumocode-ai/core/database/database"
+import { Database } from "@opencode-ai/core/database/database"
 import { asc } from "drizzle-orm"
 import { eq } from "drizzle-orm"
 import { inArray } from "drizzle-orm"
 import { Project } from "@/project/project"
 import { GlobalBus } from "@/bus/global"
 import { Auth } from "@/auth"
-import { EventV2 } from "@sumocode-ai/core/event"
+import { EventV2 } from "@opencode-ai/core/event"
 import { EventV2Bridge } from "@/event-v2-bridge"
-import { EventSequenceTable, EventTable } from "@sumocode-ai/core/event/sql"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { EventSequenceTable, EventTable } from "@opencode-ai/core/event/sql"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { RuntimeFlags } from "@/effect/runtime-flags"
-import { ProjectV2 } from "@sumocode-ai/core/project"
-import { Slug } from "@sumocode-ai/core/util/slug"
-import { WorkspaceTable } from "@sumocode-ai/core/control-plane/workspace.sql"
+import { ProjectV2 } from "@opencode-ai/core/project"
+import { Slug } from "@opencode-ai/core/util/slug"
+import { WorkspaceTable } from "@opencode-ai/core/control-plane/workspace.sql"
 import { getAdapter, registeredAdapters } from "./adapters"
 import { type Target, type WorkspaceInfo, WorkspaceInfo as WorkspaceInfoSchema } from "./types"
-import { WorkspaceV2 } from "@sumocode-ai/core/workspace"
+import { WorkspaceV2 } from "@opencode-ai/core/workspace"
 import { Session } from "@/session/session"
 import { SessionPrompt } from "@/session/prompt"
-import { SessionTable } from "@sumocode-ai/core/session/sql"
+import { SessionTable } from "@opencode-ai/core/session/sql"
 import { SessionID } from "@/session/schema"
 import { NotFoundError } from "@/storage/storage"
 import { errorData } from "@/util/error"
@@ -33,6 +33,7 @@ import { Vcs } from "@/project/vcs"
 import { InstanceStore } from "@/project/instance-store"
 import { InstanceBootstrap } from "@/project/bootstrap"
 import { WorkspaceAdapterRuntime } from "./workspace-adapter-runtime"
+import { WorkspaceEvent } from "@opencode-ai/schema/workspace-event"
 
 export const Info = Schema.Struct({
   ...WorkspaceInfoSchema.fields,
@@ -40,27 +41,10 @@ export const Info = Schema.Struct({
 }).annotate({ identifier: "Workspace" })
 export type Info = WorkspaceInfo & { timeUsed: number }
 
-export const ConnectionStatus = Schema.Struct({
-  workspaceID: WorkspaceV2.ID,
-  status: Schema.Literals(["connected", "connecting", "disconnected", "error"]),
-})
-export type ConnectionStatus = Schema.Schema.Type<typeof ConnectionStatus>
+export const ConnectionStatus = WorkspaceEvent.ConnectionStatus
+export type ConnectionStatus = WorkspaceEvent.ConnectionStatus
 
-export const Event = {
-  Ready: EventV2.define({
-    type: "workspace.ready",
-    schema: {
-      name: Schema.String,
-    },
-  }),
-  Failed: EventV2.define({
-    type: "workspace.failed",
-    schema: {
-      message: Schema.String,
-    },
-  }),
-  Status: EventV2.define({ type: "workspace.status", schema: ConnectionStatus.fields }),
-}
+export const Event = WorkspaceEvent
 
 function fromRow(row: typeof WorkspaceTable.$inferSelect): Info {
   return {
@@ -543,9 +527,9 @@ export const layer = Layer.effect(
         .pipe(Effect.orDie)
 
       const env = {
-        SUMOCODE_AUTH_CONTENT: JSON.stringify(yield* auth.all()),
-        SUMOCODE_WORKSPACE_ID: config.id,
-        SUMOCODE_EXPERIMENTAL_WORKSPACES: "true",
+        OPENCODE_AUTH_CONTENT: JSON.stringify(yield* auth.all()),
+        OPENCODE_WORKSPACE_ID: config.id,
+        OPENCODE_EXPERIMENTAL_WORKSPACES: "true",
         OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS,
         OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
         OTEL_RESOURCE_ATTRIBUTES: process.env.OTEL_RESOURCE_ATTRIBUTES,
@@ -974,16 +958,20 @@ function route(url: string | URL, path: string) {
   return next
 }
 
-export const node = LayerNode.make(layer, [
-  Auth.node,
-  Session.node,
-  SessionPrompt.node,
-  httpClient,
-  EventV2Bridge.node,
-  Vcs.node,
-  RuntimeFlags.node,
-  FSUtil.node,
-  Database.node,
-])
+export const node = LayerNode.make({
+  service: Service,
+  layer: layer,
+  deps: [
+    Auth.node,
+    Session.node,
+    SessionPrompt.node,
+    httpClient,
+    EventV2Bridge.node,
+    Vcs.node,
+    RuntimeFlags.node,
+    FSUtil.node,
+    Database.node,
+  ],
+})
 
 export * as Workspace from "./workspace"

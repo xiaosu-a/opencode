@@ -2,15 +2,15 @@ import * as InstanceState from "@/effect/instance-state"
 import { registerDisposer } from "@/effect/instance-registry"
 import { InstanceRef, WorkspaceRef } from "@/effect/instance-ref"
 import { Plugin } from "@/plugin"
-import { Pty } from "@sumocode-ai/core/pty"
-import { PtyProtocol } from "@sumocode-ai/core/pty/protocol"
-import { PtyID } from "@sumocode-ai/core/pty/schema"
-import { PtyTicket } from "@sumocode-ai/core/pty/ticket"
-import { LocationServiceMap } from "@sumocode-ai/core/location-layer"
-import { Location } from "@sumocode-ai/core/location"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { Shell } from "@sumocode-ai/core/shell"
-import { CorsConfig, isAllowedRequestOrigin, type CorsOptions } from "@sumocode-ai/server/cors"
+import { Pty } from "@opencode-ai/core/pty"
+import { PtyProtocol } from "@opencode-ai/core/pty/protocol"
+import { PtyID } from "@opencode-ai/core/pty/schema"
+import { PtyTicket } from "@opencode-ai/core/pty/ticket"
+import { LocationServiceMap, locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { Location } from "@opencode-ai/core/location"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Shell } from "@opencode-ai/core/shell"
+import { CorsConfig, isAllowedRequestOrigin, type CorsOptions } from "@opencode-ai/server/cors"
 import {
   PTY_CONNECT_TICKET_QUERY,
   PTY_CONNECT_TOKEN_HEADER,
@@ -43,7 +43,7 @@ export const ptyHandlers = HttpApiBuilder.group(InstanceHttpApi, "pty", (handler
     const tickets = yield* PtyTicket.Service
     const cors = yield* CorsConfig
     const plugin = yield* Plugin.Service
-    const locations = yield* LocationServiceMap
+    const locations = yield* LocationServiceMap.Service
     const unregister = registerDisposer((directory) =>
       Effect.runPromise(locations.invalidate(Location.Ref.make({ directory: AbsolutePath.make(directory) }))),
     )
@@ -158,13 +158,13 @@ export const ptyHandlers = HttpApiBuilder.group(InstanceHttpApi, "pty", (handler
       .handle("remove", remove)
       .handle("connectToken", connectToken)
   }),
-).pipe(Layer.provide(LocationServiceMap.layer))
+).pipe(Layer.provide(locationServiceMapLayer))
 
 export const ptyConnectHandlers = HttpApiBuilder.group(PtyConnectApi, "pty-connect", (handlers) =>
   Effect.gen(function* () {
     const tickets = yield* PtyTicket.Service
     const cors = yield* CorsConfig
-    const locations = yield* LocationServiceMap
+    const locations = yield* LocationServiceMap.Service
     const unregister = registerDisposer((directory) =>
       Effect.runPromise(locations.invalidate(Location.Ref.make({ directory: AbsolutePath.make(directory) }))),
     )
@@ -270,4 +270,4 @@ export const ptyConnectHandlers = HttpApiBuilder.group(PtyConnectApi, "pty-conne
       }),
     )
   }),
-).pipe(Layer.provide(LocationServiceMap.layer))
+).pipe(Layer.provide(locationServiceMapLayer))

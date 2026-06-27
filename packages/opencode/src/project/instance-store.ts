@@ -1,10 +1,10 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
 import { GlobalBus } from "@/bus/global"
-import { serviceUse } from "@sumocode-ai/core/effect/service-use"
+import { serviceUse } from "@opencode-ai/core/effect/service-use"
 import { WorkspaceContext } from "@/control-plane/workspace-context"
 import { InstanceRef } from "@/effect/instance-ref"
 import { disposeInstance as runDisposers } from "@/effect/instance-registry"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { Context, Deferred, Duration, Effect, Exit, Layer, Scope } from "effect"
 import { type InstanceContext } from "./instance-context"
 import { InstanceBootstrap } from "./bootstrap-service"
@@ -204,6 +204,10 @@ export const layer: Layer.Layer<Service, never, Project.Service | InstanceBootst
 
 export const defaultLayer = layer.pipe(Layer.provide(Project.defaultLayer))
 
-export const node = LayerNode.make(layer, [Project.node, InstanceBootstrapGraph.node])
+export const node = LayerNode.make({
+  service: Service,
+  layer: layer,
+  deps: [Project.node, InstanceBootstrapGraph.node],
+})
 
 export * as InstanceStore from "./instance-store"

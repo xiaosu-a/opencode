@@ -2,20 +2,20 @@ import type { Argv } from "yargs"
 import { UI } from "../ui"
 import * as prompts from "@clack/prompts"
 import { Installation } from "../../installation"
-import { InstallationVersion } from "@sumocode-ai/core/installation/version"
+import { InstallationVersion } from "@opencode-ai/core/installation/version"
 
 export const UpgradeCommand = {
   command: "upgrade [target]",
-  describe: "升级 SumoCode 到最新或指定版本",
+  describe: "upgrade opencode to the latest or a specific version",
   builder: (yargs: Argv) => {
     return yargs
       .positional("target", {
-        describe: "要升级到的版本，例如 '0.1.48' 或 'v0.1.48'",
+        describe: "version to upgrade to, for ex '0.1.48' or 'v0.1.48'",
         type: "string",
       })
       .option("method", {
         alias: "m",
-        describe: "使用的安装方式",
+        describe: "installation method to use",
         type: "string",
         choices: ["curl", "npm", "pnpm", "bun", "brew", "choco", "scoop"],
       })
@@ -28,7 +28,7 @@ export const UpgradeCommand = {
     const detectedMethod = await Installation.method()
     const method = (args.method as Installation.Method) ?? detectedMethod
     if (method === "unknown") {
-      prompts.log.error(`SumoCode 安装在 ${process.execPath}，可能由包管理器管理`)
+      prompts.log.error(`opencode is installed to ${process.execPath} and may be managed by a package manager`)
       const install = await prompts.select({
         message: "Install anyways?",
         options: [
@@ -46,7 +46,7 @@ export const UpgradeCommand = {
     const target = args.target ? args.target.replace(/^v/, "") : await Installation.latest()
 
     if (InstallationVersion === target) {
-      prompts.log.warn(`SumoCode 升级已跳过：${target} 已安装`)
+      prompts.log.warn(`opencode upgrade skipped: ${target} is already installed`)
       prompts.outro("Done")
       return
     }

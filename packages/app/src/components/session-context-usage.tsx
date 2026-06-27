@@ -1,13 +1,14 @@
 import { Match, Show, Switch, createMemo } from "solid-js"
-import { Tooltip, type TooltipProps } from "@sumocode-ai/ui/tooltip"
-import { ProgressCircle } from "@sumocode-ai/ui/progress-circle"
-import { Button } from "@sumocode-ai/ui/button"
+import { Tooltip, type TooltipProps } from "@opencode-ai/ui/tooltip"
+import { ProgressCircle } from "@opencode-ai/ui/progress-circle"
+import { Button } from "@opencode-ai/ui/button"
 
 import { useFile } from "@/context/file"
 import { useLayout } from "@/context/layout"
 import { useSync } from "@/context/sync"
 import { useLanguage } from "@/context/language"
 import { useProviders } from "@/hooks/use-providers"
+import { useSDK } from "@/context/sdk"
 import { getSessionContextMetrics } from "@/components/session/session-context-metrics"
 import { useSessionLayout } from "@/pages/session/session-layout"
 import { createSessionTabs } from "@/pages/session/helpers"
@@ -33,7 +34,8 @@ export function SessionContextUsage(props: SessionContextUsageProps) {
   const file = useFile()
   const layout = useLayout()
   const language = useLanguage()
-  const providers = useProviders()
+  const sdk = useSDK()
+  const providers = useProviders(() => sdk().directory)
   const { params, tabs, view } = useSessionLayout()
 
   const variant = createMemo(() => props.variant ?? "button")

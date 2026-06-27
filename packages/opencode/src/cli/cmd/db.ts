@@ -1,25 +1,25 @@
 import type { Argv } from "yargs"
 import { spawn } from "child_process"
-import { Database } from "@sumocode-ai/core/database/database"
+import { Database } from "@opencode-ai/core/database/database"
 import { Effect } from "effect"
 import { sql } from "drizzle-orm"
 import { effectCmd } from "../effect-cmd"
 
 const QueryCommand = effectCmd({
   command: "$0 [query]",
-  describe: "打开交互式 sqlite3 shell 或执行 SQL 查询",
+  describe: "open an interactive sqlite3 shell or run a query",
   instance: false,
   builder: (yargs: Argv) => {
     return yargs
       .positional("query", {
         type: "string",
-        describe: "要执行的 SQL 查询",
+        describe: "SQL query to execute",
       })
       .option("format", {
         type: "string",
         choices: ["json", "tsv"],
         default: "tsv",
-        describe: "输出格式",
+        describe: "Output format",
       })
   },
   handler: Effect.fn("Cli.db.query")(function* (args: { query?: string; format: string }) {
@@ -44,7 +44,7 @@ const QueryCommand = effectCmd({
 
 const PathCommand = effectCmd({
   command: "path",
-  describe: "打印数据库路径",
+  describe: "print the database path",
   instance: false,
   handler: Effect.fn("Cli.db.path")(function* () {
     console.log(Database.path())
@@ -53,7 +53,7 @@ const PathCommand = effectCmd({
 
 export const DbCommand = effectCmd({
   command: "db",
-  describe: "数据库工具",
+  describe: "database tools",
   instance: false,
   builder: (yargs: Argv) => {
     return yargs.command(QueryCommand).command(PathCommand).demandCommand()

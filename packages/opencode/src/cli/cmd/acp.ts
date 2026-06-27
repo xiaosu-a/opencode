@@ -2,16 +2,16 @@ import { Effect } from "effect"
 import { effectCmd } from "../effect-cmd"
 import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk"
 import { ServerAuth } from "@/server/auth"
-import { createOpencodeClient } from "@sumocode-ai/sdk/v2"
+import { createOpencodeClient } from "@opencode-ai/sdk/v2"
 import { withNetworkOptions, resolveNetworkOptions } from "../network"
 import { ACPProfile } from "@/acp/profile"
 
 export const AcpCommand = effectCmd({
   command: "acp",
-  describe: "启动 ACP (Agent Client Protocol) 服务器",
+  describe: "start ACP (Agent Client Protocol) server",
   builder: (yargs) => {
     return withNetworkOptions(yargs).option("cwd", {
-      describe: "工作目录",
+      describe: "working directory",
       type: "string",
       default: process.cwd(),
     })
@@ -20,7 +20,7 @@ export const AcpCommand = effectCmd({
     const { Server } = yield* Effect.promise(() => import("@/server/server"))
     const { ACP } = yield* Effect.promise(() => import("@/acp/agent"))
     ACPProfile.mark("cli.acp.handler")
-    process.env.SUMOCODE_CLIENT = "acp"
+    process.env.OPENCODE_CLIENT = "acp"
     const opts = yield* resolveNetworkOptions(args)
     const server = yield* Effect.promise(() => ACPProfile.measure("cli.acp.server.listen", () => Server.listen(opts)))
 

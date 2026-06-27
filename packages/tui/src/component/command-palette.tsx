@@ -69,11 +69,11 @@ export function CommandPaletteDialog() {
         .map((option) => ({
           ...option,
           value: `suggested:${option.value}`,
-          category: "建议",
+          category: "Suggested",
         })),
       ...options(),
     ]
   }
 
-  return <DialogSelect ref={(value) => (ref = value)} title="命令" options={list()} />
+  return <DialogSelect ref={(value) => (ref = value)} title="Commands" options={list()} />
 }

@@ -14,7 +14,7 @@ import "opentui-spinner/solid"
 import path from "path"
 import { fileURLToPath } from "url"
 import { useLocal } from "../../context/local"
-import { Flag } from "@sumocode-ai/core/flag/flag"
+import { Flag } from "@opencode-ai/core/flag/flag"
 import { tint, useTheme } from "../../context/theme"
 import { EmptyBorder, SplitBorder } from "../../ui/border"
 import { useTuiPaths, useTuiTerminalEnvironment } from "../../context/runtime"
@@ -37,7 +37,7 @@ import { usePromptStash } from "../../prompt/stash"
 import { DialogStash } from "../dialog-stash"
 import { type AutocompleteRef, Autocomplete } from "./autocomplete"
 import { useRenderer, useTerminalDimensions, type JSX } from "@opentui/solid"
-import type { AssistantMessage, FilePart, UserMessage } from "@sumocode-ai/sdk/v2"
+import type { AssistantMessage, FilePart, UserMessage } from "@opencode-ai/sdk/v2"
 import { Locale } from "../../util/locale"
 import { errorMessage } from "../../util/error"
 import { formatDuration } from "../../util/format"
@@ -51,7 +51,7 @@ import { createFadeIn } from "../../util/signal"
 import { DialogSkill } from "../dialog-skill"
 import { DialogWorkspaceUnavailable } from "../dialog-workspace-unavailable"
 import { useArgs } from "../../context/args"
-import { SUMOCODE_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useOpencodeKeymap } from "../../keymap"
+import { OPENCODE_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useOpencodeKeymap } from "../../keymap"
 import { useTuiConfig } from "../../config"
 import { usePromptWorkspace } from "./workspace"
 import { usePromptMove } from "./move"
@@ -212,7 +212,7 @@ export function Prompt(props: PromptProps) {
   function promptModelWarning() {
     toast.show({
       variant: "warning",
-      message: "连接提供商以发送提示",
+      message: "Connect a provider to send prompts",
       duration: 3000,
     })
     if (sync.data.provider.length === 0) {
@@ -330,7 +330,7 @@ export function Prompt(props: PromptProps) {
   const promptCommands = createMemo(() =>
     [
       {
-        title: "清空提示",
+        title: "Clear prompt",
         name: "prompt.clear",
         category: "Prompt",
         hidden: true,
@@ -340,7 +340,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "提交提示",
+        title: "Submit prompt",
         name: "prompt.submit",
         category: "Prompt",
         hidden: true,
@@ -353,7 +353,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "移除编辑器上下文",
+        title: "Remove editor context",
         name: "prompt.editor_context.clear",
         category: "Prompt",
         enabled: Boolean(editorContext()),
@@ -363,7 +363,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "粘贴",
+        title: "Paste",
         name: "prompt.paste",
         category: "Prompt",
         hidden: true,
@@ -385,7 +385,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "中断会话",
+        title: "Interrupt session",
         name: "session.interrupt",
         category: "Session",
         hidden: true,
@@ -416,7 +416,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "打开编辑器",
+        title: "Open editor",
         category: "Session",
         name: "prompt.editor",
         slashName: "editor",
@@ -508,7 +508,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "技能",
+        title: "Skills",
         name: "prompt.skills",
         category: "Prompt",
         slashName: "skills",
@@ -528,19 +528,19 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "切换工作区",
-        desc: "更改会话的工作区",
+        title: "Warp",
+        desc: "Change the workspace for the session",
         name: "workspace.set",
         category: "Session",
-        enabled: Flag.SUMOCODE_EXPERIMENTAL_WORKSPACES,
+        enabled: Flag.OPENCODE_EXPERIMENTAL_WORKSPACES,
         slashName: "warp",
         run: () => {
           workspace.open()
         },
       },
       {
-        title: "移动会话",
-        desc: "移动到其他项目目录",
+        title: "Move session",
+        desc: "Move to another project dir",
         name: "session.move",
         category: "Session",
         slashName: "move",
@@ -559,7 +559,7 @@ export function Prompt(props: PromptProps) {
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     bindings: tuiConfig.keybinds.gather("prompt.palette", [
       "prompt.submit",
       "prompt.editor",
@@ -730,7 +730,7 @@ export function Prompt(props: PromptProps) {
   const stashCommands = createMemo(() =>
     [
       {
-        title: "暂存提示",
+        title: "Stash prompt",
         name: "prompt.stash",
         category: "Prompt",
         enabled: !!store.prompt.input,
@@ -748,7 +748,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "恢复暂存",
+        title: "Stash pop",
         name: "prompt.stash.pop",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -764,7 +764,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "暂存列表",
+        title: "Stash list",
         name: "prompt.stash.list",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -823,7 +823,7 @@ export function Prompt(props: PromptProps) {
       bindings: [
         {
           key: "!",
-          desc: "Shell 模式",
+          desc: "Shell mode",
           group: "Prompt",
           cmd: () => {
             setStore("placeholder", randomIndex(shell().length))
@@ -838,7 +838,7 @@ export function Prompt(props: PromptProps) {
     return {
       target: inputTarget,
       enabled: inputTarget() !== undefined && store.mode === "shell",
-      bindings: [{ key: "escape", desc: "退出 Shell 模式", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "escape", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -849,7 +849,7 @@ export function Prompt(props: PromptProps) {
         cursorVersion()
         return inputTarget() !== undefined && store.mode === "shell" && input?.visualCursor.offset === 0
       })(),
-      bindings: [{ key: "backspace", desc: "退出 Shell 模式", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "backspace", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -863,7 +863,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.previous",
-          title: "上一个提示记录",
+          title: "Previous prompt history",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== 0) {
@@ -895,7 +895,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.next",
-          title: "下一个提示记录",
+          title: "Next prompt history",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== input.plainText.length) {
@@ -1007,7 +1007,7 @@ export function Prompt(props: PromptProps) {
         console.log("Creating a session failed:", res.error)
 
         toast.show({
-          message: "创建会话失败。请打开控制台查看详情。",
+          message: "Creating a session failed. Open console for more details.",
           variant: "error",
         })
 
@@ -1106,7 +1106,7 @@ export function Prompt(props: PromptProps) {
         )
         .catch((error) => {
           toast.show({
-            title: "发送提示失败",
+            title: "Failed to send prompt",
             message: errorMessage(error),
             variant: "error",
           })
@@ -1307,10 +1307,10 @@ export function Prompt(props: PromptProps) {
     if (store.mode === "shell") {
       if (!shell().length) return undefined
       const example = shell()[store.placeholder % shell().length]
-      return `运行命令... "${example}"`
+      return `Run a command... "${example}"`
     }
     if (!list().length) return undefined
-    return `随便问... "${list()[store.placeholder % list().length]}"`
+    return `Ask anything... "${list()[store.placeholder % list().length]}"`
   })
 
   const spinnerDef = createMemo(() => {
@@ -1525,7 +1525,7 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return
                         if (r.message.includes("exceeded your current quota") && r.message.includes("gemini"))
-                          return "gemini 现在太忙了"
+                          return "gemini is way too hot right now"
                         if (r.message.length > 80) return r.message.slice(0, 80) + "..."
                         return r.message
                       })
@@ -1549,7 +1549,7 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return
                         if (isTruncated()) {
-                          void DialogAlert.show(dialog, "重试错误", r.message)
+                          void DialogAlert.show(dialog, "Retry Error", r.message)
                         }
                       }
 
@@ -1557,9 +1557,9 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return ""
                         const baseMessage = message()
-                        const truncatedHint = isTruncated() ? " (点击展开)" : ""
+                        const truncatedHint = isTruncated() ? " (click to expand)" : ""
                         const duration = formatDuration(seconds())
-                        const retryInfo = ` [重试中${duration ? ` ${duration} 后` : ""} 第 ${r.attempt} 次尝试]`
+                        const retryInfo = ` [retrying ${duration ? `in ${duration} ` : ""}attempt #${r.attempt}]`
                         return baseMessage + truncatedHint + retryInfo
                       }
 
@@ -1576,7 +1576,7 @@ export function Prompt(props: PromptProps) {
                 <text fg={store.interrupt > 0 ? theme.primary : theme.text}>
                   esc{" "}
                   <span style={{ fg: store.interrupt > 0 ? theme.primary : theme.textMuted }}>
-                    {store.interrupt > 0 ? "再次按下中断" : "中断"}
+                    {store.interrupt > 0 ? "again to interrupt" : "interrupt"}
                   </span>
                 </text>
               </box>
@@ -1599,16 +1599,16 @@ export function Prompt(props: PromptProps) {
                       const item = label()
                       if (item.type === "new") {
                         if (workspace.creating())
-                          return `创建中 ${item.workspaceType}${".".repeat(workspace.creatingDots())}`
+                          return `Creating ${item.workspaceType}${".".repeat(workspace.creatingDots())}`
                         return (
                           <>
-                            工作区 <span style={{ fg: theme.textMuted }}>(新 ${item.workspaceType})</span>
+                            Workspace <span style={{ fg: theme.textMuted }}>(new {item.workspaceType})</span>
                           </>
                         )
                       }
                       return (
                         <>
-                          工作区 <span style={{ fg: theme.textMuted }}>{item.workspaceName}</span>
+                          Workspace <span style={{ fg: theme.textMuted }}>{item.workspaceName}</span>
                         </>
                       )
                     })()}
@@ -1628,7 +1628,7 @@ export function Prompt(props: PromptProps) {
             </Match>
             <Match when={move.pendingNew()}>
               <box paddingLeft={3}>
-                <text fg={theme.accent}>(新工作副本)</text>
+                <text fg={theme.accent}>(new working copy)</text>
               </box>
             </Match>
             <Match when={true}>{props.hint ?? <text />}</Match>
@@ -1652,17 +1652,17 @@ export function Prompt(props: PromptProps) {
                     </Match>
                     <Match when={true}>
                       <text fg={theme.text}>
-                        {agentShortcut()} <span style={{ fg: theme.textMuted }}>智能体</span>
+                        {agentShortcut()} <span style={{ fg: theme.textMuted }}>agents</span>
                       </text>
                     </Match>
                   </Switch>
                   <text fg={theme.text}>
-                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>命令</span>
+                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>commands</span>
                   </text>
                 </Match>
                 <Match when={store.mode === "shell"}>
                   <text fg={theme.text}>
-                    esc <span style={{ fg: theme.textMuted }}>退出 Shell 模式</span>
+                    esc <span style={{ fg: theme.textMuted }}>exit shell mode</span>
                   </text>
                 </Match>
               </Switch>

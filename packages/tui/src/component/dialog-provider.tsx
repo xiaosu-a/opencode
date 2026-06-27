@@ -8,7 +8,7 @@ import { DialogPrompt } from "../ui/dialog-prompt"
 import { Link } from "../ui/link"
 import { useTheme } from "../context/theme"
 import { TextAttributes } from "@opentui/core"
-import type { ProviderAuthAuthorization, ProviderAuthMethod } from "@sumocode-ai/sdk/v2"
+import type { ProviderAuthAuthorization, ProviderAuthMethod } from "@opencode-ai/sdk/v2"
 import { DialogModel } from "./dialog-model"
 import { useToast } from "../ui/toast"
 import { isConsoleManagedProvider } from "../util/provider-origin"
@@ -59,20 +59,20 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
         value: provider.id,
         providerID: provider.id,
         description: {
-          opencode: "(推荐)",
-          anthropic: "(API 密钥)",
-          openai: "(ChatGPT Plus/Pro 或 API 密钥)",
-          "opencode-go": "适合所有人的低价订阅",
+          opencode: "(Recommended)",
+          anthropic: "(API key)",
+          openai: "(ChatGPT Plus/Pro or API key)",
+          "opencode-go": "Low cost subscription for everyone",
         }[provider.id],
-        category: provider.id in PROVIDER_PRIORITY ? "热门" : "提供商",
+        category: provider.id in PROVIDER_PRIORITY ? "Popular" : "Providers",
       })),
     ),
     {
       type: "custom",
-      title: "其他",
+      title: "Other",
       value: CUSTOM_PROVIDER_OPTION_VALUE,
-      description: "自定义提供商",
-      category: "提供商",
+      description: "Custom provider",
+      category: "Providers",
     },
   ]
 }
@@ -92,11 +92,11 @@ export function createDialogProviderOptions() {
   const onboarded = useConnected()
 
   async function promptCustomProviderID(): Promise<string | undefined> {
-    const value = await DialogPrompt.show(dialog, "其他", {
-      placeholder: "提供商 ID",
+    const value = await DialogPrompt.show(dialog, "Other", {
+      placeholder: "Provider id",
       description: () => (
         <text fg={theme.textMuted}>
-          这仅保存凭据。请在 sumocode.json 中配置提供商以使用它。
+          This only stores a credential. Configure the provider in opencode.json to use it.
         </text>
       ),
     })
@@ -108,7 +108,7 @@ export function createDialogProviderOptions() {
     toast.show({
       variant: "error",
       message:
-        "提供商 ID 必须以小写字母或数字开头，只能使用小写字母、数字、连字符和下划线",
+        "Provider ids must start with a lowercase letter or number and only use lowercase letters, numbers, hyphens, and underscores",
     })
     return promptCustomProviderID()
   }
@@ -157,7 +157,7 @@ export function createDialogProviderOptions() {
                 dialog.replace(
                   () => (
                     <DialogSelect
-                      title="选择认证方式"
+                      title="Select auth method"
                       options={methods.map((x, index) => ({
                         title: x.label,
                         value: index,
@@ -227,7 +227,7 @@ export function createDialogProviderOptions() {
 
 export function DialogProvider() {
   const options = createDialogProviderOptions()
-  return <DialogSelect title="连接提供商" options={options()} />
+  return <DialogSelect title="Connect a provider" options={options()} />
 }
 
 interface AutoMethodProps {
@@ -248,14 +248,14 @@ function AutoMethod(props: AutoMethodProps) {
     bindings: [
       {
         key: "c",
-        desc: "复制提供商代码",
+        desc: "Copy provider code",
         group: "Dialog",
         cmd: () => {
           const code =
             props.authorization.instructions.match(/[A-Z0-9]{4}-[A-Z0-9]{4,5}/)?.[0] ?? props.authorization.url
           clipboard
             .write?.(code)
-            .then(() => toast.show({ message: "已复制到剪贴板", variant: "info" }))
+            .then(() => toast.show({ message: "Copied to clipboard", variant: "info" }))
             .catch(toast.error)
         },
       },
@@ -272,7 +272,7 @@ function AutoMethod(props: AutoMethodProps) {
         variant: "error",
         message:
           "name" in result.error && result.error.name === "ProviderAuthOauthCallbackFailed"
-            ? "OAuth 授权失败。请重试 /connect。"
+            ? "OAuth authorization failed. Try /connect again."
             : JSON.stringify(result.error),
       })
       dialog.clear()
@@ -297,9 +297,9 @@ function AutoMethod(props: AutoMethodProps) {
         <Link href={props.authorization.url} fg={theme.primary} />
         <text fg={theme.textMuted}>{props.authorization.instructions}</text>
       </box>
-      <text fg={theme.textMuted}>等待授权中...</text>
+      <text fg={theme.textMuted}>Waiting for authorization...</text>
       <text fg={theme.text}>
-        c <span style={{ fg: theme.textMuted }}>复制</span>
+        c <span style={{ fg: theme.textMuted }}>copy</span>
       </text>
     </box>
   )
@@ -321,7 +321,7 @@ function CodeMethod(props: CodeMethodProps) {
   return (
     <DialogPrompt
       title={props.title}
-      placeholder="授权码"
+      placeholder="Authorization code"
       onConfirm={async (value) => {
         const { error } = await sdk.client.provider.oauth.callback({
           providerID: props.providerID,
@@ -341,7 +341,7 @@ function CodeMethod(props: CodeMethodProps) {
           <text fg={theme.textMuted}>{props.authorization.instructions}</text>
           <Link href={props.authorization.url} fg={theme.primary} />
           <Show when={error()}>
-            <text fg={theme.error}>无效的验证码</text>
+            <text fg={theme.error}>Invalid code</text>
           </Show>
         </box>
       )}
@@ -365,26 +365,28 @@ function ApiMethod(props: ApiMethodProps) {
   return (
     <DialogPrompt
       title={props.title}
-      placeholder="API 密钥"
+      placeholder="API key"
       description={
         {
           opencode: (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                SumoCode Zen 让你通过单个 API 密钥以最低价格访问所有最佳编码模型。
+                OpenCode Zen gives you access to all the best coding models at the cheapest prices with a single API
+                key.
               </text>
               <text fg={theme.text}>
-                前往 <span style={{ fg: theme.primary }}>https://sumocode.ai/zen</span> 获取密钥
+                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/zen</span> to get a key
               </text>
             </box>
           ),
           "opencode-go": (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                SumoCode Go 是每月 10 美元的订阅，提供对热门开源编码模型的可靠访问和慷慨的使用额度。
+                OpenCode Go is a $10 per month subscription that provides reliable access to popular open coding models
+                with generous usage limits.
               </text>
               <text fg={theme.text}>
-                前往 <span style={{ fg: theme.primary }}>https://sumocode.ai/go</span> 并启用 SumoCode Go
+                Go to <span style={{ fg: theme.primary }}>https://opencode.ai/go</span> and enable OpenCode Go
               </text>
             </box>
           ),
@@ -405,7 +407,7 @@ function ApiMethod(props: ApiMethodProps) {
         if (props.custom && !sync.data.provider_next.all.some((provider) => provider.id === props.providerID)) {
           toast.show({
             variant: "info",
-            message: `已保存 ${props.providerID} 的凭据。请在 sumocode.json 中配置以使用它。`,
+            message: `Saved credential for ${props.providerID}. Configure it in opencode.json to use it.`,
           })
           dialog.clear()
           return

@@ -1,10 +1,10 @@
-import { FileSystem } from "@sumocode-ai/core/filesystem"
-import { RelativePath } from "@sumocode-ai/core/schema"
+import { FileSystem } from "@opencode-ai/core/filesystem"
+import { RelativePath } from "@opencode-ai/core/schema"
 import { Effect } from "effect"
 import { HttpServerResponse } from "effect/unstable/http"
 import { HttpApiBuilder } from "effect/unstable/httpapi"
 import { Api } from "../api"
-import { response } from "../groups/location"
+import { response } from "../location"
 
 export const FileSystemHandler = HttpApiBuilder.group(Api, "server.fs", (handlers) =>
   Effect.gen(function* () {

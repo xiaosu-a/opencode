@@ -1,6 +1,6 @@
 export * as GlobTool from "./glob"
 
-import { ToolFailure } from "@sumocode-ai/llm"
+import { ToolFailure } from "@opencode-ai/llm"
 import { Effect, Layer, Schema } from "effect"
 import path from "path"
 import { FileSystem } from "../filesystem"
@@ -79,12 +79,11 @@ export const layer = Layer.effectDiscard(
                 })
                 .pipe(
                   Effect.map((result) =>
-                    result.map(
-                      (entry) =>
-                        new FileSystem.Entry({
-                          ...entry,
-                          path: RelativePath.make(path.relative(location.directory, path.resolve(cwd, entry.path))),
-                        }),
+                    result.map((entry) =>
+                      FileSystem.Entry.make({
+                        ...entry,
+                        path: RelativePath.make(path.relative(location.directory, path.resolve(cwd, entry.path))),
+                      }),
                     ),
                   ),
                 )

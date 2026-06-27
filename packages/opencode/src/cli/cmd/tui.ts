@@ -4,18 +4,18 @@ import { type rpc } from "../tui/worker"
 import path from "path"
 import { fileURLToPath } from "url"
 import { UI } from "@/cli/ui"
-import { errorMessage } from "@sumocode-ai/tui/util/error"
+import { errorMessage } from "@opencode-ai/tui/util/error"
 import { withTimeout } from "@/util/timeout"
 import { withNetworkOptions, resolveNetworkOptionsNoConfig } from "@/cli/network"
 import { Filesystem } from "@/util/filesystem"
-import type { GlobalEvent } from "@sumocode-ai/sdk/v2"
-import type { EventSource } from "@sumocode-ai/tui/context/sdk"
+import type { GlobalEvent } from "@opencode-ai/sdk/v2"
+import type { EventSource } from "@opencode-ai/tui/context/sdk"
 import { writeHeapSnapshot } from "v8"
 import { validateSession } from "../tui/validate-session"
-import { win32InstallCtrlCGuard } from "@sumocode-ai/tui/terminal-win32"
+import { win32InstallCtrlCGuard } from "@opencode-ai/tui/terminal-win32"
 
 declare global {
-  const SUMOCODE_WORKER_PATH: string
+  const OPENCODE_WORKER_PATH: string
 }
 
 type RpcClient = ReturnType<typeof Rpc.client<typeof rpc>>
@@ -49,7 +49,7 @@ function createEventSource(client: RpcClient): EventSource {
 }
 
 async function target() {
-  if (typeof SUMOCODE_WORKER_PATH !== "undefined") return SUMOCODE_WORKER_PATH
+  if (typeof OPENCODE_WORKER_PATH !== "undefined") return OPENCODE_WORKER_PATH
   const dist = new URL("./cli/tui/worker.js", import.meta.url)
   if (await Filesystem.exists(fileURLToPath(dist))) return dist
   return new URL("../tui/worker.ts", import.meta.url)
@@ -70,43 +70,43 @@ export function resolveThreadDirectory(project?: string, envPWD = process.env.PW
 
 export const TuiThreadCommand = cmd({
   command: "$0 [project]",
-  describe: "启动 SumoCode TUI 界面",
+  describe: "start opencode tui",
   builder: (yargs) =>
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "项目路径",
+        describe: "path to start opencode in",
       })
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "使用的模型，格式为 provider/model",
+        describe: "model to use in the format of provider/model",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "继续上一次会话",
+        describe: "continue the last session",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "要继续的会话 ID",
+        describe: "session id to continue",
       })
       .option("fork", {
         type: "boolean",
-        describe: "继续时创建会话分支（与 --continue 或 --session 配合使用）",
+        describe: "fork the session when continuing (use with --continue or --session)",
       })
       .option("prompt", {
         type: "string",
-        describe: "使用的提示词",
+        describe: "prompt to use",
       })
       .option("agent", {
         type: "string",
-        describe: "使用的 agent",
+        describe: "agent to use",
       })
       .option("mini", {
         type: "boolean",
-        describe: "启动最小化交互界面",
+        describe: "start the minimal interactive interface",
         default: false,
       })
       .option("replay", {
@@ -115,11 +115,11 @@ export const TuiThreadCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "恢复时和调整大小后禁用 mini 会话历史回放",
+        describe: "disable mini session history replay on resume and after resize",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "mini 回放最多显示最近 N 条消息",
+        describe: "cap visible mini replay to the newest N messages",
       })
       .option("demo", {
         type: "boolean",
@@ -226,7 +226,7 @@ export const TuiThreadCommand = cmd({
             events: undefined,
           }
         : {
-            url: "http://sumocode.internal",
+            url: "http://opencode.internal",
             fetch: createWorkerFetch(client),
             events: createEventSource(client),
           }

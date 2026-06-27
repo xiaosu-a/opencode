@@ -1,13 +1,13 @@
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { Credential } from "@sumocode-ai/core/credential"
-import { Integration } from "@sumocode-ai/core/integration"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { OpencodePlugin } from "@sumocode-ai/core/plugin/provider/opencode"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { Credential } from "@opencode-ai/core/credential"
+import { Integration } from "@opencode-ai/core/integration"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { OpencodePlugin } from "@opencode-ai/core/plugin/provider/opencode"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -23,6 +23,20 @@ const addPlugin = Effect.fn(function* () {
 function required<T>(value: T | undefined): T {
   if (value === undefined) throw new Error("Expected value")
   return value
+}
+
+function eventually<A>(
+  effect: Effect.Effect<A>,
+  predicate: (value: A) => boolean,
+  remaining = 1000,
+): Effect.Effect<A, Error> {
+  return Effect.gen(function* () {
+    const value = yield* effect
+    if (predicate(value)) return value
+    if (remaining === 0) return yield* Effect.fail(new Error("Timed out waiting for value"))
+    yield* Effect.promise(() => Bun.sleep(1))
+    return yield* eventually(effect, predicate, remaining - 1)
+  })
 }
 
 function withEnv<A, E, R>(vars: Record<string, string | undefined>, effect: () => Effect.Effect<A, E, R>) {
@@ -56,22 +70,25 @@ describe("OpencodePlugin", () => {
         {
           id: Integration.MethodID.make("device"),
           type: "oauth",
-          label: "SumoCode Console account",
+          label: "OpenCode Console account",
         },
         { type: "key", label: "API key (service account)" },
       ])
     }),
   )
 
-  it.live("loads providers and models from the connected SumoCode server", () =>
+  it.live("loads providers and models from the connected OpenCode server", () =>
     Effect.acquireUseRelease(
       Effect.sync(() => {
         const authorization: Array<string | null> = []
+        const gate = Promise.withResolvers<void>()
         return {
           authorization,
+          release: gate.resolve,
           server: Bun.serve({
             port: 0,
-            fetch: (request) => {
+            fetch: async (request) => {
+              await gate.promise
               authorization.push(request.headers.get("authorization"))
               const origin = new URL(request.url).origin
               return Response.json({
@@ -110,7 +127,7 @@ describe("OpencodePlugin", () => {
           }),
         }
       }),
-      ({ authorization, server }) =>
+      ({ authorization, release, server }) =>
         Effect.gen(function* () {
           const credentials = yield* Credential.Service
           const catalog = yield* Catalog.Service
@@ -120,7 +137,7 @@ describe("OpencodePlugin", () => {
           })
           yield* credentials.create({
             integrationID: Integration.ID.make("opencode"),
-            value: new Credential.Key({
+            value: Credential.Key.make({
               type: "key",
               key: "secret",
               metadata: { server: server.url.origin },
@@ -128,8 +145,15 @@ describe("OpencodePlugin", () => {
           })
 
           yield* addPlugin()
+          expect(authorization).toEqual([])
+          release()
 
-          const provider = required(yield* catalog.provider.get(ProviderV2.ID.make("remote")))
+          const provider = required(
+            yield* eventually(
+              catalog.provider.get(ProviderV2.ID.make("remote")),
+              (item) => item?.integrationID === Integration.ID.make("opencode"),
+            ),
+          )
           expect(provider).toMatchObject({
             name: "Remote",
             integrationID: "opencode",
@@ -150,21 +174,18 @@ describe("OpencodePlugin", () => {
             cost: [{ input: 1, output: 2, cache: { read: 0.1, write: 0 } }],
             limit: { context: 1000, output: 100 },
           })
-          expect(model.request).toMatchObject({ body: { custom: "value" }, generation: { temperature: 0.5 } })
-          expect(model.request.body).toEqual({ custom: "value" })
+          expect(model.request.body).toEqual({ custom: "value", temperature: 0.5 })
           expect(model.variants).toEqual([
             {
               id: ModelV2.VariantID.make("high"),
               headers: {},
-              body: {},
-              generation: { temperature: 0.2 },
-              options: {},
+              body: { temperature: 0.2 },
             },
           ])
           expect(
             required(yield* catalog.model.get(ProviderV2.ID.make("remote"), ModelV2.ID.make("disabled"))).enabled,
           ).toBe(false)
-          expect(yield* catalog.model.get(ProviderV2.ID.make("remote"), ModelV2.ID.make("stale"))).toBeUndefined()
+          expect(yield* catalog.model.get(ProviderV2.ID.make("remote"), ModelV2.ID.make("stale"))).toBeDefined()
           expect(authorization).toContain("Bearer secret")
         }),
       ({ server }) => Effect.promise(() => server.stop(true)),
@@ -172,15 +193,15 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("uses a public key and disables paid models without credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
             api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
             cost: cost(1),
@@ -198,15 +219,15 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("keeps free models without credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("free")),
             api: { id: ModelV2.ID.make("free"), type: "aisdk", package: "test-provider" },
             cost: cost(0),
@@ -224,15 +245,15 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("treats output-only cost as free without credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("output-only")),
             api: { id: ModelV2.ID.make("output-only"), type: "aisdk", package: "test-provider" },
             cost: cost(0, 1),
@@ -251,16 +272,16 @@ describe("OpencodePlugin", () => {
     ),
   )
 
-  it.effect("uses SUMOCODE_API_KEY as credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: "secret" }, () =>
+  it.effect("uses OPENCODE_API_KEY as credentials", () =>
+    withEnv({ OPENCODE_API_KEY: "secret" }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
             api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
             cost: cost(1),
@@ -278,22 +299,22 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("uses configured provider env vars as credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined, CUSTOM_SUMOCODE_API_KEY: "secret" }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined, CUSTOM_OPENCODE_API_KEY: "secret" }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         const integrations = yield* Integration.Service
         yield* integrations.transform((editor) => {
           editor.method.update({
             integrationID: Integration.ID.make("opencode"),
-            method: { type: "env", names: ["CUSTOM_SUMOCODE_API_KEY"] },
+            method: { type: "env", names: ["CUSTOM_OPENCODE_API_KEY"] },
           })
         })
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
             api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
             cost: cost(1),
@@ -311,11 +332,11 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("uses configured apiKey as credentials", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.opencode),
             api: { type: "aisdk", package: "test-provider" },
             request: {
@@ -323,7 +344,7 @@ describe("OpencodePlugin", () => {
               body: { apiKey: "configured" },
             },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
             api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
             cost: cost(1),
@@ -343,15 +364,15 @@ describe("OpencodePlugin", () => {
   )
 
   it.effect("ignores non-opencode providers and models", () =>
-    withEnv({ SUMOCODE_API_KEY: undefined }, () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const provider = new ProviderV2.Info({
+          const provider = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.openai),
             api: { type: "aisdk", package: "test-provider" },
           })
-          const model = new ModelV2.Info({
+          const model = ModelV2.Info.make({
             ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
             api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
             cost: cost(1),

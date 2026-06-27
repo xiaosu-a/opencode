@@ -2,7 +2,7 @@ import { useDialog } from "../ui/dialog"
 import { DialogSelect } from "../ui/dialog-select"
 import { useRoute } from "../context/route"
 import { useSync } from "../context/sync"
-import { createMemo, createResource, createSignal, onMount } from "solid-js"
+import { createMemo, createResource, createSignal, onCleanup, onMount } from "solid-js"
 import path from "path"
 import { Locale } from "../util/locale"
 import { useProject } from "../context/project"
@@ -17,6 +17,30 @@ import { Spinner } from "./spinner"
 import { errorMessage } from "../util/error"
 import { DialogSessionDeleteFailed } from "./dialog-session-delete-failed"
 import { useCommandShortcut } from "../keymap"
+import { useEvent } from "../context/event"
+
+type SessionListFilter = { scope?: "project"; path?: string }
+
+export function createDialogSessionListQuery(input: { search?: string; filter: SessionListFilter }) {
+  const search = input.search?.trim()
+  return {
+    roots: true,
+    limit: search ? 30 : 100,
+    ...(search ? { search } : {}),
+    ...input.filter,
+  }
+}
+
+export function loadDialogSessionList<T>(input: {
+  search?: string
+  filter: SessionListFilter
+  list: (query: ReturnType<typeof createDialogSessionListQuery>) => Promise<{ data?: T[] }>
+}) {
+  return input.list(createDialogSessionListQuery(input)).then(
+    (result) => result.data,
+    () => undefined,
+  )
+}
 
 export function DialogSessionList() {
   const dialog = useDialog()
@@ -25,25 +49,54 @@ export function DialogSessionList() {
   const project = useProject()
   const { theme } = useTheme()
   const sdk = useSDK()
+  const event = useEvent()
   const local = useLocal()
   const toast = useToast()
   const [toDelete, setToDelete] = createSignal<string>()
+  const [deleted, setDeleted] = createSignal(new Set<string>())
   const [search, setSearch] = createDebouncedSignal("", 150)
   const deleteHint = useCommandShortcut("session.delete")
   const quickSwitch1 = useCommandShortcut("session.quick_switch.1")
   const quickSwitch9 = useCommandShortcut("session.quick_switch.9")
 
+  const [browseResults, { refetch: refetchBrowse }] = createResource(
+    () => sync.session.query(),
+    (filter) => loadDialogSessionList({ filter, list: (query) => sdk.client.session.list(query) }),
+  )
   const [searchResults, { refetch }] = createResource(
     () => ({ query: search(), filter: sync.session.query() }),
-    async (input) => {
+    (input) => {
       if (!input.query) return undefined
-      const result = await sdk.client.session.list({ search: input.query, limit: 30, ...input.filter })
-      return result.data ?? []
+      return loadDialogSessionList({
+        search: input.query,
+        filter: input.filter,
+        list: (query) => sdk.client.session.list(query),
+      })
     },
   )
 
   const currentSessionID = createMemo(() => (route.data.type === "session" ? route.data.sessionID : undefined))
-  const sessions = createMemo(() => searchResults() ?? sync.data.session)
+  const sessions = createMemo(() => {
+    const result = searchResults() ?? browseResults() ?? sync.data.session
+    const synced = new Map(sync.data.session.map((session) => [session.id, session]))
+    const ids = new Set(result.map((session) => session.id))
+    const extra = [currentSessionID(), ...local.session.pinned()].flatMap((id) => {
+      if (!id || ids.has(id)) return []
+      const session = synced.get(id)
+      if (session) ids.add(id)
+      return session ? [session] : []
+    })
+    const query = search().trim().toLowerCase()
+    return [...result.map((session) => synced.get(session.id) ?? session), ...extra]
+      .filter((session) => !deleted().has(session.id))
+      .filter((session) => !query || session.title.toLowerCase().includes(query))
+  })
+
+  onCleanup(
+    event.on("session.deleted", (event) => {
+      setDeleted((current) => new Set(current).add(event.properties.info.id))
+    }),
+  )
 
   function recover(session: NonNullable<ReturnType<typeof sessions>[number]>) {
     const workspace = project.workspace.get(session.workspaceID!)
@@ -57,7 +110,7 @@ export function DialogSessionList() {
           result = await sdk.client.experimental.workspace.create({ type: selection.workspaceType, branch: null })
         } catch (err) {
           toast.show({
-            title: "创建工作区失败",
+            title: "Failed to create workspace",
             message: errorMessage(err),
             variant: "error",
           })
@@ -66,7 +119,7 @@ export function DialogSessionList() {
         const workspace = result?.data
         if (!workspace) {
           toast.show({
-            title: "创建工作区失败",
+            title: "Failed to create workspace",
             message: errorMessage(result?.error ?? "no response"),
             variant: "error",
           })
@@ -101,13 +154,14 @@ export function DialogSessionList() {
           if (result.error) {
             toast.show({
               variant: "error",
-              title: "删除工作区失败",
+              title: "Failed to delete workspace",
               message: errorMessage(result.error),
             })
             return false
           }
           await project.workspace.sync()
           await sync.session.refresh()
+          await refetchBrowse()
           if (search()) await refetch()
           if (info?.workspaceID === session.workspaceID) {
             route.navigate({ type: "home" })
@@ -138,7 +192,7 @@ export function DialogSessionList() {
       .map((x) => x.id)
   }
 
-  const [browseOrder] = createSignal<string[]>(orderByRecency(sync.data.session))
+  const browseOrder = createMemo(() => orderByRecency(browseResults() ?? sync.data.session))
 
   const quickSwitchHint = createMemo(() => {
     const first = quickSwitch1()
@@ -148,7 +202,7 @@ export function DialogSessionList() {
   })
   const quickSwitchFooterHints = createMemo(() => {
     const hint = quickSwitchHint()
-    return hint && local.session.slots().length > 0 ? [{ title: "切换", label: hint }] : []
+    return hint && local.session.slots().length > 0 ? [{ title: "switch", label: hint }] : []
   })
 
   const options = createMemo(() => {
@@ -160,7 +214,9 @@ export function DialogSessionList() {
     )
 
     const searchResult = searchResults()
-    const displayOrder = searchResult ? orderByRecency(searchResult) : browseOrder()
+    const order = searchResult ? orderByRecency(sessions()) : browseOrder()
+    const current = currentSessionID()
+    const displayOrder = current && sessionMap.has(current) && !order.includes(current) ? [...order, current] : order
 
     const pinned = local.session.pinned().filter((id) => sessionMap.has(id))
     const pinnedSet = new Set(pinned)
@@ -187,7 +243,7 @@ export function DialogSessionList() {
           ? () => <text fg={theme.accent}>{slot}</text>
           : undefined
       return {
-        title: isDeleting ? `再按一次 ${deleteHint()} 确认` : x.title,
+        title: isDeleting ? `Press ${deleteHint()} again to confirm` : x.title,
         bg: isDeleting ? theme.error : undefined,
         value: x.id,
         category,
@@ -202,11 +258,11 @@ export function DialogSessionList() {
         const x = sessionMap.get(id)
         if (!x) return undefined
         const label = new Date(x.time.updated).toDateString()
-        return buildOption(id, label === today ? "今天" : label)
+        return buildOption(id, label === today ? "Today" : label)
       })
       .filter((x) => x !== undefined)
 
-    return [...pinned.map((id) => buildOption(id, "已固定")).filter((x) => x !== undefined), ...remaining]
+    return [...pinned.map((id) => buildOption(id, "Pinned")).filter((x) => x !== undefined), ...remaining]
   })
 
   onMount(() => {
@@ -215,9 +271,10 @@ export function DialogSessionList() {
 
   return (
     <DialogSelect
-      title="会话"
+      title="Sessions"
       options={options()}
       skipFilter={true}
+      preserveSelection={true}
       current={currentSessionID()}
       onFilter={setSearch}
       onMove={() => {
@@ -233,14 +290,14 @@ export function DialogSessionList() {
       actions={[
         {
           command: "session.pin.toggle",
-          title: "固定/取消固定",
+          title: "pin/unpin",
           onTrigger: (option: { value: string }) => {
             local.session.togglePin(option.value)
           },
         },
         {
           command: "session.delete",
-          title: "删除",
+          title: "delete",
           onTrigger: async (option) => {
             if (toDelete() === option.value) {
               const session = sessions().find((item) => item.id === option.value)
@@ -256,7 +313,7 @@ export function DialogSessionList() {
                   } else {
                     toast.show({
                       variant: "error",
-                      title: "删除会话失败",
+                      title: "Failed to delete session",
                       message: errorMessage(result.error),
                     })
                   }
@@ -269,7 +326,7 @@ export function DialogSessionList() {
                 } else {
                   toast.show({
                     variant: "error",
-                    title: "删除会话失败",
+                    title: "Failed to delete session",
                     message: errorMessage(err),
                   })
                 }
@@ -279,6 +336,7 @@ export function DialogSessionList() {
               if (status && status !== "connected") {
                 await sync.session.refresh()
               }
+              await refetchBrowse()
               if (search()) await refetch()
               setToDelete(undefined)
               return
@@ -288,7 +346,7 @@ export function DialogSessionList() {
         },
         {
           command: "session.rename",
-          title: "重命名",
+          title: "rename",
           onTrigger: async (option) => {
             dialog.replace(() => <DialogSessionRename session={option.value} />)
           },

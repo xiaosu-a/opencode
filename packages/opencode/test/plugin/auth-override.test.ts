@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test"
 import path from "path"
 import { pathToFileURL } from "url"
 import { Effect, Layer } from "effect"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { provideInstance, TestInstance, tmpdirScoped } from "../fixture/fixture"
 import { ProviderAuth } from "@/provider/auth"
 
@@ -12,8 +12,8 @@ import { Auth } from "@/auth"
 import { EventV2Bridge } from "@/event-v2-bridge"
 import { TestConfig } from "../fixture/config"
 import { testEffect } from "../lib/effect"
-import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 
 const it = testEffect(Layer.mergeAll(CrossSpawnSpawner.defaultLayer, FSUtil.defaultLayer))
 
@@ -31,7 +31,7 @@ function layer(directory: string, plugins: string[]) {
                 plugin: plugins,
                 plugin_origins: plugins.map((plugin) => ({
                   spec: plugin,
-                  source: path.join(directory, "sumocode.json"),
+                  source: path.join(directory, "opencode.json"),
                   scope: "local" as const,
                 })),
               }),
@@ -50,7 +50,7 @@ describe("plugin.auth-override", () => {
       Effect.gen(function* () {
         const tmp = yield* TestInstance
         const fs = yield* FSUtil.Service
-        const pluginDir = path.join(tmp.directory, ".sumocode", "plugin")
+        const pluginDir = path.join(tmp.directory, ".opencode", "plugin")
 
         yield* fs.writeWithDirs(
           path.join(pluginDir, "custom-copilot-auth.ts"),

@@ -1,22 +1,24 @@
-import { Dialog } from "@sumocode-ai/ui/dialog"
-import { List } from "@sumocode-ai/ui/list"
-import { Switch } from "@sumocode-ai/ui/switch"
-import { Tooltip } from "@sumocode-ai/ui/tooltip"
-import { Button } from "@sumocode-ai/ui/button"
+import { Dialog } from "@opencode-ai/ui/dialog"
+import { List } from "@opencode-ai/ui/list"
+import { Switch } from "@opencode-ai/ui/switch"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { Button } from "@opencode-ai/ui/button"
 import type { Component } from "solid-js"
 import { useLocal } from "@/context/local"
 import { popularProviders } from "@/hooks/use-providers"
 import { useLanguage } from "@/context/language"
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { DialogSelectProvider } from "./dialog-select-provider"
+import { decode64 } from "@/utils/base64"
 
 export const DialogManageModels: Component = () => {
   const local = useLocal()
   const language = useLanguage()
   const dialog = useDialog()
+  const directory = () => decode64(local.slug())
 
   const handleConnectProvider = () => {
-    dialog.show(() => <DialogSelectProvider />)
+    dialog.show(() => <DialogSelectProvider directory={directory} />)
   }
   const providerRank = (id: string) => popularProviders.indexOf(id)
   const providerList = (providerID: string) => local.model.list().filter((x) => x.provider.id === providerID)

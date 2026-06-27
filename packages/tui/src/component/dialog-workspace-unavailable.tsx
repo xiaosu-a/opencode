@@ -9,13 +9,13 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
   const dialog = useDialog()
   const { theme } = useTheme()
   const [store, setStore] = createStore({
-    active: "恢复" as "取消" | "恢复",
+    active: "restore" as "cancel" | "restore",
   })
 
-  const options = ["取消", "恢复"] as const
+  const options = ["cancel", "restore"] as const
 
   async function confirm() {
-    if (store.active === "取消") {
+    if (store.active === "cancel") {
       dialog.clear()
       return
     }
@@ -25,9 +25,9 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
 
   useBindings(() => ({
     bindings: [
-      { key: "return", desc: "确认工作区选项", group: "Dialog", cmd: () => void confirm() },
-      { key: "left", desc: "取消工作区恢复", group: "Dialog", cmd: () => setStore("active", "取消") },
-      { key: "right", desc: "恢复工作区", group: "Dialog", cmd: () => setStore("active", "恢复") },
+      { key: "return", desc: "Confirm workspace option", group: "Dialog", cmd: () => void confirm() },
+      { key: "left", desc: "Cancel workspace restore", group: "Dialog", cmd: () => setStore("active", "cancel") },
+      { key: "right", desc: "Restore workspace", group: "Dialog", cmd: () => setStore("active", "restore") },
     ],
   }))
 
@@ -35,17 +35,17 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          工作区不可用
+          Workspace Unavailable
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
         </text>
       </box>
       <text fg={theme.textMuted} wrapMode="word">
-        此会话关联的工作区已不可用。
+        This session is attached to a workspace that is no longer available.
       </text>
       <text fg={theme.textMuted} wrapMode="word">
-        是否要将此会话恢复到新的工作区？
+        Would you like to restore this session into a new workspace?
       </text>
       <box flexDirection="row" justifyContent="flex-end" paddingBottom={1} gap={1}>
         <For each={options}>

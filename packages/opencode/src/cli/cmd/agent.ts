@@ -1,7 +1,7 @@
 import { cmd } from "./cmd"
 import * as prompts from "@clack/prompts"
 import { UI } from "../ui"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import path from "path"
 import fs from "fs/promises"
 import { Filesystem } from "@/util/filesystem"
@@ -32,20 +32,20 @@ const AVAILABLE_PERMISSIONS = [
 
 const AgentCreateCommand = effectCmd({
   command: "create",
-  describe: "创建新 agent",
+  describe: "create a new agent",
   builder: (yargs: Argv) =>
     yargs
       .option("path", {
         type: "string",
-        describe: "agent 文件的生成目录路径",
+        describe: "directory path to generate the agent file",
       })
       .option("description", {
         type: "string",
-        describe: "agent 的功能描述",
+        describe: "what the agent should do",
       })
       .option("mode", {
         type: "string",
-        describe: "agent 模式",
+        describe: "agent mode",
         choices: ["all", "primary", "subagent"] as const,
       })
       .option("permissions", {
@@ -56,7 +56,7 @@ const AgentCreateCommand = effectCmd({
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "使用的模型，格式为 provider/model",
+        describe: "model to use in the format of provider/model",
       }),
   handler: Effect.fn("Cli.agent.create")(function* (args) {
     const { InstanceRef } = yield* Effect.promise(() => import("@/effect/instance-ref"))
@@ -108,7 +108,7 @@ const AgentCreateCommand = effectCmd({
           if (prompts.isCancel(scopeResult)) throw new UI.CancelledError()
           scope = scopeResult
         }
-        targetPath = path.join(scope === "global" ? Global.Path.config : path.join(ctx.worktree, ".sumocode"), "agents")
+        targetPath = path.join(scope === "global" ? Global.Path.config : path.join(ctx.worktree, ".opencode"), "agents")
       }
 
       // Get description
@@ -233,7 +233,7 @@ const AgentCreateCommand = effectCmd({
 
 const AgentListCommand = effectCmd({
   command: "list",
-  describe: "列出所有可用 agent",
+  describe: "list all available agents",
   handler: Effect.fn("Cli.agent.list")(function* () {
     const { Agent } = yield* Effect.promise(() => import("../../agent/agent"))
     const agents = yield* Agent.Service.use((svc) => svc.list())
@@ -253,7 +253,7 @@ const AgentListCommand = effectCmd({
 
 export const AgentCommand = cmd({
   command: "agent",
-  describe: "管理 agent",
+  describe: "manage agents",
   builder: (yargs) => yargs.command(AgentCreateCommand).command(AgentListCommand).demandCommand(),
   async handler() {},
 })

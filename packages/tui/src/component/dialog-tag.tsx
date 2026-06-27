@@ -36,7 +36,7 @@ export function DialogTag(props: { onSelect?: (value: string) => void }) {
 
   return (
     <DialogSelect
-      title="自动补全"
+      title="Autocomplete"
       options={options()}
       onSelect={(option) => {
         props.onSelect?.(option.value)

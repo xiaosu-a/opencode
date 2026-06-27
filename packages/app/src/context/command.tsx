@@ -1,5 +1,5 @@
-import { createSimpleContext } from "@sumocode-ai/ui/context"
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
+import { createSimpleContext } from "@opencode-ai/ui/context"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { type Accessor, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { createStore } from "solid-js/store"
 import { makeEventListener } from "@solid-primitives/event-listener"
@@ -225,6 +225,11 @@ export function formatKeybind(config: string, t?: (key: KeyLabel) => string): st
   const parts = formatKeybindParts(config, t)
   if (parts.length === 0) return ""
   return IS_MAC ? parts.join("") : parts.join("+")
+}
+
+// KeybindV2 takes an array instead of a string
+export function formatKeybindKeys(config: string, t?: (key: KeyLabel) => string): string[] {
+  return formatKeybindParts(config, t)
 }
 
 function isEditableTarget(target: EventTarget | null) {

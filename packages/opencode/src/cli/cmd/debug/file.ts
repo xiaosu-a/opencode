@@ -1,26 +1,26 @@
 import { EOL } from "os"
 import { Effect } from "effect"
-import { FileSystem } from "@sumocode-ai/core/filesystem"
-import { LocationServiceMap } from "@sumocode-ai/core/location-layer"
-import { Location } from "@sumocode-ai/core/location"
-import { AbsolutePath, RelativePath } from "@sumocode-ai/core/schema"
+import { FileSystem } from "@opencode-ai/core/filesystem"
+import { LocationServiceMap, locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { Location } from "@opencode-ai/core/location"
+import { AbsolutePath, RelativePath } from "@opencode-ai/core/schema"
 import { effectCmd } from "../../effect-cmd"
 import { cmd } from "../cmd"
 
 const filesystem = <A, E, R>(effect: Effect.Effect<A, E, R>) =>
   effect.pipe(
-    Effect.provide(LocationServiceMap.get(Location.Ref.make({ directory: AbsolutePath.make(process.cwd()) }))),
-    Effect.provide(LocationServiceMap.layer),
+    Effect.provide(LocationServiceMap.Service.get(Location.Ref.make({ directory: AbsolutePath.make(process.cwd()) }))),
+    Effect.provide(locationServiceMapLayer),
   )
 
 const FileSearchCommand = effectCmd({
   command: "search <query>",
-  describe: "按查询搜索文件",
+  describe: "search files by query",
   builder: (yargs) =>
     yargs.positional("query", {
       type: "string",
       demandOption: true,
-      description: "搜索查询",
+      description: "Search query",
     }),
   handler: Effect.fn("Cli.debug.file.search")(function* (args) {
     const results = yield* Effect.orDie(filesystem(FileSystem.Service.use((svc) => svc.find({ query: args.query }))))
@@ -30,12 +30,12 @@ const FileSearchCommand = effectCmd({
 
 const FileReadCommand = effectCmd({
   command: "read <path>",
-  describe: "以 JSON 格式读取文件内容",
+  describe: "read file contents as JSON",
   builder: (yargs) =>
     yargs.positional("path", {
       type: "string",
       demandOption: true,
-      description: "要读取的文件路径",
+      description: "File path to read",
     }),
   handler: Effect.fn("Cli.debug.file.read")(function* (args) {
     const file = yield* filesystem(FileSystem.Service.use((svc) => svc.read({ path: RelativePath.make(args.path) })))
@@ -51,12 +51,12 @@ const FileReadCommand = effectCmd({
 
 const FileListCommand = effectCmd({
   command: "list <path>",
-  describe: "列出目录中的文件",
+  describe: "list files in a directory",
   builder: (yargs) =>
     yargs.positional("path", {
       type: "string",
       demandOption: true,
-      description: "要列出的文件路径",
+      description: "File path to list",
     }),
   handler: Effect.fn("Cli.debug.file.list")(function* (args) {
     const files = yield* filesystem(FileSystem.Service.use((svc) => svc.list({ path: RelativePath.make(args.path) })))
@@ -66,7 +66,7 @@ const FileListCommand = effectCmd({
 
 export const FileCommand = cmd({
   command: "file",
-  describe: "文件系统调试工具",
+  describe: "file system debugging utilities",
   builder: (yargs) =>
     yargs.command(FileReadCommand).command(FileListCommand).command(FileSearchCommand).demandCommand(),
   async handler() {},

@@ -1,6 +1,6 @@
 export * as GrepTool from "./grep"
 
-import { ToolFailure } from "@sumocode-ai/llm"
+import { ToolFailure } from "@opencode-ai/llm"
 import { Effect, Layer, Schema } from "effect"
 import path from "path"
 import { FileSystem } from "../filesystem"
@@ -102,23 +102,22 @@ export const layer = Layer.effectDiscard(
                 })
                 .pipe(
                   Effect.map((result) =>
-                    result.map(
-                      (match) =>
-                        new FileSystem.Match({
-                          ...match,
-                          entry: new FileSystem.Entry({
-                            ...match.entry,
-                            path: RelativePath.make(
-                              path.relative(
-                                location.directory,
-                                path.resolve(
-                                  info?.type === "Directory" ? target : path.dirname(target),
-                                  match.entry.path,
-                                ),
+                    result.map((match) =>
+                      FileSystem.Match.make({
+                        ...match,
+                        entry: FileSystem.Entry.make({
+                          ...match.entry,
+                          path: RelativePath.make(
+                            path.relative(
+                              location.directory,
+                              path.resolve(
+                                info?.type === "Directory" ? target : path.dirname(target),
+                                match.entry.path,
                               ),
                             ),
-                          }),
+                          ),
                         }),
+                      }),
                     ),
                   ),
                 )

@@ -1,15 +1,15 @@
-import type { Session as SDKSession, Message, Part } from "@sumocode-ai/sdk/v2"
-import { SessionV1 } from "@sumocode-ai/core/v1/session"
+import type { Session as SDKSession, Message, Part } from "@opencode-ai/sdk/v2"
+import { SessionV1 } from "@opencode-ai/core/v1/session"
 import { Session } from "@/session/session"
 import { MessageV2 } from "../../session/message-v2"
 import { CliError, effectCmd } from "../effect-cmd"
-import { Database } from "@sumocode-ai/core/database/database"
-import { SessionTable, MessageTable, PartTable } from "@sumocode-ai/core/session/sql"
+import { Database } from "@opencode-ai/core/database/database"
+import { SessionTable, MessageTable, PartTable } from "@opencode-ai/core/session/sql"
 import { InstanceRef } from "@/effect/instance-ref"
 import { ShareNext } from "@/share/share-next"
 import { EOL } from "os"
 import path from "path"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { Effect, Schema } from "effect"
 import type { InstanceContext } from "@/project/instance-context"
 
@@ -82,10 +82,10 @@ type ExportData = { info: SDKSession; messages: Array<{ info: Message; parts: Pa
 
 export const ImportCommand = effectCmd({
   command: "import <file>",
-  describe: "从 JSON 文件或 URL 导入会话数据",
+  describe: "import session data from JSON file or URL",
   builder: (yargs) =>
     yargs.positional("file", {
-      describe: "JSON 文件路径或分享 URL",
+      describe: "path to JSON file or share URL",
       type: "string",
       demandOption: true,
     }),

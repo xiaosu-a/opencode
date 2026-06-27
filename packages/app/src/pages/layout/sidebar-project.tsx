@@ -1,10 +1,10 @@
 import { createMemo, For, Show, type Accessor, type JSX } from "solid-js"
 import { createStore } from "solid-js/store"
-import { base64Encode } from "@sumocode-ai/core/util/encode"
-import { Button } from "@sumocode-ai/ui/button"
-import { ContextMenu } from "@sumocode-ai/ui/context-menu"
-import { HoverCard } from "@sumocode-ai/ui/hover-card"
-import { Icon } from "@sumocode-ai/ui/icon"
+import { base64Encode } from "@opencode-ai/core/util/encode"
+import { Button } from "@opencode-ai/ui/button"
+import { ContextMenu } from "@opencode-ai/ui/context-menu"
+import { HoverCard } from "@opencode-ai/ui/hover-card"
+import { Icon } from "@opencode-ai/ui/icon"
 import { createSortable } from "@thisbeyond/solid-dnd"
 import { useLayout, type LocalProject } from "@/context/layout"
 import { useServerSync } from "@/context/server-sync"
@@ -304,8 +304,10 @@ export const SortableProject = (props: {
   const projectStore = createMemo(() => serverSync().child(props.project.worktree, { bootstrap: false })[0])
   const isWorking = createMemo(() =>
     dirs().some((directory) => {
-      const [store] = serverSync().child(directory, { bootstrap: false })
-      return Object.keys(store.session_status).some((id) => store.session_working(id))
+      return Object.keys(serverSync().session.data.session_status).some((id) => {
+        if (serverSync().session.get(id)?.directory !== directory) return false
+        return serverSync().session.data.session_working(id)
+      })
     }),
   )
   const projectSessions = createMemo(() => sortedRootSessions(projectStore(), props.sortNow()))

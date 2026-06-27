@@ -1,13 +1,13 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import type { LanguageModelV3 } from "@ai-sdk/provider"
 import { Effect } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { AzureCognitiveServicesPlugin } from "@sumocode-ai/core/plugin/provider/azure"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { AzureCognitiveServicesPlugin } from "@opencode-ai/core/plugin/provider/azure"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -87,11 +87,11 @@ describe("AzureCognitiveServicesPlugin", () => {
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* catalog.transform((catalog) => {
-          const azure = new ProviderV2.Info({
+          const azure = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services")),
             api: { type: "aisdk", package: "@ai-sdk/openai-compatible" },
           })
-          const openai = new ProviderV2.Info({
+          const openai = ProviderV2.Info.make({
             ...ProviderV2.Info.empty(ProviderV2.ID.openai),
             api: { type: "aisdk", package: "test-provider" },
           })
@@ -120,7 +120,7 @@ describe("AzureCognitiveServicesPlugin", () => {
       const calls: string[] = []
       yield* addPlugin()
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services"), ModelV2.ID.make("deployment")),
           api: { id: ModelV2.ID.make("deployment"), type: "aisdk", package: "test-provider" },
         }),
@@ -138,7 +138,7 @@ describe("AzureCognitiveServicesPlugin", () => {
       const calls: string[] = []
       yield* addPlugin()
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services"), ModelV2.ID.make("deployment")),
           api: { id: ModelV2.ID.make("deployment"), type: "aisdk", package: "test-provider" },
         }),
@@ -146,7 +146,7 @@ describe("AzureCognitiveServicesPlugin", () => {
         options: {},
       })
       const ignored = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.openai, ModelV2.ID.make("deployment")),
           api: { id: ModelV2.ID.make("deployment"), type: "aisdk", package: "test-provider" },
         }),
@@ -166,7 +166,7 @@ describe("AzureCognitiveServicesPlugin", () => {
       const sdk = fakeSelectorSdk(calls)
       yield* addPlugin()
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services"), ModelV2.ID.make("messages-deployment")),
           api: { id: ModelV2.ID.make("messages-deployment"), type: "aisdk", package: "test-provider" },
         }),
@@ -174,7 +174,7 @@ describe("AzureCognitiveServicesPlugin", () => {
         options: {},
       })
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services"), ModelV2.ID.make("chat-deployment")),
           api: { id: ModelV2.ID.make("chat-deployment"), type: "aisdk", package: "test-provider" },
         }),
@@ -182,7 +182,7 @@ describe("AzureCognitiveServicesPlugin", () => {
         options: {},
       })
       yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("azure-cognitive-services"), ModelV2.ID.make("language-deployment")),
           api: { id: ModelV2.ID.make("language-deployment"), type: "aisdk", package: "test-provider" },
         }),

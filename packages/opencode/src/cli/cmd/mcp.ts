@@ -1,5 +1,5 @@
 import { cmd } from "./cmd"
-import { ConfigV1 } from "@sumocode-ai/core/v1/config/config"
+import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
 import { effectCmd } from "../effect-cmd"
 import { Cause } from "effect"
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
@@ -12,15 +12,13 @@ import { MCP } from "../../mcp"
 import { McpAuth } from "../../mcp/auth"
 import { McpOAuthProvider } from "../../mcp/oauth-provider"
 import { Config } from "@/config/config"
-import { ConfigMCPV1 } from "@sumocode-ai/core/v1/config/mcp"
+import { ConfigMCPV1 } from "@opencode-ai/core/v1/config/mcp"
 import { InstanceRef } from "@/effect/instance-ref"
-import { InstallationVersion } from "@sumocode-ai/core/installation/version"
+import { InstallationVersion } from "@opencode-ai/core/installation/version"
 import path from "path"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import { modify, applyEdits } from "jsonc-parser"
 import { Filesystem } from "@/util/filesystem"
-import { EventV2Bridge } from "@/event-v2-bridge"
-import { EventV2 } from "@sumocode-ai/core/event"
 import { Effect } from "effect"
 
 function getAuthStatusIcon(status: MCP.AuthStatus): string {
@@ -96,7 +94,7 @@ function authState() {
 
 export const McpCommand = cmd({
   command: "mcp",
-  describe: "管理 MCP (Model Context Protocol) 服务器",
+  describe: "manage MCP (Model Context Protocol) servers",
   builder: (yargs) =>
     yargs
       .command(McpAddCommand)
@@ -111,7 +109,7 @@ export const McpCommand = cmd({
 export const McpListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "列出 MCP 服务器及其状态",
+  describe: "list MCP servers and their status",
   handler: Effect.fn("Cli.mcp.list")(function* () {
     UI.empty()
     prompts.intro("MCP Servers")
@@ -121,7 +119,7 @@ export const McpListCommand = effectCmd({
 
     if (servers.length === 0) {
       prompts.log.warn("No MCP servers configured")
-      prompts.outro("使用以下命令添加服务器：sumocode mcp add")
+      prompts.outro("Add servers with: opencode mcp add")
       return
     }
 
@@ -171,11 +169,11 @@ export const McpListCommand = effectCmd({
 
 export const McpAuthCommand = effectCmd({
   command: "auth [name]",
-  describe: "通过 OAuth 认证 MCP 服务器",
+  describe: "authenticate with an OAuth-enabled MCP server",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "MCP 服务器名称",
+        describe: "name of the MCP server",
         type: "string",
       })
       .command(McpAuthListCommand),
@@ -189,7 +187,7 @@ export const McpAuthCommand = effectCmd({
 
     if (servers.length === 0) {
       prompts.log.warn("No OAuth-capable MCP servers configured")
-      prompts.log.info("Remote MCP servers support OAuth by default. Add a remote server in sumocode.json:")
+      prompts.log.info("Remote MCP servers support OAuth by default. Add a remote server in opencode.json:")
       prompts.log.info(`
   "mcp": {
     "my-server": {
@@ -258,21 +256,13 @@ export const McpAuthCommand = effectCmd({
     const spinner = prompts.spinner()
     spinner.start("Starting OAuth flow...")
 
-    // Subscribe to browser open failure events to show URL for manual opening
-    const events = yield* EventV2Bridge.Service
-    const unsubscribe = yield* events.listen((event) => {
-      if (event.type !== MCP.BrowserOpenFailed.type) return Effect.void
-      const data = event.data as EventV2.Data<typeof MCP.BrowserOpenFailed>
-      if (data.mcpName === serverName) {
-        spinner.stop("Could not open browser automatically")
-        prompts.log.warn("Please open this URL in your browser to authenticate:")
-        prompts.log.info(data.url)
+    yield* MCP.Service.use((mcp) =>
+      mcp.authenticate(serverName, (url) => {
+        spinner.stop("Authorize in your browser:")
+        prompts.log.info(url)
         spinner.start("Waiting for authorization...")
-      }
-      return Effect.void
-    })
-
-    yield* MCP.Service.use((mcp) => mcp.authenticate(serverName)).pipe(
+      }),
+    ).pipe(
       Effect.tap((status) =>
         Effect.sync(() => {
           if (status.status === "connected") {
@@ -307,7 +297,6 @@ export const McpAuthCommand = effectCmd({
           prompts.log.error(error instanceof Error ? error.message : String(error))
         }),
       ),
-      Effect.ensuring(unsubscribe),
     )
 
     prompts.outro("Done")
@@ -317,7 +306,7 @@ export const McpAuthCommand = effectCmd({
 export const McpAuthListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "列出支持 OAuth 的 MCP 服务器及认证状态",
+  describe: "list OAuth-capable MCP servers and their auth status",
   handler: Effect.fn("Cli.mcp.auth.list")(function* () {
     UI.empty()
     prompts.intro("MCP OAuth Status")
@@ -346,10 +335,10 @@ export const McpAuthListCommand = effectCmd({
 
 export const McpLogoutCommand = effectCmd({
   command: "logout [name]",
-  describe: "移除 MCP 服务器的 OAuth 凭据",
+  describe: "remove OAuth credentials for an MCP server",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "MCP 服务器名称",
+      describe: "name of the MCP server",
       type: "string",
     }),
   handler: Effect.fn("Cli.mcp.logout")(function* (args) {
@@ -403,11 +392,11 @@ export const McpLogoutCommand = effectCmd({
 })
 
 async function resolveConfigPath(baseDir: string, global = false) {
-  // Check for existing config files (prefer .jsonc over .json, check .sumocode/ subdirectory too)
-  const candidates = [path.join(baseDir, "sumocode.json"), path.join(baseDir, "sumocode.jsonc")]
+  // Check for existing config files (prefer .jsonc over .json, check .opencode/ subdirectory too)
+  const candidates = [path.join(baseDir, "opencode.json"), path.join(baseDir, "opencode.jsonc")]
 
   if (!global) {
-    candidates.push(path.join(baseDir, ".sumocode", "sumocode.json"), path.join(baseDir, ".sumocode", "sumocode.jsonc"))
+    candidates.push(path.join(baseDir, ".opencode", "opencode.json"), path.join(baseDir, ".opencode", "opencode.jsonc"))
   }
 
   for (const candidate of candidates) {
@@ -416,7 +405,7 @@ async function resolveConfigPath(baseDir: string, global = false) {
     }
   }
 
-  // Default to sumocode.json if none exist
+  // Default to opencode.json if none exist
   return candidates[0]
 }
 
@@ -439,24 +428,24 @@ async function addMcpToConfig(name: string, mcpConfig: ConfigMCPV1.Info, configP
 
 export const McpAddCommand = effectCmd({
   command: "add [name]",
-  describe: "添加 MCP 服务器",
+  describe: "add an MCP server",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "MCP 服务器名称",
+        describe: "name of the MCP server",
         type: "string",
       })
       .option("url", {
-        describe: "远程 MCP 服务器的 URL",
+        describe: "URL for a remote MCP server",
         type: "string",
       })
       .option("env", {
-        describe: "本地 MCP 服务器的环境变量 (KEY=VALUE)",
+        describe: "environment variable for a local MCP server (KEY=VALUE)",
         type: "string",
         array: true,
       })
       .option("header", {
-        describe: "远程 MCP 服务器的 HTTP 头 (KEY=VALUE)",
+        describe: "HTTP header for a remote MCP server (KEY=VALUE)",
         type: "string",
         array: true,
       }),
@@ -570,7 +559,7 @@ export const McpAddCommand = effectCmd({
       if (type === "local") {
         const command = await prompts.text({
           message: "Enter command to run",
-          placeholder: "例如：sumocode x @modelcontextprotocol/server-filesystem",
+          placeholder: "e.g., opencode x @modelcontextprotocol/server-filesystem",
           validate: (x) => (x && x.length > 0 ? undefined : "Required"),
         })
         if (prompts.isCancel(command)) throw new UI.CancelledError()
@@ -669,10 +658,10 @@ export const McpAddCommand = effectCmd({
 
 export const McpDebugCommand = effectCmd({
   command: "debug <name>",
-  describe: "调试 MCP 服务器的 OAuth 连接",
+  describe: "debug OAuth connection for an MCP server",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "MCP 服务器名称",
+      describe: "name of the MCP server",
       type: "string",
       demandOption: true,
     }),
@@ -680,14 +669,20 @@ export const McpDebugCommand = effectCmd({
     const config = yield* Config.Service.use((cfg) => cfg.get())
     const mcp = yield* MCP.Service
     const auth = yield* McpAuth.Service
+    const serverConfig = config.mcp?.[args.name]
+    const authInfo =
+      serverConfig && isMcpRemote(serverConfig) && serverConfig.oauth !== false
+        ? yield* Effect.all({
+            authStatus: mcp.getAuthStatus(args.name),
+            entry: auth.get(args.name),
+          })
+        : undefined
     yield* Effect.promise(async () => {
       UI.empty()
       prompts.intro("MCP OAuth Debug")
 
-      const mcpServers = config.mcp ?? {}
       const serverName = args.name
 
-      const serverConfig = mcpServers[serverName]
       if (!serverConfig) {
         prompts.log.error(`MCP server not found: ${serverName}`)
         prompts.outro("Done")
@@ -709,17 +704,13 @@ export const McpDebugCommand = effectCmd({
       prompts.log.info(`Server: ${serverName}`)
       prompts.log.info(`URL: ${serverConfig.url}`)
 
-      // Check stored auth status — services already in hand, run inline.
-      const { authStatus, entry } = await Effect.runPromise(
-        Effect.all({
-          authStatus: mcp.getAuthStatus(serverName),
-          entry: auth.get(serverName),
-        }),
-      )
+      const { authStatus, entry } = authInfo!
       prompts.log.info(`Auth status: ${getAuthStatusIcon(authStatus)} ${getAuthStatusText(authStatus)}`)
 
       if (entry?.tokens) {
-        prompts.log.info(`  Access token: ${entry.tokens.accessToken.substring(0, 20)}...`)
+        prompts.log.info(
+          `  Access token: ${entry.tokens.accessToken.length > 8 ? `${entry.tokens.accessToken.slice(0, 4)}***${entry.tokens.accessToken.slice(-4)}` : "***"}`,
+        )
         if (entry.tokens.expiresAt) {
           const expiresDate = new Date(entry.tokens.expiresAt * 1000)
           const isExpired = entry.tokens.expiresAt < Date.now() / 1000

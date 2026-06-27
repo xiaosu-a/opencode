@@ -3,16 +3,18 @@ import { createEffect, createMemo, For, Show, type Accessor, type JSX } from "so
 import { createStore } from "solid-js/store"
 import { createSortable } from "@thisbeyond/solid-dnd"
 import { createMediaQuery } from "@solid-primitives/media"
-import { base64Encode } from "@sumocode-ai/core/util/encode"
-import { getFilename } from "@sumocode-ai/core/util/path"
-import { Button } from "@sumocode-ai/ui/button"
-import { Collapsible } from "@sumocode-ai/ui/collapsible"
-import { DropdownMenu } from "@sumocode-ai/ui/dropdown-menu"
-import { Icon } from "@sumocode-ai/ui/icon"
-import { IconButton } from "@sumocode-ai/ui/icon-button"
-import { Spinner } from "@sumocode-ai/ui/spinner"
-import { Tooltip } from "@sumocode-ai/ui/tooltip"
-import { type Session } from "@sumocode-ai/sdk/v2/client"
+import { base64Encode } from "@opencode-ai/core/util/encode"
+import { getFilename } from "@opencode-ai/core/util/path"
+import { Button } from "@opencode-ai/ui/button"
+import { Collapsible } from "@opencode-ai/ui/collapsible"
+import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
+import { Icon } from "@opencode-ai/ui/icon"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { IconButtonV2 } from "@opencode-ai/ui/v2/icon-button-v2"
+import { Icon as IconV2 } from "@opencode-ai/ui/v2/icon"
+import { Spinner } from "@opencode-ai/ui/spinner"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { type Session } from "@opencode-ai/sdk/v2/client"
 import { type LocalProject } from "@/context/layout"
 import { useServerSync, useQueryOptions } from "@/context/server-sync"
 import { useLanguage } from "@/context/language"
@@ -214,9 +216,10 @@ const WorkspaceActions = (props: {
     </DropdownMenu>
     <Show when={!props.touch()}>
       <Tooltip value={props.language.t("command.session.new")} placement="top">
-        <IconButton
-          icon="new-session"
+        <IconButtonV2
+          icon={<IconV2 name="edit" size="small" />}
           variant="ghost"
+          size="small"
           class="size-6 rounded-md opacity-0 pointer-events-none group-hover/workspace:opacity-100 group-hover/workspace:pointer-events-auto group-focus-within/workspace:opacity-100 group-focus-within/workspace:pointer-events-auto"
           data-action="workspace-new-session"
           data-workspace={base64Encode(props.directory)}

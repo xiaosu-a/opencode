@@ -11,7 +11,7 @@
 import { useTerminalDimensions } from "@opentui/solid"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import "opentui-spinner/solid"
-import { createColors, createFrames } from "@sumocode-ai/tui/ui/spinner"
+import { createColors, createFrames } from "@opencode-ai/tui/ui/spinner"
 import {
   RUN_SUBAGENT_PANEL_ROWS,
   RunCommandMenuBody,
@@ -28,13 +28,13 @@ import { RunPermissionBody } from "./footer.permission"
 import { RunQuestionBody } from "./footer.question"
 import { footerWidthPolicy } from "./footer.width"
 import {
-  SUMOCODE_BASE_MODE,
+  OPENCODE_BASE_MODE,
   formatKeyBindings,
   formatKeySequence,
   useBindings,
   useKeymapSelector,
   type OpenTuiKeymap,
-} from "@sumocode-ai/tui/keymap"
+} from "@opencode-ai/tui/keymap"
 import type {
   FooterPromptRoute,
   FooterQueuedPrompt,
@@ -383,7 +383,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   const stateStatus = createMemo(() => props.state().status.trim())
   const modeLabel = createMemo(() => {
     if (exiting()) {
-      return "退出"
+      return "EXIT"
     }
 
     return shell() ? "SHELL" : "BUILD"
@@ -401,18 +401,18 @@ export function RunFooterView(props: RunFooterViewProps) {
   })
   const statusText = createMemo(() => {
     if (exiting()) {
-      return `再按一次 ${clearShortcut() || "ctrl+c"} 退出`
+      return `Press ${clearShortcut() || "ctrl+c"} again to exit`
     }
 
     if (busy()) {
-      return armed() ? "再按一次中断" : "中断"
+      return armed() ? "again to interrupt" : "interrupt"
     }
 
     if (stateStatus().length > 0) {
       return stateStatus()
     }
 
-    return shell() ? "Shell 模式" : ""
+    return shell() ? "Shell mode" : ""
   })
   const activityMeta = createMemo(() => {
     if (!responsive().statusline.showActivityMeta || usage().length === 0) {
@@ -459,13 +459,13 @@ export function RunFooterView(props: RunFooterViewProps) {
 
     const items: Array<{ kind: string; key: string; label: string }> = []
     if (foregroundSubagents() && backgroundShortcut()) {
-      items.push({ kind: "background", key: backgroundShortcut(), label: "后台" })
+      items.push({ kind: "background", key: backgroundShortcut(), label: "background" })
     }
     if (queuedPrompts().length > 0 && queuedShortcut()) {
-      items.push({ kind: "queued", key: queuedShortcut(), label: `${queue()} 排队` })
+      items.push({ kind: "queued", key: queuedShortcut(), label: `${queue()} queued` })
     }
     if (activeTabs().length > 0 && subagentShortcut()) {
-      items.push({ kind: "subagents", key: subagentShortcut(), label: "子智能体" })
+      items.push({ kind: "subagents", key: subagentShortcut(), label: "subagents" })
     }
 
     const limit = responsive().statusline.contextHintLimit
@@ -478,7 +478,7 @@ export function RunFooterView(props: RunFooterViewProps) {
     }
 
     if (shell()) {
-      return { key: "esc", label: "常规" }
+      return { key: "esc", label: "normal" }
     }
 
     if (command()) {
@@ -496,18 +496,18 @@ export function RunFooterView(props: RunFooterViewProps) {
   })
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && !composer.visible(),
     commands: [
       {
         name: "command.palette.show",
-        title: "打开命令面板",
+        title: "Open command palette",
         category: "Prompt",
         run: openCommand,
       },
       {
         name: "variant.cycle",
-        title: "切换模型变体",
+        title: "Cycle model variant",
         category: "Model",
         run: props.onCycle,
       },
@@ -519,13 +519,13 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && foregroundSubagents(),
     priority: 1,
     commands: [
       {
         name: "session.background",
-        title: "后台子智能体",
+        title: "Background subagents",
         category: "Session",
         run: () => props.onBackground?.(),
       },
@@ -534,12 +534,12 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && tabs().length > 0,
     commands: [
       {
         name: "session.child.first",
-        title: "查看子智能体",
+        title: "View subagents",
         category: "Session",
         run: openSubagentMenu,
       },
@@ -548,12 +548,12 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && queuedPrompts().length > 0,
     commands: [
       {
         name: "session.queued_prompts",
-        title: "管理排队提示",
+        title: "Manage queued prompts",
         category: "Session",
         run: openQueuedMenu,
       },

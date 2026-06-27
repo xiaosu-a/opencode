@@ -1,19 +1,19 @@
-import { Duration, Effect, Schema, Stream } from "effect"
+import { Duration, Effect, Schema, Semaphore, Stream } from "effect"
 import type { Scope } from "effect"
-import type { IntegrationOAuthMethodRegistration } from "@sumocode-ai/plugin/v2/effect/integration"
-import { define } from "@sumocode-ai/plugin/v2/effect/plugin"
-import type { CredentialValue } from "@sumocode-ai/sdk/v2/types"
+import type { IntegrationOAuthMethodRegistration } from "@opencode-ai/plugin/v2/effect/integration"
+import { define } from "@opencode-ai/plugin/v2/effect/plugin"
+import type { CredentialValue } from "@opencode-ai/sdk/v2/types"
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
 import { EventV2 } from "../../event"
 import { Credential } from "../../credential"
 import { Integration } from "../../integration"
 import { ModelV2 } from "../../model"
-import { ModelRequest } from "../../model-request"
 import { ProviderV2 } from "../../provider"
 import { ConfigProviderV1 } from "../../v1/config/provider"
+import { ConfigProviderOptionsV1 } from "../../v1/config/provider-options"
 import { ConfigV1 } from "../../v1/config/config"
 
-const defaultServer = "https://console.sumocode.ai"
+const defaultServer = "https://console.opencode.ai"
 const clientID = "opencode-cli"
 const methodID = Integration.MethodID.make("device")
 const RemoteResponse = Schema.Struct({ config: ConfigV1.Info })
@@ -40,7 +40,7 @@ function oauth(http: HttpClient.HttpClient) {
     method: {
       id: methodID,
       type: "oauth",
-      label: "SumoCode Console account",
+      label: "OpenCode Console account",
     },
     authorize: () =>
       Effect.gen(function* () {
@@ -79,6 +79,7 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
   effect: Effect.fn(function* (ctx) {
     const events = yield* EventV2.Service
     const http = yield* HttpClient.HttpClient
+    const loading = Semaphore.makeUnsafe(1)
     let connected = false
     let providers: typeof ConfigV1.Info.Type.provider | undefined
 
@@ -91,7 +92,7 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
       providers = credential
         ? yield* fetchProviders(http, credential).pipe(
             Effect.catch((cause) =>
-              Effect.logWarning("failed to load SumoCode provider config", { cause }).pipe(Effect.as(undefined)),
+              Effect.logWarning("failed to load OpenCode provider config", { cause }).pipe(Effect.as(undefined)),
             ),
           )
         : undefined
@@ -99,13 +100,13 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
 
     yield* ctx.integration.transform((draft) => {
       draft.update("opencode", (integration) => {
-        integration.name = "SumoCode"
+        integration.name = "OpenCode"
       })
       draft.method.update(oauth(http))
       draft.method.update({ integrationID: "opencode", method: { type: "key", label: "API key (service account)" } })
     })
 
-    yield* load()
+    connected = (yield* ctx.integration.connection.active("opencode")) !== undefined
     yield* ctx.catalog.transform((catalog) => {
       for (const [providerID, item] of Object.entries(providers ?? {})) {
         catalog.provider.update(providerID, (provider) => {
@@ -117,11 +118,6 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
           Object.assign(provider.request.headers, item.options?.headers)
           Object.assign(provider.request.body, withoutCredentials(item.options))
         })
-
-        const modelIDs = new Set(Object.keys(item.models ?? {}))
-        for (const model of catalog.provider.get(providerID)?.models.values() ?? []) {
-          if (!modelIDs.has(model.id)) catalog.model.remove(providerID, model.id)
-        }
 
         for (const [modelID, config] of Object.entries(item.models ?? {})) {
           catalog.model.update(providerID, modelID, (model) => {
@@ -142,15 +138,14 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
             if (config.modalities?.input !== undefined) model.capabilities.input = [...config.modalities.input]
             if (config.modalities?.output !== undefined) model.capabilities.output = [...config.modalities.output]
             const packageName = config.provider?.npm ?? item.npm
-            ModelRequest.assign(model.request, {
-              headers: config.headers,
-              ...ModelRequest.normalizeAiSdkOptions(packageName, withoutCredentials(config.options)),
-            })
+            const lowerer = ConfigProviderOptionsV1.get(packageName)
+            Object.assign(model.request.headers, config.headers)
+            Object.assign(model.request.body, lowerer.request(withoutCredentials(config.options)))
             if (config.variants !== undefined) {
               model.variants = Object.entries(config.variants).map(([id, options]) => ({
                 id: ModelV2.VariantID.make(id),
                 headers: { ...(options.headers ?? {}) },
-                ...ModelRequest.normalizeAiSdkOptions(packageName, withoutCredentials(options)),
+                body: lowerer.request(withoutCredentials(options)),
               }))
             }
             if (config.release_date !== undefined) {
@@ -169,7 +164,7 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
 
       const item = catalog.provider.get(ProviderV2.ID.opencode)
       if (!item) return
-      const hasKey = Boolean(process.env.SUMOCODE_API_KEY || connected || item.provider.request.body.apiKey)
+      const hasKey = Boolean(process.env.OPENCODE_API_KEY || connected || item.provider.request.body.apiKey)
       catalog.provider.update(item.provider.id, (provider) => {
         if (!hasKey) provider.request.body.apiKey = "public"
       })
@@ -182,11 +177,13 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
       }
     })
 
+    const refresh = () => loading.withPermit(load().pipe(Effect.andThen(ctx.catalog.reload())))
     yield* events.subscribe(Integration.Event.ConnectionUpdated).pipe(
       Stream.filter((event) => event.data.integrationID === Integration.ID.make("opencode")),
-      Stream.runForEach(() => load().pipe(Effect.andThen(ctx.catalog.reload()))),
+      Stream.runForEach(refresh),
       Effect.forkScoped({ startImmediately: true }),
     )
+    yield* refresh().pipe(Effect.forkScoped)
   }),
 })
 
@@ -274,7 +271,7 @@ function credential(http: HttpClient.HttpClient, server: string, token: typeof T
       { concurrency: 2 },
     )
     const org = orgs.toSorted((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id))[0]
-    return new Credential.OAuth({
+    return Credential.OAuth.make({
       type: "oauth" as const,
       methodID,
       access: token.access_token,

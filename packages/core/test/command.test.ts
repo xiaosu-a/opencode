@@ -1,8 +1,8 @@
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { CommandV2 } from "@sumocode-ai/core/command"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { CommandV2 } from "@opencode-ai/core/command"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "./lib/effect"
 
 const it = testEffect(CommandV2.locationLayer)
@@ -27,7 +27,7 @@ describe("CommandV2", () => {
       })
 
       expect(yield* command.get("review")).toEqual(
-        new CommandV2.Info({
+        CommandV2.Info.make({
           name: "review",
           template: "Second",
           description: "Review code",
@@ -39,7 +39,7 @@ describe("CommandV2", () => {
         }),
       )
       expect(yield* command.list()).toEqual([
-        new CommandV2.Info({
+        CommandV2.Info.make({
           name: "review",
           template: "Second",
           description: "Review code",

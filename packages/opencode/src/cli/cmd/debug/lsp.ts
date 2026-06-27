@@ -6,7 +6,7 @@ import { EOL } from "os"
 
 export const LSPCommand = cmd({
   command: "lsp",
-  describe: "LSP 调试工具",
+  describe: "LSP debugging utilities",
   builder: (yargs) =>
     yargs.command(DiagnosticsCommand).command(SymbolsCommand).command(DocumentSymbolsCommand).demandCommand(),
   async handler() {},
@@ -14,7 +14,7 @@ export const LSPCommand = cmd({
 
 const DiagnosticsCommand = effectCmd({
   command: "diagnostics <file>",
-  describe: "获取文件的诊断信息",
+  describe: "get diagnostics for a file",
   builder: (yargs) => yargs.positional("file", { type: "string", demandOption: true }),
   handler: Effect.fn("Cli.debug.lsp.diagnostics")(function* (args) {
     const out = yield* LSP.Service.use((lsp) =>
@@ -29,7 +29,7 @@ const DiagnosticsCommand = effectCmd({
 
 export const SymbolsCommand = effectCmd({
   command: "symbols <query>",
-  describe: "搜索工作区符号",
+  describe: "search workspace symbols",
   builder: (yargs) => yargs.positional("query", { type: "string", demandOption: true }),
   handler: Effect.fn("Cli.debug.lsp.symbols")(function* (args) {
     yield* Effect.logInfo("symbols")
@@ -40,7 +40,7 @@ export const SymbolsCommand = effectCmd({
 
 export const DocumentSymbolsCommand = effectCmd({
   command: "document-symbols <uri>",
-  describe: "获取文档符号",
+  describe: "get symbols from a document",
   builder: (yargs) => yargs.positional("uri", { type: "string", demandOption: true }),
   handler: Effect.fn("Cli.debug.lsp.documentSymbols")(function* (args) {
     yield* Effect.logInfo("document-symbols")

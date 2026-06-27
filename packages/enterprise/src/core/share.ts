@@ -1,5 +1,5 @@
-import { Message, Model, Part, Session, SnapshotFileDiff } from "@sumocode-ai/sdk/v2"
-import { iife } from "@sumocode-ai/core/util/iife"
+import { Message, Model, Part, Session, SnapshotFileDiff } from "@opencode-ai/sdk/v2"
+import { iife } from "@opencode-ai/core/util/iife"
 import z from "zod"
 import { Storage } from "./storage"
 
@@ -145,6 +145,12 @@ export namespace Share {
     for (const item of groups.flat()) {
       await Storage.remove(item)
     }
+  })
+
+  export const removeAdmin = fn(Info.pick({ id: true }), async (body) => {
+    const share = await get(body.id)
+    if (!share) throw new Errors.NotFound(body.id)
+    await remove({ id: share.id, secret: share.secret })
   })
 
   export const sync = fn(

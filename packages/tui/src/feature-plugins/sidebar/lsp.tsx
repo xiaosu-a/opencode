@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi } from "@sumocode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi } from "@opencode-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Show, createSignal } from "solid-js"
 
@@ -22,7 +22,7 @@ function View(props: { api: TuiPluginApi }) {
       </box>
       <Show when={list().length <= 2 || open()}>
         <Show when={list().length === 0}>
-          <text fg={theme().textMuted}>{off() ? "LSP 已禁用" : "LSP 将在读取文件时自动激活"}</text>
+          <text fg={theme().textMuted}>{off() ? "LSPs are disabled" : "LSPs will activate as files are read"}</text>
         </Show>
         <For each={list()}>
           {(item) => (

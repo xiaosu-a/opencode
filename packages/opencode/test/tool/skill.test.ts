@@ -1,10 +1,9 @@
-import { PermissionV1 } from "@sumocode-ai/core/v1/permission"
-import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
-import { Ripgrep } from "@sumocode-ai/core/ripgrep"
+import { PermissionV1 } from "@opencode-ai/core/v1/permission"
+import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
 import { Cause, Effect, Exit, Layer } from "effect"
 import { afterEach, describe, expect } from "bun:test"
 import path from "path"
-import { pathToFileURL } from "url"
 import type { Permission } from "../../src/permission"
 import type { Tool } from "@/tool/tool"
 import { SkillTool } from "../../src/tool/skill"
@@ -35,7 +34,7 @@ describe("tool.skill", () => {
   it.instance("execute returns skill content block with files", () =>
     Effect.gen(function* () {
       const dir = (yield* TestInstance).directory
-      const skill = path.join(dir, ".sumocode", "skill", "tool-skill")
+      const skill = path.join(dir, ".opencode", "skill", "tool-skill")
       yield* Effect.promise(() =>
         Bun.write(
           path.join(skill, "SKILL.md"),
@@ -52,11 +51,11 @@ Use this skill.
       )
       yield* Effect.promise(() => Bun.write(path.join(skill, "scripts", "demo.txt"), "demo"))
 
-      const home = process.env.SUMOCODE_TEST_HOME
-      process.env.SUMOCODE_TEST_HOME = dir
+      const home = process.env.OPENCODE_TEST_HOME
+      process.env.OPENCODE_TEST_HOME = dir
       yield* Effect.addFinalizer(() =>
         Effect.sync(() => {
-          process.env.SUMOCODE_TEST_HOME = home
+          process.env.OPENCODE_TEST_HOME = home
         }),
       )
 
@@ -90,7 +89,7 @@ Use this skill.
       expect(requests[0].always).toContain("tool-skill")
       expect(result.metadata.dir).toBe(skill)
       expect(result.output).toContain(`<skill_content name="tool-skill">`)
-      expect(result.output).toContain(`Base directory for this skill: ${pathToFileURL(skill).href}`)
+      expect(result.output).toContain(`Base directory for this skill: ${skill}`)
       expect(result.output).toContain(`<file>${file}</file>`)
     }),
   )
@@ -98,11 +97,11 @@ Use this skill.
   it.instance("execute preserves not found message", () =>
     Effect.gen(function* () {
       const dir = (yield* TestInstance).directory
-      const home = process.env.SUMOCODE_TEST_HOME
-      process.env.SUMOCODE_TEST_HOME = dir
+      const home = process.env.OPENCODE_TEST_HOME
+      process.env.OPENCODE_TEST_HOME = dir
       yield* Effect.addFinalizer(() =>
         Effect.sync(() => {
-          process.env.SUMOCODE_TEST_HOME = home
+          process.env.OPENCODE_TEST_HOME = home
         }),
       )
 

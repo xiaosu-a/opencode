@@ -18,10 +18,12 @@ bun run test:bench
 The suite contains:
 
 - cold and hot session-tab timing
+- home-session click timing split between content and titlebar-tab paint
+- single-session tab close timing through stable home restoration
 - cached session repaint and mutation tracing
 - streaming timeline throughput, RAF-gap, long-task, geometry, and remount diagnostics
 
-All benchmarks import the shared `benchmark` fixture. Pages created through Playwright's `page` fixture automatically capture main-frame navigation history and emit a Chrome trace when `SUMOCODE_PERFORMANCE_TRACE_DIR` is set. Benchmarks that need isolated browser contexts use `withBenchmarkPage`, which owns the context and the same diagnostics lifecycle.
+All benchmarks import the shared `benchmark` fixture. Pages created through Playwright's `page` fixture automatically capture main-frame navigation history and emit a Chrome trace when `OPENCODE_PERFORMANCE_TRACE_DIR` is set. Benchmarks that need isolated browser contexts use `withBenchmarkPage`, which owns the context and the same diagnostics lifecycle.
 
 New benchmarks should look like normal Playwright tests:
 
@@ -56,10 +58,10 @@ Committed smoke and regression tests continue to own correctness coverage for pa
 
 ## Chrome traces
 
-Set `SUMOCODE_PERFORMANCE_TRACE_DIR` to emit a standard Chrome DevTools trace for every benchmark page automatically:
+Set `OPENCODE_PERFORMANCE_TRACE_DIR` to emit a standard Chrome DevTools trace for every benchmark page automatically:
 
 ```sh
-SUMOCODE_PERFORMANCE_TRACE_DIR=/tmp/opencode-performance-traces \
+OPENCODE_PERFORMANCE_TRACE_DIR=/tmp/opencode-performance-traces \
 bunx playwright test --config e2e/performance/playwright.config.ts \
   timeline/session-tab-switch-benchmark.spec.ts
 ```
@@ -72,6 +74,6 @@ Trace capture mirrors [Puppeteer's official tracing defaults and lifecycle](http
 bunx devtools-tracing stats <trace-path-from-BENCHMARK_PAGE>
 ```
 
-INP analysis requires a trace with a supported navigation/interaction insight. Selector statistics require a trace captured with `SUMOCODE_PERFORMANCE_SELECTOR_TRACE=1`.
+INP analysis requires a trace with a supported navigation/interaction insight. Selector statistics require a trace captured with `OPENCODE_PERFORMANCE_SELECTOR_TRACE=1`.
 
 `e2e/performance/playwright.uncapped.config.ts` disables Chromium frame-rate limiting for explicit uncapped diagnostics. Native product benchmarks should use the default Playwright configuration.

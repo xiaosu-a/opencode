@@ -2,7 +2,7 @@ import type { Argv } from "yargs"
 import { UI } from "../ui"
 import * as prompts from "@clack/prompts"
 import { Installation } from "../../installation"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import fs from "fs/promises"
 import path from "path"
 import os from "os"
@@ -24,30 +24,30 @@ interface RemovalTargets {
 
 export const UninstallCommand = {
   command: "uninstall",
-  describe: "卸载 SumoCode 并移除所有相关文件",
+  describe: "uninstall opencode and remove all related files",
   builder: (yargs: Argv) =>
     yargs
       .option("keep-config", {
         alias: "c",
         type: "boolean",
-        describe: "保留配置文件",
+        describe: "keep configuration files",
         default: false,
       })
       .option("keep-data", {
         alias: "d",
         type: "boolean",
-        describe: "保留会话数据和快照",
+        describe: "keep session data and snapshots",
         default: false,
       })
       .option("dry-run", {
         type: "boolean",
-        describe: "显示将要移除的内容而不实际移除",
+        describe: "show what would be removed without removing",
         default: false,
       })
       .option("force", {
         alias: "f",
         type: "boolean",
-        describe: "跳过确认提示",
+        describe: "skip confirmation prompts",
         default: false,
       }),
 
@@ -55,10 +55,10 @@ export const UninstallCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("卸载 SumoCode")
+    prompts.intro("Uninstall OpenCode")
 
     const method = await Installation.method()
-    prompts.log.info(`安装方式：${method}`)
+    prompts.log.info(`Installation method: ${method}`)
 
     const targets = await collectRemovalTargets(args, method)
 
@@ -66,18 +66,18 @@ export const UninstallCommand = {
 
     if (!args.force && !args.dryRun) {
       const confirm = await prompts.confirm({
-        message: "确定要卸载吗？",
+        message: "Are you sure you want to uninstall?",
         initialValue: false,
       })
       if (!confirm || prompts.isCancel(confirm)) {
-        prompts.outro("已取消")
+        prompts.outro("Cancelled")
         return
       }
     }
 
     if (args.dryRun) {
-      prompts.log.warn("试运行 - 未做任何更改")
-      prompts.outro("完成")
+      prompts.log.warn("Dry run - no changes made")
+      prompts.outro("Done")
       return
     }
 
@@ -102,7 +102,7 @@ async function collectRemovalTargets(args: UninstallArgs, method: Installation.M
 }
 
 async function showRemovalSummary(targets: RemovalTargets, method: Installation.Method) {
-  prompts.log.message("将移除以下内容：")
+  prompts.log.message("The following will be removed:")
 
   for (const dir of targets.directories) {
     const exists = await fs
@@ -113,31 +113,31 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
 
     const size = await getDirectorySize(dir.path)
     const sizeStr = formatSize(size)
-    const status = dir.keep ? UI.Style.TEXT_DIM + "（保留）" : ""
+    const status = dir.keep ? UI.Style.TEXT_DIM + "(keeping)" : ""
     const prefix = dir.keep ? "○" : "✓"
 
     prompts.log.info(`  ${prefix} ${dir.label}: ${shortenPath(dir.path)} ${UI.Style.TEXT_DIM}(${sizeStr})${status}`)
   }
 
   if (targets.binary) {
-    prompts.log.info(`  ✓ 二进制文件: ${shortenPath(targets.binary)}`)
+    prompts.log.info(`  ✓ Binary: ${shortenPath(targets.binary)}`)
   }
 
   if (targets.shellConfig) {
-    prompts.log.info(`  ✓ Shell PATH 位于 ${shortenPath(targets.shellConfig)}`)
+    prompts.log.info(`  ✓ Shell PATH in ${shortenPath(targets.shellConfig)}`)
   }
 
   if (method !== "curl" && method !== "unknown") {
     const cmds: Record<string, string> = {
-      npm: "npm uninstall -g sumocode-ai",
-      pnpm: "pnpm uninstall -g sumocode-ai",
-      bun: "bun remove -g sumocode-ai",
-      yarn: "yarn global remove sumocode-ai",
-      brew: "brew uninstall sumocode",
-      choco: "choco uninstall sumocode",
-      scoop: "scoop uninstall sumocode",
+      npm: "npm uninstall -g opencode-ai",
+      pnpm: "pnpm uninstall -g opencode-ai",
+      bun: "bun remove -g opencode-ai",
+      yarn: "yarn global remove opencode-ai",
+      brew: "brew uninstall opencode",
+      choco: "choco uninstall opencode",
+      scoop: "scoop uninstall opencode",
     }
-    prompts.log.info(`  ✓ 包: ${cmds[method] || method}`)
+    prompts.log.info(`  ✓ Package: ${cmds[method] || method}`)
   }
 }
 
@@ -147,7 +147,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
 
   for (const dir of targets.directories) {
     if (dir.keep) {
-      prompts.log.step(`跳过 ${dir.label} (--keep-${dir.label.toLowerCase()})`)
+      prompts.log.step(`Skipping ${dir.label} (--keep-${dir.label.toLowerCase()})`)
       continue
     }
 
@@ -157,79 +157,79 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
       .catch(() => false)
     if (!exists) continue
 
-    spinner.start(`正在移除 ${dir.label}...`)
+    spinner.start(`Removing ${dir.label}...`)
     const err = await fs.rm(dir.path, { recursive: true, force: true }).catch((e) => e)
     if (err) {
-      spinner.stop(`移除 ${dir.label} 失败`, 1)
+      spinner.stop(`Failed to remove ${dir.label}`, 1)
       errors.push(`${dir.label}: ${err.message}`)
       continue
     }
-    spinner.stop(`已移除 ${dir.label}`)
+    spinner.stop(`Removed ${dir.label}`)
   }
 
   if (targets.shellConfig) {
-    spinner.start("正在清理 Shell 配置...")
+    spinner.start("Cleaning shell config...")
     const err = await cleanShellConfig(targets.shellConfig).catch((e) => e)
     if (err) {
-      spinner.stop("清理 Shell 配置失败", 1)
+      spinner.stop("Failed to clean shell config", 1)
       errors.push(`Shell config: ${err.message}`)
     } else {
-      spinner.stop("已清理 Shell 配置")
+      spinner.stop("Cleaned shell config")
     }
   }
 
   if (method !== "curl" && method !== "unknown") {
     const cmds: Record<string, string[]> = {
-      npm: ["npm", "uninstall", "-g", "sumocode-ai"],
-      pnpm: ["pnpm", "uninstall", "-g", "sumocode-ai"],
-      bun: ["bun", "remove", "-g", "sumocode-ai"],
-      yarn: ["yarn", "global", "remove", "sumocode-ai"],
-      brew: ["brew", "uninstall", "sumocode"],
-      choco: ["choco", "uninstall", "sumocode"],
-      scoop: ["scoop", "uninstall", "sumocode"],
+      npm: ["npm", "uninstall", "-g", "opencode-ai"],
+      pnpm: ["pnpm", "uninstall", "-g", "opencode-ai"],
+      bun: ["bun", "remove", "-g", "opencode-ai"],
+      yarn: ["yarn", "global", "remove", "opencode-ai"],
+      brew: ["brew", "uninstall", "opencode"],
+      choco: ["choco", "uninstall", "opencode"],
+      scoop: ["scoop", "uninstall", "opencode"],
     }
 
     const cmd = cmds[method]
     if (cmd) {
-      spinner.start(`正在运行 ${cmd.join(" ")}...`)
-      const result = await Process.run(method === "choco" ? ["choco", "uninstall", "sumocode", "-y", "-r"] : cmd, {
+      spinner.start(`Running ${cmd.join(" ")}...`)
+      const result = await Process.run(method === "choco" ? ["choco", "uninstall", "opencode", "-y", "-r"] : cmd, {
         nothrow: true,
       })
       if (result.code !== 0) {
-        spinner.stop(`包管理器卸载失败：退出码 ${result.code}`, 1)
+        spinner.stop(`Package manager uninstall failed: exit code ${result.code}`, 1)
         const text = `${result.stdout.toString("utf8")}\n${result.stderr.toString("utf8")}`
         if (method === "choco" && text.includes("not running from an elevated command shell")) {
-          prompts.log.warn(`您可能需要从提升权限的命令行运行 '${cmd.join(" ")}'`)
+          prompts.log.warn(`You may need to run '${cmd.join(" ")}' from an elevated command shell`)
         } else {
-          prompts.log.warn(`您可能需要手动运行：${cmd.join(" ")}`)
+          prompts.log.warn(`You may need to run manually: ${cmd.join(" ")}`)
         }
       } else {
-        spinner.stop("包已移除")
+        spinner.stop("Package removed")
       }
     }
   }
 
   if (method === "curl" && targets.binary) {
     UI.empty()
-    prompts.log.message("要完成二进制文件的移除，请运行：")
+    prompts.log.message("To finish removing the binary, run:")
     prompts.log.info(`  rm "${targets.binary}"`)
 
     const binDir = path.dirname(targets.binary)
-    if (binDir.includes(".sumocode")) {
+    if (binDir.includes(".opencode")) {
       prompts.log.info(`  rmdir "${binDir}" 2>/dev/null`)
     }
   }
 
   if (errors.length > 0) {
     UI.empty()
-    prompts.log.warn("部分操作失败：")
+    prompts.log.warn("Some operations failed:")
     for (const err of errors) {
       prompts.log.error(`  ${err}`)
     }
   }
 
   UI.empty()
-  prompts.log.success("感谢您使用 SumoCode！")
+  prompts.log.success("Thank you for using OpenCode!")
 }
 
 async function getShellConfigFile(): Promise<string | null> {
@@ -266,7 +266,7 @@ async function getShellConfigFile(): Promise<string | null> {
     if (!exists) continue
 
     const content = await Filesystem.readText(file).catch(() => "")
-    if (content.includes("# sumocode") || content.includes(".sumocode/bin")) {
+    if (content.includes("# opencode") || content.includes(".opencode/bin")) {
       return file
     }
   }
@@ -284,21 +284,21 @@ async function cleanShellConfig(file: string) {
   for (const line of lines) {
     const trimmed = line.trim()
 
-    if (trimmed === "# sumocode") {
+    if (trimmed === "# opencode") {
       skip = true
       continue
     }
 
     if (skip) {
       skip = false
-      if (trimmed.includes(".sumocode/bin") || trimmed.includes("fish_add_path")) {
+      if (trimmed.includes(".opencode/bin") || trimmed.includes("fish_add_path")) {
         continue
       }
     }
 
     if (
-      (trimmed.startsWith("export PATH=") && trimmed.includes(".sumocode/bin")) ||
-      (trimmed.startsWith("fish_add_path") && trimmed.includes(".sumocode"))
+      (trimmed.startsWith("export PATH=") && trimmed.includes(".opencode/bin")) ||
+      (trimmed.startsWith("fish_add_path") && trimmed.includes(".opencode"))
     ) {
       continue
     }

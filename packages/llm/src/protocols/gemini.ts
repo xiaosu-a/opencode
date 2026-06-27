@@ -150,7 +150,7 @@ interface ParserState {
 // 1. Sanitize — fix common authoring mistakes Gemini rejects: integer/number
 //    enums (must be strings), `required` entries that don't match a property,
 //    untyped arrays (`items` must be present), and `properties`/`required`
-//    keys on non-object scalars. Mirrors SumoCode's historical Gemini rules.
+//    keys on non-object scalars. Mirrors OpenCode's historical Gemini rules.
 //
 // 2. Project — lossy mapping from JSON Schema to Gemini's schema dialect:
 //    drop empty objects, derive `nullable: true` from `type: [..., "null"]`,
@@ -407,21 +407,35 @@ const step = (state: ParserState, event: GeminiEvent) => {
     if ("thoughtSignature" in part && part.thoughtSignature && "thought" in part && part.thought)
       reasoningSignature = part.thoughtSignature
     if ("text" in part && part.text.length > 0) {
-      lifecycle = part.thought
-        ? Lifecycle.reasoningDelta(
-            lifecycle,
-            events,
-            "reasoning-0",
-            part.text,
-            part.thoughtSignature ? googleMetadata({ thoughtSignature: part.thoughtSignature }) : undefined,
-          )
-        : Lifecycle.textDelta(lifecycle, events, "text-0", part.text)
+      if (part.thought) {
+        lifecycle = Lifecycle.reasoningDelta(
+          lifecycle,
+          events,
+          "reasoning-0",
+          part.text,
+          part.thoughtSignature ? googleMetadata({ thoughtSignature: part.thoughtSignature }) : undefined,
+        )
+        continue
+      }
+      lifecycle = Lifecycle.reasoningEnd(
+        lifecycle,
+        events,
+        "reasoning-0",
+        reasoningSignature ? googleMetadata({ thoughtSignature: reasoningSignature }) : undefined,
+      )
+      lifecycle = Lifecycle.textDelta(lifecycle, events, "text-0", part.text)
       continue
     }
 
     if ("functionCall" in part) {
       const input = part.functionCall.args
       const id = `tool_${nextToolCallId++}`
+      lifecycle = Lifecycle.reasoningEnd(
+        lifecycle,
+        events,
+        "reasoning-0",
+        reasoningSignature ? googleMetadata({ thoughtSignature: reasoningSignature }) : undefined,
+      )
       lifecycle = Lifecycle.stepStart(lifecycle, events)
       events.push(
         LLMEvent.toolCall({

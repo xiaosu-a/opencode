@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { Script } from "@sumocode-ai/script"
+import { Script } from "@opencode-ai/script"
 import path from "path"
 import { fileURLToPath } from "url"
 
@@ -20,8 +20,8 @@ await Bun.build({
   sourcemap: "linked",
   external: ["jsonc-parser", "@lydell/node-pty"],
   define: {
-    SUMOCODE_MODELS_DEV: generated.modelsData,
-    SUMOCODE_CHANNEL: `'${Script.channel}'`,
+    OPENCODE_MODELS_DEV: generated.modelsData,
+    OPENCODE_CHANNEL: `'${Script.channel}'`,
   },
   files: {
     "opencode-web-ui.gen.ts": "",

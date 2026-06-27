@@ -1,4 +1,4 @@
-import type { Workspace } from "@sumocode-ai/sdk/v2"
+import type { Workspace } from "@opencode-ai/sdk/v2"
 import { useDialog } from "../ui/dialog"
 import { DialogSelect, type DialogSelectOption } from "../ui/dialog-select"
 import { useProject } from "../context/project"
@@ -39,9 +39,9 @@ export function DialogWorkspaceList() {
         return {
           title:
             removing() === workspace.id
-              ? "删除中..."
+              ? "Deleting..."
               : deleting() === workspace.id
-                ? `删除 ${workspace.name}？再按一次删除确认`
+                ? `Delete ${workspace.name}? Press delete again`
                 : workspace.name,
           value: { workspace },
           footer: workspace.type,
@@ -71,7 +71,7 @@ export function DialogWorkspaceList() {
       setRemoving(undefined)
       toast.show({
         variant: "error",
-        title: "删除工作区失败",
+        title: "Failed to delete workspace",
         message: errorMessage(result.error),
       })
       return
@@ -94,7 +94,7 @@ export function DialogWorkspaceList() {
 
   return (
     <DialogSelect
-      title="工作区"
+      title="Workspaces"
       options={options()}
       onMove={(option) => {
         setDeleting(undefined)
@@ -103,7 +103,7 @@ export function DialogWorkspaceList() {
       actions={[
         {
           command: "session.delete",
-          title: "删除",
+          title: "delete",
           onTrigger: (option) => void remove(option.value.workspace),
         },
       ]}

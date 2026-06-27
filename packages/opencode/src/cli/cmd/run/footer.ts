@@ -29,7 +29,7 @@ import type { Keymap } from "@opentui/keymap"
 import { render } from "@opentui/solid"
 import { createComponent, createSignal, type Accessor, type Setter } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
-import { OpencodeKeymapProvider } from "@sumocode-ai/tui/keymap"
+import { OpencodeKeymapProvider } from "@opencode-ai/tui/keymap"
 import { RUN_COMMAND_PANEL_ROWS, RUN_SUBAGENT_PANEL_ROWS } from "./footer.command"
 import { SUBAGENT_INSPECTOR_ROWS } from "./footer.subagent"
 import { PROMPT_MAX_ROWS, TEXTAREA_MIN_ROWS } from "./footer.prompt"
@@ -135,7 +135,7 @@ function eventPatch(next: FooterEvent): FooterPatch | undefined {
   if (next.type === "turn.send") {
     return {
       phase: "running",
-      status: "正在发送",
+      status: "sending prompt",
       queue: next.queue,
       interrupt: 0,
       exit: 0,
@@ -145,7 +145,7 @@ function eventPatch(next: FooterEvent): FooterPatch | undefined {
   if (next.type === "turn.wait") {
     return {
       phase: "running",
-      status: "等待回复",
+      status: "waiting for assistant",
     }
   }
 
@@ -756,7 +756,7 @@ export class RunFooter implements FooterApi {
     }
 
     if (this.prompts.size === 0) {
-      this.setNotice("输入队列不可用")
+      this.setNotice("input queue unavailable")
       return false
     }
 
@@ -794,7 +794,7 @@ export class RunFooter implements FooterApi {
   private handleCycle = (): void => {
     const result = this.options.onCycleVariant?.()
     if (!result) {
-      this.setNotice("没有可用的变体")
+      this.setNotice("no variants available")
       return
     }
 
@@ -813,7 +813,7 @@ export class RunFooter implements FooterApi {
     }
 
     this.patch(patch)
-    this.setNotice(result.status ?? "变体已更新")
+    this.setNotice(result.status ?? "variant updated")
   }
 
   private handleModelSelect = (model: NonNullable<RunInput["model"]>): void => {
@@ -979,7 +979,7 @@ export class RunFooter implements FooterApi {
 
     this.clearInterruptTimer()
     this.patch({ interrupt: 0 })
-    this.setNotice("正在中断")
+    this.setNotice("interrupting")
     this.options.onInterrupt?.()
     return true
   }
@@ -999,7 +999,7 @@ export class RunFooter implements FooterApi {
     }
 
     this.clearExitTimer()
-    this.patch({ exit: 0, status: "正在退出" })
+    this.patch({ exit: 0, status: "exiting" })
     this.close()
     this.options.onExit?.()
     return true

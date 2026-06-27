@@ -1,13 +1,13 @@
 import { expect, test } from "bun:test"
 import { Effect, Schema, Stream } from "effect"
-import { LLMEvent } from "@sumocode-ai/llm"
-import { EventV2 } from "@sumocode-ai/core/event"
-import { SessionEvent } from "@sumocode-ai/core/session/event"
-import { SessionMessage } from "@sumocode-ai/core/session/message"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
-import { createLLMEventPublisher } from "@sumocode-ai/core/session/runner/publish-llm-event"
+import { LLMEvent } from "@opencode-ai/llm"
+import { EventV2 } from "@opencode-ai/core/event"
+import { SessionEvent } from "@opencode-ai/core/session/event"
+import { SessionMessage } from "@opencode-ai/core/session/message"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { createLLMEventPublisher } from "@opencode-ai/core/session/runner/publish-llm-event"
 
 const sessionID = SessionV2.ID.make("ses_tool_event_test")
 const base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB"
@@ -124,4 +124,13 @@ test("old success event data containing result still decodes", () => {
     provider: { executed: false },
   })
   expect(decoded.result).toMatchObject({ type: "content" })
+})
+
+test("step finish records settlement without publishing step ended", async () => {
+  const { published, publisher } = capture()
+  await Effect.runPromise(publisher.publish(LLMEvent.stepStart({ index: 0 })))
+  await Effect.runPromise(publisher.publish(LLMEvent.stepFinish({ index: 0, reason: "stop" })))
+
+  expect(published.some((event) => event.type === "session.next.step.ended.2")).toBe(false)
+  expect(publisher.stepSettlement()).toMatchObject({ finish: "stop" })
 })

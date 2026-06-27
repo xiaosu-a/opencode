@@ -3,21 +3,21 @@ import { effectCmd } from "../../effect-cmd"
 
 export const AgentCommand = effectCmd({
   command: "agent <name>",
-  describe: "显示 agent 详情",
+  describe: "show agent configuration details",
   builder: (yargs) =>
     yargs
       .positional("name", {
         type: "string",
         demandOption: true,
-        description: "agent 名称",
+        description: "Agent name",
       })
       .option("tool", {
         type: "string",
-        description: "要执行的 tool ID",
+        description: "Tool id to execute",
       })
       .option("params", {
         type: "string",
-        description: "以 JSON 或 JS 对象字面量表示的 tool 参数",
+        description: "Tool params as JSON or a JS object literal",
       }),
   handler: (args) =>
     Effect.gen(function* () {

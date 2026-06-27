@@ -1,9 +1,9 @@
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { Reference } from "@sumocode-ai/core/reference"
-import { ReferenceGuidance } from "@sumocode-ai/core/reference/guidance"
-import { SystemContext } from "@sumocode-ai/core/system-context/index"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Reference } from "@opencode-ai/core/reference"
+import { ReferenceGuidance } from "@opencode-ai/core/reference/guidance"
+import { SystemContext } from "@opencode-ai/core/system-context/index"
 import { it } from "./lib/effect"
 
 describe("ReferenceGuidance", () => {
@@ -26,7 +26,7 @@ describe("ReferenceGuidance", () => {
                 name: "docs",
                 path: AbsolutePath.make("/docs"),
                 description: "Use for product documentation",
-                source: new Reference.LocalSource({
+                source: Reference.LocalSource.make({
                   type: "local",
                   path: AbsolutePath.make("/docs"),
                   description: "Use for product documentation",
@@ -63,7 +63,7 @@ describe("ReferenceGuidance", () => {
               new Reference.Info({
                 name: "docs",
                 path: AbsolutePath.make("/docs"),
-                source: new Reference.LocalSource({ type: "local", path: AbsolutePath.make("/docs") }),
+                source: Reference.LocalSource.make({ type: "local", path: AbsolutePath.make("/docs") }),
               }),
             ]),
         }),

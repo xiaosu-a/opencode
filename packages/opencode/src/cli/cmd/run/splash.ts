@@ -22,7 +22,7 @@ import { go } from "@/cli/logo"
 import type { RunSplashTheme } from "./theme"
 
 export const SPLASH_TITLE_LIMIT = 50
-export const SPLASH_TITLE_FALLBACK = "未命名会话"
+export const SPLASH_TITLE_FALLBACK = "Untitled session"
 
 type SplashInput = {
   title: string | undefined
@@ -194,7 +194,7 @@ function build(input: SplashWriterInput, kind: "entry" | "exit", ctx: Scrollback
       })
     }
 
-    push(lines, body_left, top, "SumoCode", right, undefined, TextAttributes.BOLD)
+    push(lines, body_left, top, "OpenCode", right, undefined, TextAttributes.BOLD)
     if (input.detail) {
       push(
         lines,
@@ -212,8 +212,8 @@ function build(input: SplashWriterInput, kind: "entry" | "exit", ctx: Scrollback
     const mark = go.right.slice(1)
     const top = 1
     const body_left = (mark[0]?.length ?? 0) + 2
-    const session = "会话  "
-    const label = "继续 "
+    const session = "Session  "
+    const label = "Continue "
 
     for (let i = 0; i < mark.length; i += 1) {
       draw(lines, mark[i] ?? "", {
@@ -234,7 +234,7 @@ function build(input: SplashWriterInput, kind: "entry" | "exit", ctx: Scrollback
       lines,
       body_left + label.length,
       top + 1,
-      `sumocode --mini -s ${meta.session_id}`,
+      `opencode --mini -s ${meta.session_id}`,
       right,
       undefined,
       TextAttributes.BOLD,

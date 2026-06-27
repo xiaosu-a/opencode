@@ -1,15 +1,15 @@
-import { PermissionV1 } from "@sumocode-ai/core/v1/permission"
+import { PermissionV1 } from "@opencode-ai/core/v1/permission"
 import { afterEach, describe, expect } from "bun:test"
 import { NodeHttpServer, NodeServices } from "@effect/platform-node"
-import { SessionV1 } from "@sumocode-ai/core/v1/session"
+import { SessionV1 } from "@opencode-ai/core/v1/session"
 import { mkdir } from "node:fs/promises"
 import path from "node:path"
 import { Cause, Config, Effect, Exit, Layer } from "effect"
 import { HttpClient, HttpClientRequest, HttpClientResponse, HttpRouter, HttpServer } from "effect/unstable/http"
 import { layerWebSocketConstructorGlobal } from "effect/unstable/socket/Socket"
-import { CrossSpawnSpawner } from "@sumocode-ai/core/cross-spawn-spawner"
-import { Flag } from "@sumocode-ai/core/flag/flag"
-import { Ripgrep } from "@sumocode-ai/core/ripgrep"
+import { CrossSpawnSpawner } from "@opencode-ai/core/cross-spawn-spawner"
+import { Flag } from "@opencode-ai/core/flag/flag"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
 import { registerAdapter } from "../../src/control-plane/adapters"
 import type { WorkspaceAdapter } from "../../src/control-plane/types"
 import { Workspace } from "../../src/control-plane/workspace"
@@ -23,21 +23,20 @@ import * as HttpSessionError from "../../src/server/routes/instance/httpapi/hand
 import { SessionPaths } from "../../src/server/routes/instance/httpapi/groups/session"
 import { Session } from "@/session/session"
 import { MessageID, PartID, SessionID, type SessionID as SessionIDType } from "../../src/session/schema"
-import { MessageV2 } from "../../src/session/message-v2"
-import { Database } from "@sumocode-ai/core/database/database"
-import { SessionInputTable, SessionMessageTable, SessionTable } from "@sumocode-ai/core/session/sql"
-import { SessionMessage } from "@sumocode-ai/core/session/message"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { Database } from "@opencode-ai/core/database/database"
+import { SessionInputTable, SessionMessageTable, SessionTable } from "@opencode-ai/core/session/sql"
+import { SessionMessage } from "@opencode-ai/core/session/message"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import * as DateTime from "effect/DateTime"
 import { eq } from "drizzle-orm"
 import { resetDatabase } from "../fixture/db"
 import { disposeAllInstances, provideInstanceEffect, TestInstance, tmpdirScoped } from "../fixture/fixture"
 import { TestLLMServer } from "../lib/llm-server"
 import { testProviderConfig } from "../lib/test-provider"
-import { testEffect } from "../lib/effect"
+import { pollWithTimeout, testEffect } from "../lib/effect"
 
-const originalWorkspaces = Flag.SUMOCODE_EXPERIMENTAL_WORKSPACES
+const originalWorkspaces = Flag.OPENCODE_EXPERIMENTAL_WORKSPACES
 const workspaceLayer = Workspace.defaultLayer.pipe(
   Layer.provide(InstanceStore.defaultLayer),
   Layer.provide(InstanceBootstrap.defaultLayer),
@@ -129,7 +128,7 @@ const createLocalWorkspace = (input: { projectID: Project.Info["id"]; type: stri
 
 const insertLegacyAssistantMessage = (sessionID: SessionIDType, seq = 1, time = seq) =>
   Effect.gen(function* () {
-    const message = new SessionMessage.Assistant({
+    const message = SessionMessage.Assistant.make({
       id: SessionMessage.ID.create(),
       type: "assistant",
       agent: "build",
@@ -238,7 +237,7 @@ function requestJson<T>(path: string, init?: RequestInit) {
 }
 
 afterEach(async () => {
-  Flag.SUMOCODE_EXPERIMENTAL_WORKSPACES = originalWorkspaces
+  Flag.OPENCODE_EXPERIMENTAL_WORKSPACES = originalWorkspaces
   await disposeAllInstances()
   await resetDatabase()
 })
@@ -582,7 +581,7 @@ describe("session HttpApi", () => {
           request(`/api/session/${session.id}/prompt`, {
             method: "POST",
             headers: { ...headers, "content-type": "application/json" },
-            body: JSON.stringify({ id: "msg_http_prompt", prompt: { text: "hello" } }),
+            body: JSON.stringify({ id: "msg_http_prompt", prompt: { text: "hello" }, resume: false }),
           })
         const first = yield* recordPrompt()
         const retried = yield* recordPrompt()
@@ -625,6 +624,22 @@ describe("session HttpApi", () => {
           message: "Prompt message ID conflicts with an existing durable record: msg_http_prompt",
           resource: "msg_http_prompt",
         })
+
+        const wakeID = SessionMessage.ID.make("msg_http_wake")
+        const wake = yield* request(`/api/session/${session.id}/prompt`, {
+          method: "POST",
+          headers: { ...headers, "content-type": "application/json" },
+          body: JSON.stringify({ id: wakeID, prompt: { text: "hello again" } }),
+        })
+        expect(wake.status).toBe(200)
+        const message = yield* pollWithTimeout(
+          requestJson<{ data: SessionMessage.Message[] }>(`/api/session/${session.id}/message`, { headers }).pipe(
+            Effect.map(({ data }) => data.find((message) => message.id === wakeID)),
+          ),
+          "V2 prompt was not promoted after wake",
+          "10 seconds",
+        )
+        expect(message).toMatchObject({ id: wakeID, type: "user" })
       }),
     { git: true, config: { formatter: false, lsp: false } },
   )
@@ -790,7 +805,7 @@ describe("session HttpApi", () => {
     () =>
       Effect.gen(function* () {
         const test = yield* TestInstance
-        Flag.SUMOCODE_EXPERIMENTAL_WORKSPACES = true
+        Flag.OPENCODE_EXPERIMENTAL_WORKSPACES = true
         const project = yield* Project.use.fromDirectory(test.directory)
         const workspace = yield* createLocalWorkspace({
           projectID: project.project.id,

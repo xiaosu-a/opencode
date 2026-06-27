@@ -1,20 +1,21 @@
 import { beforeEach, describe, expect } from "bun:test"
 import path from "path"
 import { Effect, Exit, Layer, PlatformError } from "effect"
-import { Config } from "@sumocode-ai/core/config"
-import { ConfigAttachments } from "@sumocode-ai/core/config/attachments"
-import { FileSystem } from "@sumocode-ai/core/filesystem"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { Location } from "@sumocode-ai/core/location"
-import { Image } from "@sumocode-ai/core/image"
-import { PermissionV2 } from "@sumocode-ai/core/permission"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { Global } from "@sumocode-ai/core/global"
+import { Config } from "@opencode-ai/core/config"
+import { ConfigAttachments } from "@opencode-ai/core/config/attachments"
+import { FileSystem } from "@opencode-ai/core/filesystem"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Location } from "@opencode-ai/core/location"
+import { Image } from "@opencode-ai/core/image"
+import { PermissionV2 } from "@opencode-ai/core/permission"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Global } from "@opencode-ai/core/global"
+import { LocationMutation } from "@opencode-ai/core/location-mutation"
 import { location } from "./fixture/location"
-import { ToolRegistry } from "@sumocode-ai/core/tool/registry"
-import { ReadTool } from "@sumocode-ai/core/tool/read"
-import { ReadToolFileSystem } from "@sumocode-ai/core/tool/read-filesystem"
+import { ToolRegistry } from "@opencode-ai/core/tool/registry"
+import { ReadTool } from "@opencode-ai/core/tool/read"
+import { ReadToolFileSystem } from "@opencode-ai/core/tool/read-filesystem"
 import { testEffect } from "./lib/effect"
 import { toolIdentity, executeTool, settleTool, toolDefinitions } from "./lib/tool"
 
@@ -97,6 +98,32 @@ const infrastructure = Layer.mergeAll(
   Layer.succeed(Location.Service, Location.Service.of(location({ directory: AbsolutePath.make(process.cwd()) }))),
   Global.layerWith({ data: Global.Path.data }),
 )
+const mutation = Layer.succeed(
+  LocationMutation.Service,
+  LocationMutation.Service.of({
+    resolve: (input) => {
+      if (input.path === missingPath)
+        return Effect.fail(new LocationMutation.PathError({ path: input.path, reason: "non_directory_ancestor" }))
+      const canonical = path.resolve(process.cwd(), input.path)
+      const external = path.isAbsolute(input.path) && !FSUtil.contains(process.cwd(), canonical)
+      const resource = external ? canonical.replaceAll("\\", "/") : path.relative(process.cwd(), canonical) || "."
+      const directory = path.dirname(canonical)
+      const externalResource = path.join(directory, "*").replaceAll("\\", "/")
+      return Effect.succeed({
+        canonical,
+        resource,
+        externalDirectory: external
+          ? {
+              action: "external_directory" as const,
+              directory,
+              resource: externalResource,
+              save: externalResource,
+            }
+          : undefined,
+      })
+    },
+  }),
+)
 const unavailableImage = Layer.succeed(
   Image.Service,
   Image.Service.of({ normalize: () => Effect.fail(new Image.ResizerUnavailableError()) }),
@@ -107,19 +134,21 @@ const read = ReadTool.layer.pipe(
   Layer.provide(permission),
   Layer.provide(config),
   Layer.provide(image),
+  Layer.provide(mutation),
   Layer.provide(infrastructure),
 )
-const it = testEffect(Layer.mergeAll(registry, reader, permission, config, image, infrastructure, read))
+const it = testEffect(Layer.mergeAll(registry, reader, permission, config, image, mutation, infrastructure, read))
 const unavailableRead = ReadTool.layer.pipe(
   Layer.provide(registry),
   Layer.provide(reader),
   Layer.provide(permission),
   Layer.provide(config),
   Layer.provide(unavailableImage),
+  Layer.provide(mutation),
   Layer.provide(infrastructure),
 )
 const itWithoutResizer = testEffect(
-  Layer.mergeAll(registry, reader, permission, config, unavailableImage, infrastructure, unavailableRead),
+  Layer.mergeAll(registry, reader, permission, config, unavailableImage, mutation, infrastructure, unavailableRead),
 )
 const sessionID = SessionV2.ID.make("ses_read_tool_test")
 
@@ -171,6 +200,30 @@ describe("ReadTool", () => {
           page: { offset: undefined, limit: undefined },
         },
       ])
+    }),
+  )
+
+  it.effect("asks for external_directory approval before reading an external absolute path", () =>
+    Effect.gen(function* () {
+      const registry = yield* ToolRegistry.Service
+      const external = path.join(path.parse(process.cwd()).root, "external-read", "notes.txt")
+
+      expect(
+        yield* executeTool(registry, {
+          sessionID,
+          ...toolIdentity,
+          call: { type: "tool-call", id: "call-external-read", name: "read", input: { path: external } },
+        }),
+      ).toMatchObject({ type: "json" })
+      expect(assertions).toMatchObject([
+        {
+          sessionID,
+          action: "external_directory",
+          resources: [path.join(path.dirname(external), "*").replaceAll("\\", "/")],
+        },
+        { sessionID, action: "read", resources: [external.replaceAll("\\", "/")], save: ["*"] },
+      ])
+      expect(readCalls).toEqual([{ input: AbsolutePath.make(external), page: { offset: undefined, limit: undefined } }])
     }),
   )
 

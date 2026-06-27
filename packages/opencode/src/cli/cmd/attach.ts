@@ -1,50 +1,50 @@
 import { cmd } from "./cmd"
 import { UI } from "@/cli/ui"
-import { errorMessage } from "@sumocode-ai/tui/util/error"
+import { errorMessage } from "@opencode-ai/tui/util/error"
 import { validateSession } from "../tui/validate-session"
 import { ServerAuth } from "@/server/auth"
 
 export const AttachCommand = cmd({
   command: "attach <url>",
-  describe: "连接到正在运行的 SumoCode 服务器",
+  describe: "attach to a running opencode server",
   builder: (yargs) =>
     yargs
       .positional("url", {
         type: "string",
-        describe: "服务器 URL，例如 http://localhost:4096",
+        describe: "http://localhost:4096",
         demandOption: true,
       })
       .option("dir", {
         type: "string",
-        description: "运行目录",
+        description: "directory to run in",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "继续上一次会话",
+        describe: "continue the last session",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "要继续的会话 ID",
+        describe: "session id to continue",
       })
       .option("fork", {
         type: "boolean",
-        describe: "继续时创建会话分支（与 --continue 或 --session 配合使用）",
+        describe: "fork the session when continuing (use with --continue or --session)",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "Basic auth 密码（默认读取 SUMOCODE_SERVER_PASSWORD）",
+        describe: "basic auth password (defaults to OPENCODE_SERVER_PASSWORD)",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "Basic auth 用户名（默认读取 SUMOCODE_SERVER_USERNAME 或 'sumocode'）",
+        describe: "basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')",
       })
       .option("mini", {
         type: "boolean",
-        describe: "启动最小化交互界面",
+        describe: "start the minimal interactive interface",
         default: false,
       })
       .option("replay", {
@@ -53,11 +53,11 @@ export const AttachCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "恢复时和调整大小后禁用 mini 会话历史回放",
+        describe: "disable mini session history replay on resume and after resize",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "mini 回放最多显示最近 N 条消息",
+        describe: "cap visible mini replay to the newest N messages",
       }),
   handler: async (args) => {
     if (args.replay === true) {

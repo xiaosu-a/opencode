@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import type { LanguageModelV3 } from "@ai-sdk/provider"
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { XAIPlugin } from "@sumocode-ai/core/plugin/provider/xai"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { XAIPlugin } from "@opencode-ai/core/plugin/provider/xai"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -40,7 +40,7 @@ describe("XAIPlugin", () => {
       yield* addPlugin()
 
       const ignored = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("xai"), ModelV2.ID.make("grok-4")),
           api: { id: ModelV2.ID.make("grok-4"), type: "aisdk", package: "@ai-sdk/xai" },
         }),
@@ -49,7 +49,7 @@ describe("XAIPlugin", () => {
       })
 
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("xai"), ModelV2.ID.make("grok-4")),
           api: { id: ModelV2.ID.make("grok-4"), type: "aisdk", package: "@ai-sdk/xai" },
         }),
@@ -69,7 +69,7 @@ describe("XAIPlugin", () => {
       yield* addPlugin()
 
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("custom-xai"), ModelV2.ID.make("grok-4")),
           api: { id: ModelV2.ID.make("grok-4"), type: "aisdk", package: "@ai-sdk/xai" },
         }),
@@ -89,7 +89,7 @@ describe("XAIPlugin", () => {
 
       yield* addPlugin()
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("xai"), ModelV2.ID.make("alias")),
           api: { id: ModelV2.ID.make("grok-4"), type: "aisdk", package: "@ai-sdk/xai" },
         }),
@@ -110,7 +110,7 @@ describe("XAIPlugin", () => {
 
       yield* addPlugin()
       const result = yield* aisdk.runLanguage({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.openai, ModelV2.ID.make("grok-4")),
           api: { id: ModelV2.ID.make("grok-4"), type: "aisdk", package: "@ai-sdk/xai" },
         }),

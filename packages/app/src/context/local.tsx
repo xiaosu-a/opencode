@@ -1,5 +1,5 @@
-import { createSimpleContext } from "@sumocode-ai/ui/context"
-import { base64Encode } from "@sumocode-ai/core/util/encode"
+import { createSimpleContext } from "@opencode-ai/ui/context"
+import { base64Encode } from "@opencode-ai/core/util/encode"
 import { useParams } from "@solidjs/router"
 import { batch, createEffect, createMemo } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -60,7 +60,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
     const sdk = useSDK()
     const sync = useSync()
     const serverSDK = useServerSDK()
-    const providers = useProviders()
+    const providers = useProviders(() => sdk().directory)
     const models = useModels()
 
     const id = createMemo(() => params.id || undefined)

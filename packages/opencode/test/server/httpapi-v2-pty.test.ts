@@ -6,9 +6,9 @@ import * as Socket from "effect/unstable/socket/Socket"
 import path from "path"
 import { pathToFileURL } from "url"
 import { mkdir } from "fs/promises"
-import { Location } from "@sumocode-ai/core/location"
-import { Pty } from "@sumocode-ai/core/pty"
-import { PtyTicket } from "@sumocode-ai/core/pty/ticket"
+import { Location } from "@opencode-ai/core/location"
+import { Pty } from "@opencode-ai/core/pty"
+import { PtyTicket } from "@opencode-ai/core/pty/ticket"
 import { HttpApiApp } from "../../src/server/routes/instance/httpapi/server"
 import { resetDatabase } from "../fixture/db"
 import { disposeAllInstances, tmpdir, tmpdirScoped } from "../fixture/fixture"
@@ -200,7 +200,7 @@ describe("v2 pty HttpApi", () => {
         )
         yield* Effect.promise(() =>
           Bun.write(
-            path.join(dir, "sumocode.json"),
+            path.join(dir, "opencode.json"),
             JSON.stringify({ plugin: [pathToFileURL(plugin).href], formatter: false, lsp: false }),
           ),
         )

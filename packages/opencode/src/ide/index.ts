@@ -1,7 +1,7 @@
-import { EventV2 } from "@sumocode-ai/core/event"
 import { Schema } from "effect"
-import { NamedError } from "@sumocode-ai/core/util/error"
+import { NamedError } from "@opencode-ai/core/util/error"
 import { Process } from "@/util/process"
+import { IdeEvent } from "@opencode-ai/schema/ide-event"
 
 const SUPPORTED_IDES = [
   { name: "Windsurf" as const, cmd: "windsurf" },
@@ -11,14 +11,7 @@ const SUPPORTED_IDES = [
   { name: "VSCodium" as const, cmd: "codium" },
 ]
 
-export const Event = {
-  Installed: EventV2.define({
-    type: "ide.installed",
-    schema: {
-      ide: Schema.String,
-    },
-  }),
-}
+export const Event = IdeEvent
 
 export const AlreadyInstalledError = NamedError.create("AlreadyInstalledError", {})
 
@@ -37,14 +30,14 @@ export function ide() {
 }
 
 export function alreadyInstalled() {
-  return process.env["SUMOCODE_CALLER"] === "vscode" || process.env["SUMOCODE_CALLER"] === "vscode-insiders"
+  return process.env["OPENCODE_CALLER"] === "vscode" || process.env["OPENCODE_CALLER"] === "vscode-insiders"
 }
 
 export async function install(ide: (typeof SUPPORTED_IDES)[number]["name"]) {
   const cmd = SUPPORTED_IDES.find((i) => i.name === ide)?.cmd
   if (!cmd) throw new Error(`Unknown IDE: ${ide}`)
 
-  const p = await Process.run([cmd, "--install-extension", "sst-dev.sumocode"], {
+  const p = await Process.run([cmd, "--install-extension", "sst-dev.opencode"], {
     nothrow: true,
   })
   const stdout = p.stdout.toString()

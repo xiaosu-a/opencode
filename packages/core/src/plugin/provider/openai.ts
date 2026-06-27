@@ -1,12 +1,13 @@
 import { createServer } from "node:http"
-import type { IntegrationOAuthMethodRegistration } from "@sumocode-ai/plugin/v2/effect/integration"
-import { define } from "@sumocode-ai/plugin/v2/effect/plugin"
+import type { IntegrationOAuthMethodRegistration } from "@opencode-ai/plugin/v2/effect/integration"
+import { define } from "@opencode-ai/plugin/v2/effect/plugin"
 import { Deferred, Effect } from "effect"
 import type { Scope } from "effect"
 import { Credential } from "../../credential"
 import { InstallationVersion } from "../../installation/version"
 import { Integration } from "../../integration"
 import { ModelV2 } from "../../model"
+import { OauthCallbackPage } from "../../oauth/page"
 import { ProviderV2 } from "../../provider"
 import type { PluginInternal } from "../internal"
 
@@ -58,17 +59,21 @@ const browser = {
         const value = url.searchParams.get("code")
         if (error) {
           Effect.runFork(Deferred.fail(code, new Error(error)))
-          response.writeHead(400, { "Content-Type": "text/html" }).end(errorPage(error))
+          response
+            .writeHead(400, { "Content-Type": "text/html" })
+            .end(OauthCallbackPage.error(error, { provider: "ChatGPT" }))
           return
         }
         if (!value || url.searchParams.get("state") !== state) {
           const message = value ? "Invalid OAuth state" : "Missing authorization code"
           Effect.runFork(Deferred.fail(code, new Error(message)))
-          response.writeHead(400, { "Content-Type": "text/html" }).end(errorPage(message))
+          response
+            .writeHead(400, { "Content-Type": "text/html" })
+            .end(OauthCallbackPage.error(message, { provider: "ChatGPT" }))
           return
         }
         Effect.runFork(Deferred.succeed(code, value))
-        response.writeHead(200, { "Content-Type": "text/html" }).end(successPage)
+        response.writeHead(200, { "Content-Type": "text/html" }).end(OauthCallbackPage.success({ provider: "ChatGPT" }))
       })
       yield* Effect.callback<void, Error>((resume) => {
         server.once("error", (error) => resume(Effect.fail(error)))
@@ -213,7 +218,7 @@ function refresh(methodID: Integration.MethodID, value: Pick<Credential.OAuth, "
   }).pipe(
     Effect.map((tokens) => {
       const next = credential(methodID, tokens)
-      return new Credential.OAuth({ ...next, metadata: next.metadata ?? value.metadata })
+      return Credential.OAuth.make({ ...next, metadata: next.metadata ?? value.metadata })
     }),
   )
 }
@@ -231,7 +236,7 @@ function request<A>(url: string, init: RequestInit) {
 
 function credential(methodID: Integration.MethodID, tokens: TokenResponse) {
   const accountID = extractAccountID(tokens)
-  return new Credential.OAuth({
+  return Credential.OAuth.make({
     type: "oauth",
     methodID,
     refresh: tokens.refresh_token,
@@ -285,8 +290,3 @@ function claim(token: string) {
     return
   }
 }
-
-const successPage =
-  "<!doctype html><title>SumoCode</title><h1>Authorization successful</h1><p>You can close this window.</p>"
-const errorPage = (message: string) =>
-  `<!doctype html><title>SumoCode</title><h1>Authorization failed</h1><p>${message.replace(/[&<>"']/g, "")}</p>`

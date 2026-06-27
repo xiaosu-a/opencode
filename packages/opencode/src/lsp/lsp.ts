@@ -1,7 +1,6 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { EventV2Bridge } from "@/event-v2-bridge"
-import { EventV2 } from "@sumocode-ai/core/event"
 import * as LSPClient from "./client"
 import path from "path"
 import { pathToFileURL, fileURLToPath } from "url"
@@ -12,12 +11,11 @@ import { spawn as lspspawn } from "./launch"
 import { Effect, Layer, Context, Schema } from "effect"
 import { InstanceState } from "@/effect/instance-state"
 import { containsPath } from "@/project/instance-context"
-import { NonNegativeInt } from "@sumocode-ai/core/schema"
+import { NonNegativeInt } from "@opencode-ai/core/schema"
 import { RuntimeFlags } from "@/effect/runtime-flags"
+import { LspEvent } from "@opencode-ai/schema/lsp-event"
 
-export const Event = {
-  Updated: EventV2.define({ type: "lsp.updated", schema: {} }),
-}
+export const Event = LspEvent
 
 const Position = Schema.Struct({
   line: NonNegativeInt,
@@ -506,6 +504,10 @@ export const defaultLayer = layer.pipe(
 
 export * as Diagnostic from "./diagnostic"
 
-export const node = LayerNode.make(layer, [Config.node, RuntimeFlags.node, FSUtil.node, EventV2Bridge.node])
+export const node = LayerNode.make({
+  service: Service,
+  layer: layer,
+  deps: [Config.node, RuntimeFlags.node, FSUtil.node, EventV2Bridge.node],
+})
 
 export * as LSP from "./lsp"

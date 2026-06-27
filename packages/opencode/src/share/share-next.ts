@@ -1,7 +1,7 @@
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
-import { httpClient } from "@sumocode-ai/core/effect/layer-node-platform"
-import type * as SDK from "@sumocode-ai/sdk/v2"
-import { serviceUse } from "@sumocode-ai/core/effect/service-use"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { httpClient } from "@opencode-ai/core/effect/layer-node-platform"
+import type * as SDK from "@opencode-ai/sdk/v2"
+import { serviceUse } from "@opencode-ai/core/effect/service-use"
 import { Effect, Exit, Layer, Option, Schema, Scope, Context, Stream } from "effect"
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
 import { Account } from "@/account/account"
@@ -12,15 +12,15 @@ import { Provider } from "@/provider/provider"
 import { Session } from "@/session/session"
 import { MessageV2 } from "@/session/message-v2"
 import type { SessionID } from "@/session/schema"
-import { Database } from "@sumocode-ai/core/database/database"
+import { Database } from "@opencode-ai/core/database/database"
 import { eq } from "drizzle-orm"
 import { Config } from "@/config/config"
-import { SessionShareTable } from "@sumocode-ai/core/share/sql"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { EventV2 } from "@sumocode-ai/core/event"
+import { SessionShareTable } from "@opencode-ai/core/share/sql"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { EventV2 } from "@opencode-ai/core/event"
 
-const disabled = process.env["SUMOCODE_DISABLE_SHARE"] === "true" || process.env["SUMOCODE_DISABLE_SHARE"] === "1"
+const disabled = process.env["OPENCODE_DISABLE_SHARE"] === "true" || process.env["OPENCODE_DISABLE_SHARE"] === "1"
 
 export type Api = {
   create: string
@@ -372,14 +372,10 @@ export const defaultLayer = layer.pipe(
   Layer.provide(Session.defaultLayer),
 )
 
-export const node = LayerNode.make(layer, [
-  Account.node,
-  EventV2Bridge.node,
-  Config.node,
-  Database.node,
-  httpClient,
-  Provider.node,
-  Session.node,
-])
+export const node = LayerNode.make({
+  service: Service,
+  layer: layer,
+  deps: [Account.node, EventV2Bridge.node, Config.node, Database.node, httpClient, Provider.node, Session.node],
+})
 
 export * as ShareNext from "./share-next"

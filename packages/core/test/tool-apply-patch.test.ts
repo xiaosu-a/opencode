@@ -2,15 +2,15 @@ import fs from "fs/promises"
 import path from "path"
 import { describe, expect } from "bun:test"
 import { Deferred, Effect, Exit, Fiber, Layer } from "effect"
-import { FileMutation } from "@sumocode-ai/core/file-mutation"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { Location } from "@sumocode-ai/core/location"
-import { LocationMutation } from "@sumocode-ai/core/location-mutation"
-import { PermissionV2 } from "@sumocode-ai/core/permission"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { ToolRegistry } from "@sumocode-ai/core/tool/registry"
-import { ApplyPatchTool } from "@sumocode-ai/core/tool/apply-patch"
+import { FileMutation } from "@opencode-ai/core/file-mutation"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Location } from "@opencode-ai/core/location"
+import { LocationMutation } from "@opencode-ai/core/location-mutation"
+import { PermissionV2 } from "@opencode-ai/core/permission"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { ToolRegistry } from "@opencode-ai/core/tool/registry"
+import { ApplyPatchTool } from "@opencode-ai/core/tool/apply-patch"
 import { location } from "./fixture/location"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
@@ -148,6 +148,29 @@ describe("ApplyPatchTool", () => {
                     { type: "add", resource: "nested/new.txt" },
                     { type: "update", resource: "update.txt" },
                     { type: "delete", resource: "remove.txt" },
+                  ],
+                  files: [
+                    {
+                      file: "nested/new.txt",
+                      status: "added",
+                      additions: 1,
+                      deletions: 0,
+                      patch: expect.stringContaining("+created"),
+                    },
+                    {
+                      file: "update.txt",
+                      status: "modified",
+                      additions: 1,
+                      deletions: 1,
+                      patch: expect.stringContaining("-before\n+after"),
+                    },
+                    {
+                      file: "remove.txt",
+                      status: "deleted",
+                      additions: 0,
+                      deletions: 1,
+                      patch: expect.stringContaining("-remove"),
+                    },
                   ],
                 })
                 expect(assertions).toMatchObject([

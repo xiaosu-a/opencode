@@ -22,7 +22,7 @@ import type { PromptInfo } from "../../prompt/history"
 import { useFrecency } from "../../prompt/frecency"
 import { useBindings, useCommandSlashes, useOpencodeModeStack } from "../../keymap"
 import { displayCharAt, mentionTriggerIndex } from "../../prompt/display"
-import type { FileSystemEntry } from "@sumocode-ai/sdk/v2"
+import type { FileSystemEntry } from "@opencode-ai/sdk/v2"
 
 function removeLineRange(input: string) {
   const hashIndex = input.lastIndexOf("#")
@@ -261,7 +261,7 @@ export function Autocomplete(props: {
       filename,
       part: {
         type: "file" as const,
-        mime: item.mime,
+        mime: item.type === "directory" ? "application/x-directory" : "text/plain",
         filename,
         url: urlObj.href,
         source: {
@@ -305,11 +305,7 @@ export function Autocomplete(props: {
       startLine: input.lineStart,
       endLine: input.lineEnd > input.lineStart ? input.lineEnd : undefined,
     }
-    const { filename, part } = createFilePart(
-      { path: item, type: "file", mime: "text/plain" },
-      input.filePath,
-      lineRange,
-    )
+    const { filename, part } = createFilePart({ path: item, type: "file" }, input.filePath, lineRange)
     const index = store.visible === "@" ? store.index : props.input().cursorOffset
 
     setStore("visible", false)

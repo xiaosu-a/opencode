@@ -1,33 +1,33 @@
 import { EOL } from "os"
 import { Effect } from "effect"
-import { Ripgrep } from "@sumocode-ai/core/ripgrep"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
 import { effectCmd } from "../../effect-cmd"
 import { cmd } from "../cmd"
 import { InstanceRef } from "@/effect/instance-ref"
 
 export const RipgrepCommand = cmd({
   command: "rg",
-  describe: "ripgrep 调试工具",
+  describe: "ripgrep debugging utilities",
   builder: (yargs) => yargs.command(FilesCommand).command(SearchCommand).demandCommand(),
   async handler() {},
 })
 
 const FilesCommand = effectCmd({
   command: "files",
-  describe: "使用 ripgrep 列出文件",
+  describe: "list files using ripgrep",
   builder: (yargs) =>
     yargs
       .option("query", {
         type: "string",
-        description: "按查询过滤文件",
+        description: "Filter files by query",
       })
       .option("glob", {
         type: "string",
-        description: "匹配文件的 glob 模式",
+        description: "Glob pattern to match files",
       })
       .option("limit", {
         type: "number",
-        description: "限制结果数量",
+        description: "Limit number of results",
       }),
   handler: Effect.fn("Cli.debug.rg.files")(function* (args) {
     const ctx = yield* InstanceRef
@@ -46,21 +46,21 @@ const FilesCommand = effectCmd({
 
 const SearchCommand = effectCmd({
   command: "search <pattern>",
-  describe: "使用 ripgrep 搜索文件内容",
+  describe: "search file contents using ripgrep",
   builder: (yargs) =>
     yargs
       .positional("pattern", {
         type: "string",
         demandOption: true,
-        description: "搜索模式",
+        description: "Search pattern",
       })
       .option("glob", {
         type: "array",
-        description: "文件 glob 模式",
+        description: "File glob patterns",
       })
       .option("limit", {
         type: "number",
-        description: "限制结果数量",
+        description: "Limit number of results",
       }),
   handler: Effect.fn("Cli.debug.rg.search")(function* (args) {
     const ctx = yield* InstanceRef

@@ -1,9 +1,9 @@
-import { QuestionV2 } from "@sumocode-ai/core/question"
+import { QuestionV2 } from "@opencode-ai/core/question"
 import { Effect } from "effect"
 import { HttpApiBuilder, HttpApiSchema } from "effect/unstable/httpapi"
 import { Api } from "../api"
-import { QuestionNotFoundError } from "../errors"
-import { response } from "../groups/location"
+import { QuestionNotFoundError } from "@opencode-ai/protocol/errors"
+import { response } from "../location"
 
 function missingRequest(id: QuestionV2.ID) {
   return new QuestionNotFoundError({ requestID: id, message: `Question request not found: ${id}` })

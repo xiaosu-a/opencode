@@ -115,7 +115,7 @@ export default function Home() {
                       <span data-slot="command-script">
                         <span>curl -fsSL </span>
                         <span data-slot="protocol">https://</span>
-                        <span data-slot="highlight">sumocode.ai/install</span>
+                        <span data-slot="highlight">opencode.ai/install</span>
                         <span> | bash</span>
                       </span>
                       <CopyStatus />
@@ -125,7 +125,7 @@ export default function Home() {
                     <button data-copy data-slot="command" onClick={handleCopyClick}>
                       <span>
                         <span data-slot="protocol">npm i -g </span>
-                        <span data-slot="highlight">sumocode-ai</span>
+                        <span data-slot="highlight">opencode-ai</span>
                       </span>
                       <CopyStatus />
                     </button>
@@ -134,7 +134,7 @@ export default function Home() {
                     <button data-copy data-slot="command" onClick={handleCopyClick}>
                       <span>
                         <span data-slot="protocol">bun add -g </span>
-                        <span data-slot="highlight">sumocode-ai</span>
+                        <span data-slot="highlight">opencode-ai</span>
                       </span>
                       <CopyStatus />
                     </button>

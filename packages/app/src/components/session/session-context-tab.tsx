@@ -1,18 +1,19 @@
 import { createMemo, createEffect, on, onCleanup, For, Show } from "solid-js"
 import type { JSX } from "solid-js"
 import { useSync } from "@/context/sync"
-import { checksum } from "@sumocode-ai/core/util/encode"
-import { findLast } from "@sumocode-ai/core/util/array"
+import { checksum } from "@opencode-ai/core/util/encode"
+import { findLast } from "@opencode-ai/core/util/array"
 import { same } from "@/utils/same"
-import { Icon } from "@sumocode-ai/ui/icon"
-import { Accordion } from "@sumocode-ai/ui/accordion"
-import { StickyAccordionHeader } from "@sumocode-ai/ui/sticky-accordion-header"
-import { File } from "@sumocode-ai/ui/file"
-import { Markdown } from "@sumocode-ai/ui/markdown"
-import { ScrollView } from "@sumocode-ai/ui/scroll-view"
-import type { Message, Part, UserMessage } from "@sumocode-ai/sdk/v2/client"
+import { Icon } from "@opencode-ai/ui/icon"
+import { Accordion } from "@opencode-ai/ui/accordion"
+import { StickyAccordionHeader } from "@opencode-ai/ui/sticky-accordion-header"
+import { File } from "@opencode-ai/session-ui/file"
+import { Markdown } from "@opencode-ai/session-ui/markdown"
+import { ScrollView } from "@opencode-ai/ui/scroll-view"
+import type { Message, Part, UserMessage } from "@opencode-ai/sdk/v2/client"
 import { useLanguage } from "@/context/language"
 import { useProviders } from "@/hooks/use-providers"
+import { useSDK } from "@/context/sdk"
 import { useSessionLayout } from "@/pages/session/session-layout"
 import { getSessionContextMetrics } from "./session-context-metrics"
 import { estimateSessionContextBreakdown, type SessionContextBreakdownKey } from "./session-context-breakdown"
@@ -93,7 +94,8 @@ const emptyUserMessages: UserMessage[] = []
 export function SessionContextTab() {
   const sync = useSync()
   const language = useLanguage()
-  const providers = useProviders()
+  const sdk = useSDK()
+  const providers = useProviders(() => sdk().directory)
   const { params, view } = useSessionLayout()
 
   const info = createMemo(() => (params.id ? sync().session.get(params.id) : undefined))

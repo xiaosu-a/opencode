@@ -1,1 +1,1 @@
-export * from "@sumocode-ai/tui/util/record"
+export * from "@opencode-ai/tui/util/record"

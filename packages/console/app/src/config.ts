@@ -3,7 +3,7 @@
  */
 export const config = {
   // Base URL
-  baseUrl: "https://sumocode.ai",
+  baseUrl: "https://opencode.ai",
 
   // GitHub
   github: {

@@ -5,14 +5,14 @@ import { cmd } from "../cmd"
 
 export const SnapshotCommand = cmd({
   command: "snapshot",
-  describe: "快照调试工具",
+  describe: "snapshot debugging utilities",
   builder: (yargs) => yargs.command(TrackCommand).command(PatchCommand).command(DiffCommand).demandCommand(),
   async handler() {},
 })
 
 const TrackCommand = effectCmd({
   command: "track",
-  describe: "追踪当前快照状态",
+  describe: "track current snapshot state",
   handler: Effect.fn("Cli.debug.snapshot.track")(function* () {
     const out = yield* Snapshot.Service.use((svc) => svc.track())
     console.log(out)
@@ -21,7 +21,7 @@ const TrackCommand = effectCmd({
 
 const PatchCommand = effectCmd({
   command: "patch <hash>",
-  describe: "显示快照 hash 的补丁",
+  describe: "show patch for a snapshot hash",
   builder: (yargs) =>
     yargs.positional("hash", {
       type: "string",
@@ -36,7 +36,7 @@ const PatchCommand = effectCmd({
 
 const DiffCommand = effectCmd({
   command: "diff <hash>",
-  describe: "显示快照 hash 的差异",
+  describe: "show diff for a snapshot hash",
   builder: (yargs) =>
     yargs.positional("hash", {
       type: "string",

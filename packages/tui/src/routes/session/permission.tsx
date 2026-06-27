@@ -4,7 +4,7 @@ import { createMemo, For, Match, Show, Switch } from "solid-js"
 import { Portal, useRenderer, useTerminalDimensions, type JSX } from "@opentui/solid"
 import type { TextareaRenderable } from "@opentui/core"
 import { useTheme, selectedForeground } from "../../context/theme"
-import type { PermissionRequest } from "@sumocode-ai/sdk/v2"
+import type { PermissionRequest } from "@opencode-ai/sdk/v2"
 import { useSDK } from "../../context/sdk"
 import { SplitBorder } from "../../ui/border"
 import { useSync } from "../../context/sync"
@@ -14,7 +14,7 @@ import { Locale } from "../../util/locale"
 import { webSearchProviderLabel } from "../../util/tool-display"
 import { getScrollAcceleration } from "../../util/scroll"
 import { useTuiConfig } from "../../config"
-import { SUMOCODE_BASE_MODE, useBindings, useCommandShortcut } from "../../keymap"
+import { OPENCODE_BASE_MODE, useBindings, useCommandShortcut } from "../../keymap"
 import { usePathFormatter } from "../../context/path-format"
 
 type PermissionStage = "permission" | "always" | "reject"
@@ -80,7 +80,7 @@ function EditBody(props: { request: PermissionRequest }) {
       </Show>
       <Show when={!diff()}>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>未提供差异</text>
+          <text fg={theme.textMuted}>No diff provided</text>
         </box>
       </Show>
     </box>
@@ -137,15 +137,15 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
     <Switch>
       <Match when={store.stage === "always"}>
         <Prompt
-          title="始终允许"
+          title="Always allow"
           body={
             <Switch>
               <Match when={props.request.always.length === 1 && props.request.always[0] === "*"}>
-                <TextBody title={"这将允许 " + props.request.permission + " 直到 SumoCode 重启。"} />
+                <TextBody title={"This will allow " + props.request.permission + " until OpenCode is restarted."} />
               </Match>
               <Match when={true}>
                 <box paddingLeft={1} gap={1}>
-                  <text fg={theme.textMuted}>这将允许以下模式直到 SumoCode 重启：</text>
+                  <text fg={theme.textMuted}>This will allow the following patterns until OpenCode is restarted</text>
                   <box>
                     <For each={props.request.always}>
                       {(pattern) => (
@@ -160,7 +160,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               </Match>
             </Switch>
           }
-          options={{ confirm: "确认", cancel: "取消" }}
+          options={{ confirm: "Confirm", cancel: "Cancel" }}
           escapeKey="cancel"
           onSelect={(option) => {
             setStore("stage", "permission")
@@ -201,7 +201,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const filepath = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `编辑 ${pathFormatter.format(filepath)}`,
+                title: `Edit ${pathFormatter.format(filepath)}`,
                 body: <EditBody request={props.request} />,
               }
             }
@@ -211,11 +211,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const filePath = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `读取 ${pathFormatter.format(filePath)}`,
+                title: `Read ${pathFormatter.format(filePath)}`,
                 body: (
                   <Show when={filePath}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"路径: " + pathFormatter.format(filePath)}</text>
+                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(filePath)}</text>
                     </box>
                   </Show>
                 ),
@@ -230,7 +230,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={pattern}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"模式: " + pattern}</text>
+                      <text fg={theme.textMuted}>{"Pattern: " + pattern}</text>
                     </box>
                   </Show>
                 ),
@@ -245,7 +245,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={pattern}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"模式: " + pattern}</text>
+                      <text fg={theme.textMuted}>{"Pattern: " + pattern}</text>
                     </box>
                   </Show>
                 ),
@@ -257,11 +257,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const dir = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `列出 ${pathFormatter.format(dir)}`,
+                title: `List ${pathFormatter.format(dir)}`,
                 body: (
                   <Show when={dir}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"路径: " + pathFormatter.format(dir)}</text>
+                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(dir)}</text>
                     </box>
                   </Show>
                 ),
@@ -272,7 +272,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const command = typeof data.command === "string" ? data.command : ""
               return {
                 icon: "#",
-                title: "Shell 命令",
+                title: "Shell command",
                 body: (
                   <Show when={command}>
                     <box paddingLeft={1}>
@@ -288,7 +288,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const desc = typeof data.description === "string" ? data.description : ""
               return {
                 icon: "#",
-                title: `${Locale.titlecase(type)} 任务`,
+                title: `${Locale.titlecase(type)} Task`,
                 body: (
                   <Show when={desc}>
                     <box paddingLeft={1}>
@@ -322,7 +322,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={query}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"查询: " + query}</text>
+                      <text fg={theme.textMuted}>{"Query: " + query}</text>
                     </box>
                   </Show>
                 ),
@@ -343,11 +343,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
               return {
                 icon: "←",
-                title: `访问外部目录 ${dir}`,
+                title: `Access external directory ${dir}`,
                 body: (
                   <Show when={patterns.length > 0}>
                     <box paddingLeft={1} gap={1}>
-                      <text fg={theme.textMuted}>模式</text>
+                      <text fg={theme.textMuted}>Patterns</text>
                       <box>
                         <For each={patterns}>{(p) => <text fg={theme.text}>{"- " + p}</text>}</For>
                       </box>
@@ -360,10 +360,10 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             if (permission === "doom_loop") {
               return {
                 icon: "⟳",
-                title: "在反复失败后继续",
+                title: "Continue after repeated failures",
                 body: (
                   <box paddingLeft={1}>
-                    <text fg={theme.textMuted}>尽管反复失败，仍保持会话运行。</text>
+                    <text fg={theme.textMuted}>This keeps the session running despite repeated failures.</text>
                   </box>
                 ),
               }
@@ -371,10 +371,10 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
             return {
               icon: "⚙",
-              title: `调用工具 ${permission}`,
+              title: `Call tool ${permission}`,
               body: (
                 <box paddingLeft={1}>
-                  <text fg={theme.textMuted}>{"工具: " + permission}</text>
+                  <text fg={theme.textMuted}>{"Tool: " + permission}</text>
                 </box>
               ),
             }
@@ -386,7 +386,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             <box flexDirection="column" gap={0}>
               <box flexDirection="row" gap={1} flexShrink={0}>
                 <text fg={theme.warning}>{"△"}</text>
-                <text fg={theme.text}>需要权限</text>
+                <text fg={theme.text}>Permission required</text>
               </box>
               <box flexDirection="row" gap={1} paddingLeft={2} flexShrink={0}>
                 <text fg={theme.textMuted} flexShrink={0}>
@@ -399,10 +399,10 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
           const body = (
             <Prompt
-              title="需要权限"
+              title="Permission required"
               header={header()}
               body={current.body}
-              options={{ once: "允许一次", always: "始终允许", reject: "拒绝" }}
+              options={{ once: "Allow once", always: "Allow always", reject: "Reject" }}
               escapeKey="reject"
               fullscreen
               onSelect={(option) => {
@@ -447,11 +447,11 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
   const dimensions = useTerminalDimensions()
   const narrow = createMemo(() => dimensions().width < 80)
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     commands: [
       {
         name: "app.exit",
-        title: "取消权限拒绝",
+        title: "Cancel permission rejection",
         category: "Permission",
         run() {
           props.onCancel()
@@ -459,11 +459,11 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
       },
     ],
     bindings: [
-      { key: "escape", desc: "取消权限拒绝", group: "Permission", cmd: () => props.onCancel() },
+      { key: "escape", desc: "Cancel permission rejection", group: "Permission", cmd: () => props.onCancel() },
       ...tuiConfig.keybinds.get("app.exit"),
       {
         key: "return",
-        desc: "确认权限拒绝",
+        desc: "Confirm permission rejection",
         group: "Permission",
         cmd: () => props.onConfirm(input.plainText),
       },
@@ -480,10 +480,10 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
       <box gap={1} paddingLeft={1} paddingRight={3} paddingTop={1} paddingBottom={1}>
         <box flexDirection="row" gap={1} paddingLeft={1}>
           <text fg={theme.error}>{"△"}</text>
-          <text fg={theme.text}>拒绝权限</text>
+          <text fg={theme.text}>Reject permission</text>
         </box>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>告诉 SumoCode 哪里需要改进</text>
+          <text fg={theme.textMuted}>Tell OpenCode what to do differently</text>
         </box>
       </box>
       <box
@@ -510,10 +510,10 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
         />
         <box flexDirection="row" gap={2} flexShrink={0}>
           <text fg={theme.text}>
-            enter <span style={{ fg: theme.textMuted }}>确认</span>
+            enter <span style={{ fg: theme.textMuted }}>confirm</span>
           </text>
           <text fg={theme.text}>
-            esc <span style={{ fg: theme.textMuted }}>取消</span>
+            esc <span style={{ fg: theme.textMuted }}>cancel</span>
           </text>
         </box>
       </box>
@@ -542,11 +542,11 @@ function Prompt<const T extends Record<string, string>>(props: {
   const fullscreenHint = useCommandShortcut("permission.prompt.fullscreen")
 
   useBindings(() => ({
-    mode: SUMOCODE_BASE_MODE,
+    mode: OPENCODE_BASE_MODE,
     commands: [
       {
         name: "app.exit",
-        title: "拒绝权限",
+        title: "Reject permission",
         category: "Permission",
         run() {
           if (!props.escapeKey) return
@@ -555,7 +555,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         name: "permission.prompt.fullscreen",
-        title: "切换权限全屏",
+        title: "Toggle permission fullscreen",
         category: "Permission",
         run() {
           if (!props.fullscreen) return
@@ -566,7 +566,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     bindings: [
       {
         key: "left",
-        desc: "上一个权限选项",
+        desc: "Previous permission option",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -576,7 +576,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "h",
-        desc: "上一个权限选项",
+        desc: "Previous permission option",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -586,7 +586,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "right",
-        desc: "下一个权限选项",
+        desc: "Next permission option",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -596,7 +596,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "l",
-        desc: "下一个权限选项",
+        desc: "Next permission option",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -606,7 +606,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "return",
-        desc: "选择权限选项",
+        desc: "Select permission option",
         group: "Permission",
         cmd: () => props.onSelect(store.selected),
       },
@@ -625,7 +625,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     ],
   }))
 
-  const hint = createMemo(() => (store.expanded ? "收起" : "全屏"))
+  const hint = createMemo(() => (store.expanded ? "minimize" : "fullscreen"))
   useRenderer()
 
   const content = () => (
@@ -700,10 +700,10 @@ function Prompt<const T extends Record<string, string>>(props: {
             </text>
           </Show>
           <text fg={theme.text}>
-            {"⇆"} <span style={{ fg: theme.textMuted }}>选择</span>
+            {"⇆"} <span style={{ fg: theme.textMuted }}>select</span>
           </text>
           <text fg={theme.text}>
-            enter <span style={{ fg: theme.textMuted }}>确认</span>
+            enter <span style={{ fg: theme.textMuted }}>confirm</span>
           </text>
         </box>
       </box>

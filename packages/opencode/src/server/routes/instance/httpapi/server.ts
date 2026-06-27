@@ -2,8 +2,8 @@ import { Config as EffectConfig, Context, Effect, Layer } from "effect"
 import { HttpApiBuilder, OpenApi } from "effect/unstable/httpapi"
 import { HttpClient, HttpMiddleware, HttpRouter, HttpServer, HttpServerResponse } from "effect/unstable/http"
 import * as Socket from "effect/unstable/socket/Socket"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import * as Observability from "@sumocode-ai/core/observability"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import * as Observability from "@opencode-ai/core/observability"
 import { Account } from "@/account/account"
 import { Agent } from "@/agent/agent"
 import { Auth } from "@/auth"
@@ -49,24 +49,28 @@ import { ToolRegistry } from "@/tool/registry"
 import { Truncate } from "@/tool/truncate"
 import { Worktree } from "@/worktree"
 import { RuntimeFlags } from "@/effect/runtime-flags"
-import { MoveSession } from "@sumocode-ai/core/control-plane/move-session"
-import { Database } from "@sumocode-ai/core/database/database"
-import { LayerNode } from "@sumocode-ai/core/effect/layer-node"
-import { httpClient } from "@sumocode-ai/core/effect/layer-node-platform"
-import { EventV2 } from "@sumocode-ai/core/event"
-import { ModelsDev } from "@sumocode-ai/core/models-dev"
-import { Npm } from "@sumocode-ai/core/npm"
-import { ProjectV2 } from "@sumocode-ai/core/project"
-import { ProjectCopy } from "@sumocode-ai/core/project/copy"
-import { PtyTicket } from "@sumocode-ai/core/pty/ticket"
-import { Ripgrep } from "@sumocode-ai/core/ripgrep"
-import { SessionProjector } from "@sumocode-ai/core/session/projector"
+import { MoveSession } from "@opencode-ai/core/control-plane/move-session"
+import { Database } from "@opencode-ai/core/database/database"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNodeTree } from "@opencode-ai/core/effect/layer-node"
+import { httpClient } from "@opencode-ai/core/effect/layer-node-platform"
+import { EventV2 } from "@opencode-ai/core/event"
+import { ModelsDev } from "@opencode-ai/core/models-dev"
+import { Npm } from "@opencode-ai/core/npm"
+import { PermissionSaved } from "@opencode-ai/core/permission/saved"
+import { ProjectV2 } from "@opencode-ai/core/project"
+import { ProjectCopy } from "@opencode-ai/core/project/copy"
+import { PtyTicket } from "@opencode-ai/core/pty/ticket"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
+import { SessionProjector } from "@opencode-ai/core/session/projector"
+import { SessionV2 } from "@opencode-ai/core/session"
+import * as SessionExecutionLocal from "@opencode-ai/core/session/execution/local"
 import { lazy } from "@/util/lazy"
-import { CorsConfig, isAllowedCorsOrigin, type CorsOptions } from "@sumocode-ai/server/cors"
+import { CorsConfig, isAllowedCorsOrigin, type CorsOptions } from "@opencode-ai/server/cors"
 import { serveUIEffect } from "@/server/shared/ui"
 import { ServerAuth } from "@/server/auth"
 import { InstanceHttpApi, RootHttpApi } from "./api"
-import { Api } from "@sumocode-ai/server/api"
+import { Api } from "@opencode-ai/server/api"
 import { PublicApi } from "./public"
 import {
   authorizationLayer,
@@ -94,13 +98,17 @@ import { questionHandlers } from "./handlers/question"
 import { sessionHandlers } from "./handlers/session"
 import { syncHandlers } from "./handlers/sync"
 import { tuiHandlers } from "./handlers/tui"
-import { handlers } from "@sumocode-ai/server/handlers"
-import { schemaErrorLayer as v2SchemaErrorLayer } from "@sumocode-ai/server/middleware/schema-error"
+import { handlers } from "@opencode-ai/server/handlers"
+import { locationServiceMapLayer } from "@opencode-ai/core/location-services"
+import { layer as locationLayer } from "@opencode-ai/server/location"
+import { sessionLocationLayer } from "@opencode-ai/server/middleware/session-location"
+import { PtyEnvironment } from "@opencode-ai/server/pty-environment"
+import { schemaErrorLayer as v2SchemaErrorLayer } from "@opencode-ai/server/middleware/schema-error"
 import { workspaceHandlers } from "./handlers/workspace"
 import { instanceContextLayer } from "./middleware/instance-context"
 import { workspaceRoutingLayer } from "./middleware/workspace-routing"
 import { disposeMiddleware } from "./lifecycle"
-import { memoMap } from "@sumocode-ai/core/effect/memo-map"
+import { memoMap } from "@opencode-ai/core/effect/memo-map"
 import { compressionLayer } from "./middleware/compression"
 import { corsVaryFix } from "./middleware/cors-vary"
 import { errorLayer } from "./middleware/error"
@@ -221,6 +229,7 @@ const app = LayerNode.group([
   Discovery.node,
   Question.node,
   Permission.node,
+  PermissionSaved.node,
   Todo.node,
   Session.node,
   SessionProjector.node,
@@ -279,9 +288,21 @@ export function createRoutes(
       MoveSession.defaultLayer,
       HttpServer.layerServices,
     ]),
-    Layer.provide(LayerNode.buildLayer(app)),
     Layer.provide(Layer.succeed(CorsConfig)(corsOptions)),
     Layer.provideMerge(Observability.layer),
+
+    Layer.provide(sessionLocationLayer),
+    Layer.provide(locationLayer),
+    Layer.provide(PtyEnvironment.layer),
+    Layer.provide(
+      SessionV2.defaultLayer.pipe(
+        Layer.provide(SessionExecutionLocal.defaultLayer),
+        Layer.provide(locationServiceMapLayer),
+      ),
+    ),
+    Layer.provide(locationServiceMapLayer),
+
+    Layer.provide(LayerNodeTree.compile(app)),
   )
 }
 

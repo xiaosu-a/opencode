@@ -2,8 +2,8 @@ import { Effect } from "effect"
 import { effectCmd } from "../effect-cmd"
 import { Session } from "@/session/session"
 import { NotFoundError } from "@/storage/storage"
-import { Database } from "@sumocode-ai/core/database/database"
-import { SessionTable } from "@sumocode-ai/core/session/sql"
+import { Database } from "@opencode-ai/core/database/database"
+import { SessionTable } from "@opencode-ai/core/session/sql"
 import { Project } from "@/project/project"
 import { InstanceRef } from "@/effect/instance-ref"
 
@@ -48,22 +48,22 @@ interface SessionStats {
 
 export const StatsCommand = effectCmd({
   command: "stats",
-  describe: "显示 token 用量和费用统计",
+  describe: "show token usage and cost statistics",
   builder: (yargs) =>
     yargs
       .option("days", {
-        describe: "显示最近 N 天的统计（默认：全部时间）",
+        describe: "show stats for the last N days (default: all time)",
         type: "number",
       })
       .option("tools", {
-        describe: "显示的工具数量（默认：全部）",
+        describe: "number of tools to show (default: all)",
         type: "number",
       })
       .option("models", {
-        describe: "显示模型统计（默认：隐藏）。传入数字显示前 N 个，否则显示全部",
+        describe: "show model statistics (default: hidden). Pass a number to show top N, otherwise shows all",
       })
       .option("project", {
-        describe: "按项目筛选（默认：全部项目，空字符串：当前项目）",
+        describe: "filter by project (default: all projects, empty string: current project)",
         type: "string",
       }),
   handler: Effect.fn("Cli.stats")(function* (args) {

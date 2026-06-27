@@ -1,12 +1,12 @@
-import { AISDK } from "@sumocode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect, it as bun_it } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { PluginV2 } from "@sumocode-ai/core/plugin"
-import { PluginHost } from "@sumocode-ai/core/plugin/host"
-import { SnowflakeCortexPlugin, cortexFetch } from "@sumocode-ai/core/plugin/provider/snowflake-cortex"
-import { ProviderPlugins } from "@sumocode-ai/core/plugin/provider"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { SnowflakeCortexPlugin, cortexFetch } from "@opencode-ai/core/plugin/provider/snowflake-cortex"
+import { ProviderPlugins } from "@opencode-ai/core/plugin/provider"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -55,7 +55,7 @@ describe("SnowflakeCortexPlugin", () => {
       const aisdk = yield* AISDK.Service
       yield* addPlugin()
       const result = yield* aisdk.runSDK({
-        model: new ModelV2.Info({
+        model: ModelV2.Info.make({
           ...ModelV2.Info.empty(ProviderV2.ID.make("openai"), ModelV2.ID.make("gpt-4")),
           api: { id: ModelV2.ID.make("gpt-4"), type: "aisdk", package: "test-provider" },
         }),
@@ -73,7 +73,7 @@ describe("SnowflakeCortexPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("snowflake-cortex"), ModelV2.ID.make("claude-sonnet-4-6")),
             api: { id: ModelV2.ID.make("claude-sonnet-4-6"), type: "aisdk", package: "test-provider" },
           }),
@@ -92,7 +92,7 @@ describe("SnowflakeCortexPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("snowflake-cortex"), ModelV2.ID.make("claude-sonnet-4-6")),
             api: { id: ModelV2.ID.make("claude-sonnet-4-6"), type: "aisdk", package: "test-provider" },
           }),
@@ -115,7 +115,7 @@ describe("SnowflakeCortexPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("snowflake-cortex"), ModelV2.ID.make("claude-sonnet-4-6")),
             api: { id: ModelV2.ID.make("claude-sonnet-4-6"), type: "aisdk", package: "test-provider" },
           }),
@@ -134,7 +134,7 @@ describe("SnowflakeCortexPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("snowflake-cortex"), ModelV2.ID.make("claude-sonnet-4-6")),
             api: { id: ModelV2.ID.make("claude-sonnet-4-6"), type: "aisdk", package: "test-provider" },
           }),
@@ -157,7 +157,7 @@ describe("SnowflakeCortexPlugin", () => {
         const aisdk = yield* AISDK.Service
         yield* addPlugin()
         const result = yield* aisdk.runSDK({
-          model: new ModelV2.Info({
+          model: ModelV2.Info.make({
             ...ModelV2.Info.empty(ProviderV2.ID.make("snowflake-cortex"), ModelV2.ID.make("claude-sonnet-4-6")),
             api: { id: ModelV2.ID.make("claude-sonnet-4-6"), type: "aisdk", package: "test-provider" },
           }),

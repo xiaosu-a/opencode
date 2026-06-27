@@ -4,15 +4,15 @@ import { cmd } from "./cmd"
 import { CliError, effectCmd, fail } from "../effect-cmd"
 import { UI } from "../ui"
 import * as Prompt from "../effect/prompt"
-import { ModelsDev } from "@sumocode-ai/core/models-dev"
+import { ModelsDev } from "@opencode-ai/core/models-dev"
 
 import { map, pipe, sortBy, values } from "remeda"
 import path from "path"
 import os from "os"
 import { Config } from "@/config/config"
-import { Global } from "@sumocode-ai/core/global"
+import { Global } from "@opencode-ai/core/global"
 import { Plugin } from "../../plugin"
-import type { Hooks } from "@sumocode-ai/plugin"
+import type { Hooks } from "@opencode-ai/plugin"
 import { Process } from "@/util/process"
 import { errorMessage } from "@/util/error"
 import { text } from "node:stream/consumers"
@@ -239,7 +239,7 @@ export function resolvePluginProviders(input: {
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
-  describe: "管理 AI 提供商和凭据",
+  describe: "manage AI providers and credentials",
   builder: (yargs) =>
     yargs.command(ProvidersListCommand).command(ProvidersLoginCommand).command(ProvidersLogoutCommand).demandCommand(),
   async handler() {},
@@ -248,7 +248,7 @@ export const ProvidersCommand = cmd({
 export const ProvidersListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "列出提供商和凭据",
+  describe: "list providers and credentials",
   // Lists global credentials + provider env vars; no project instance needed.
   instance: false,
   handler: Effect.fn("Cli.providers.list")(function* (_args) {
@@ -298,23 +298,23 @@ export const ProvidersListCommand = effectCmd({
 
 export const ProvidersLoginCommand = effectCmd({
   command: "login [url]",
-  describe: "登录到提供商",
+  describe: "log in to a provider",
   // URL login skips instance bootstrap, which would load remote config with the stale token and crash before re-auth.
   instance: (args) => !args.url,
   builder: (yargs: Argv) =>
     yargs
       .positional("url", {
-        describe: "SumoCode 认证提供商",
+        describe: "opencode auth provider",
         type: "string",
       })
       .option("provider", {
         alias: ["p"],
-        describe: "要登录的提供商 ID 或名称（跳过提供商选择）",
+        describe: "provider id or name to log in to (skips provider selection)",
         type: "string",
       })
       .option("method", {
         alias: ["m"],
-        describe: "登录方式标签（跳过方式选择）",
+        describe: "login method label (skips method selection)",
         type: "string",
       }),
   handler: Effect.fn("Cli.providers.login")(function* (args) {
@@ -449,7 +449,7 @@ export const ProvidersLoginCommand = effectCmd({
       }
 
       yield* Prompt.log.warn(
-        `This only stores a credential for ${provider} - you will need configure it in sumocode.json, check the docs for examples.`,
+        `This only stores a credential for ${provider} - you will need configure it in opencode.json, check the docs for examples.`,
       )
     }
 
@@ -458,13 +458,13 @@ export const ProvidersLoginCommand = effectCmd({
         "Amazon Bedrock authentication priority:\n" +
           "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK or /connect)\n" +
           "  2. AWS credential chain (profile, access keys, IAM roles, EKS IRSA)\n\n" +
-          "Configure via sumocode.json options (profile, region, endpoint) or\n" +
+          "Configure via opencode.json options (profile, region, endpoint) or\n" +
           "AWS environment variables (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
       )
     }
 
     if (provider === "opencode") {
-      yield* Prompt.log.info("Create an api key at https://sumocode.ai/auth")
+      yield* Prompt.log.info("Create an api key at https://opencode.ai/auth")
     }
 
     if (provider === "vercel") {
@@ -473,7 +473,7 @@ export const ProvidersLoginCommand = effectCmd({
 
     if (["cloudflare", "cloudflare-ai-gateway"].includes(provider)) {
       yield* Prompt.log.info(
-        "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://sumocode.ai/docs/providers/#cloudflare-ai-gateway",
+        "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://opencode.ai/docs/providers/#cloudflare-ai-gateway",
       )
     }
 
@@ -490,10 +490,10 @@ export const ProvidersLoginCommand = effectCmd({
 
 export const ProvidersLogoutCommand = effectCmd({
   command: "logout [provider]",
-  describe: "从已配置的提供商登出",
+  describe: "log out from a configured provider",
   builder: (yargs) =>
     yargs.positional("provider", {
-      describe: "要登出的提供商 ID 或名称",
+      describe: "provider id or name to log out from",
       type: "string",
     }),
   // Removes a global auth credential; no project instance needed.

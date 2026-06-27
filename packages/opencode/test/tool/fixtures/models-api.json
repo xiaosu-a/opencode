@@ -28002,11 +28002,11 @@
   },
   "opencode-go": {
     "id": "opencode-go",
-    "env": ["SUMOCODE_API_KEY"],
+    "env": ["OPENCODE_API_KEY"],
     "npm": "@ai-sdk/openai-compatible",
-    "api": "https://sumocode.ai/zen/go/v1",
-    "name": "SumoCode Go",
-    "doc": "https://sumocode.ai/docs/zen",
+    "api": "https://opencode.ai/zen/go/v1",
+    "name": "OpenCode Go",
+    "doc": "https://opencode.ai/docs/zen",
     "models": {
       "minimax-m2.7": {
         "id": "minimax-m2.7",
@@ -57812,11 +57812,11 @@
   },
   "opencode": {
     "id": "opencode",
-    "env": ["SUMOCODE_API_KEY"],
+    "env": ["OPENCODE_API_KEY"],
     "npm": "@ai-sdk/openai-compatible",
-    "api": "https://sumocode.ai/zen/v1",
-    "name": "SumoCode Zen",
-    "doc": "https://sumocode.ai/docs/zen",
+    "api": "https://opencode.ai/zen/v1",
+    "name": "OpenCode Zen",
+    "doc": "https://opencode.ai/docs/zen",
     "models": {
       "minimax-m2.7": {
         "id": "minimax-m2.7",

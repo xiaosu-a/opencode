@@ -20,13 +20,13 @@ jobs:
       - uses: ./.github/actions/setup-bun
 
       - name: Install opencode
-        run: curl -fsSL https://sumocode.ai/install | bash
+        run: curl -fsSL https://opencode.ai/install | bash
 
       - name: Check duplicates and compliance
         env:
-          SUMOCODE_API_KEY: ${{ secrets.SUMOCODE_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SUMOCODE_PERMISSION: |
+          OPENCODE_PERMISSION: |
             {
               "bash": {
                 "*": "deny",
@@ -132,13 +132,13 @@ jobs:
       - uses: ./.github/actions/setup-bun
 
       - name: Install opencode
-        run: curl -fsSL https://sumocode.ai/install | bash
+        run: curl -fsSL https://opencode.ai/install | bash
 
       - name: Recheck compliance
         env:
-          SUMOCODE_API_KEY: ${{ secrets.SUMOCODE_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SUMOCODE_PERMISSION: |
+          OPENCODE_PERMISSION: |
             {
               "bash": {
                 "*": "deny",

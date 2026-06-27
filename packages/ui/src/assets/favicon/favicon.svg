@@ -1,14 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
-  <defs>
-    <linearGradient id="sumoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4F46E5"/>
-      <stop offset="50%" stop-color="#3B82F6"/>
-      <stop offset="100%" stop-color="#06B6D4"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="#0F0E1A"/>
-  <path d="M340 196C340 170 312 150 270 150C228 150 200 170 200 196C200 238 284 232 284 274C284 296 256 306 224 306C192 306 168 296 168 274" stroke="url(#sumoGrad)" stroke-width="32" stroke-linecap="round" fill="none"/>
-  <circle cx="256" cy="256" r="180" stroke="url(#sumoGrad)" stroke-width="3" opacity="0.15" fill="none"/>
-  <rect x="200" y="340" width="112" height="8" rx="4" fill="url(#sumoGrad)" opacity="0.6"/>
-  <rect x="224" y="360" width="64" height="8" rx="4" fill="url(#sumoGrad)" opacity="0.4"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512"><svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="512" height="512" fill="#131010"></rect>
+<path d="M320 224V352H192V224H320Z" fill="#5A5858"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M384 416H128V96H384V416ZM320 160H192V352H320V160Z" fill="white"></path>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: none; } }
+</style></svg>

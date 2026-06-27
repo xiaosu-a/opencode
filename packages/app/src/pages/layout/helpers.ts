@@ -1,7 +1,8 @@
-import { getFilename } from "@sumocode-ai/core/util/path"
-import { type Session } from "@sumocode-ai/sdk/v2/client"
+import { getFilename } from "@opencode-ai/core/util/path"
+import { type Session } from "@opencode-ai/sdk/v2/client"
 import { pathKey } from "@/utils/path-key"
 import type { ServerConnection } from "@/context/server"
+import type { HomeProjectSelection } from "@/context/layout"
 
 type SessionStore = {
   session?: Session[]
@@ -56,8 +57,6 @@ export const childSessionOnPath = (sessions: Session[] | undefined, rootID: stri
 export const displayName = (project: { name?: string; worktree: string }) =>
   project.name || getFilename(project.worktree) || project.worktree
 
-export type HomeProjectSelection = { server: ServerConnection.Key; directory?: string }
-
 export function toggleHomeProjectSelection(
   current: HomeProjectSelection | undefined,
   server: ServerConnection.Key,
@@ -93,10 +92,10 @@ export function homeSessionServerStatus(active: boolean, status: () => { working
   return status()
 }
 
-const SUMOCODE_PROJECT_ID = "4b0ea68d7af9a6031a7ffda7ad66e0cb83315750"
+const OPENCODE_PROJECT_ID = "4b0ea68d7af9a6031a7ffda7ad66e0cb83315750"
 
 export function getProjectAvatarSource(id?: string, icon?: { color?: string; url?: string; override?: string }) {
-  if (id === SUMOCODE_PROJECT_ID) return "https://sumocode.ai/favicon.svg"
+  if (id === OPENCODE_PROJECT_ID) return "https://opencode.ai/favicon.svg"
   if (icon?.override) return icon.override
   if (icon?.color) return undefined
   return icon?.url

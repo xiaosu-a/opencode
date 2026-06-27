@@ -74,7 +74,7 @@ function init() {
         })
       toast.show({
         variant: "error",
-        message: "发生了未知错误",
+        message: "An unknown error has occurred",
       })
     },
     get currentToast(): ToastOptions | null {

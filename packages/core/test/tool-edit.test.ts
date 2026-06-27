@@ -3,15 +3,15 @@ import path from "path"
 import { fileURLToPath } from "url"
 import { describe, expect, test } from "bun:test"
 import { Effect, Layer } from "effect"
-import { FileMutation } from "@sumocode-ai/core/file-mutation"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
-import { Location } from "@sumocode-ai/core/location"
-import { LocationMutation } from "@sumocode-ai/core/location-mutation"
-import { PermissionV2 } from "@sumocode-ai/core/permission"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
-import { SessionV2 } from "@sumocode-ai/core/session"
-import { ToolRegistry } from "@sumocode-ai/core/tool/registry"
-import { EditTool } from "@sumocode-ai/core/tool/edit"
+import { FileMutation } from "@opencode-ai/core/file-mutation"
+import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Location } from "@opencode-ai/core/location"
+import { LocationMutation } from "@opencode-ai/core/location-mutation"
+import { PermissionV2 } from "@opencode-ai/core/permission"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { ToolRegistry } from "@opencode-ai/core/tool/registry"
+import { EditTool } from "@opencode-ai/core/tool/edit"
 import { location } from "./fixture/location"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
@@ -125,11 +125,16 @@ describe("EditTool", () => {
                   value: "Edited file successfully: hello.txt\nReplacements: 1\n```diff\n-before\n+after\n```",
                 })
                 expect(settled.output?.structured).toEqual({
-                  operation: "write",
-                  target: yield* Effect.promise(() => fs.realpath(target)),
-                  resource: "hello.txt",
-                  existed: true,
                   replacements: 1,
+                  files: [
+                    {
+                      file: "hello.txt",
+                      status: "modified",
+                      additions: 1,
+                      deletions: 1,
+                      patch: expect.stringContaining("-before\n+after"),
+                    },
+                  ],
                 })
                 expect(yield* Effect.promise(() => fs.readFile(target, "utf8"))).toBe("after\nrest\n")
                 expect(assertions).toMatchObject([{ sessionID, action: "edit", resources: ["hello.txt"], save: ["*"] }])

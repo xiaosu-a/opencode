@@ -1,14 +1,14 @@
 import { describe, expect } from "bun:test"
 import { Effect, Fiber, Layer, Stream } from "effect"
-import { Catalog } from "@sumocode-ai/core/catalog"
-import { Integration } from "@sumocode-ai/core/integration"
-import { Credential } from "@sumocode-ai/core/credential"
-import { EventV2 } from "@sumocode-ai/core/event"
-import { Location } from "@sumocode-ai/core/location"
-import { ModelV2 } from "@sumocode-ai/core/model"
-import { Policy } from "@sumocode-ai/core/policy"
-import { ProviderV2 } from "@sumocode-ai/core/provider"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { Integration } from "@opencode-ai/core/integration"
+import { Credential } from "@opencode-ai/core/credential"
+import { EventV2 } from "@opencode-ai/core/event"
+import { Location } from "@opencode-ai/core/location"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { Policy } from "@opencode-ai/core/policy"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { AbsolutePath } from "@opencode-ai/core/schema"
 import { location } from "./fixture/location"
 import { testEffect } from "./lib/effect"
 
@@ -61,7 +61,7 @@ describe("CatalogV2", () => {
       yield* credentials.create({
         integrationID,
         label: "First",
-        value: new Credential.Key({ type: "key", key: "first", metadata: { tenant: "one" } }),
+        value: Credential.Key.make({ type: "key", key: "first", metadata: { tenant: "one" } }),
       })
 
       expect((yield* catalog.provider.available()).map((provider) => provider.id)).toEqual([ProviderV2.ID.make("test")])
@@ -69,7 +69,7 @@ describe("CatalogV2", () => {
       yield* credentials.create({
         integrationID,
         label: "Second",
-        value: new Credential.Key({ type: "key", key: "second", metadata: { tenant: "two" } }),
+        value: Credential.Key.make({ type: "key", key: "second", metadata: { tenant: "two" } }),
       })
       expect((yield* catalog.provider.available()).map((provider) => provider.id)).toEqual([ProviderV2.ID.make("test")])
       expect(required(yield* catalog.provider.get(ProviderV2.ID.make("test"))).request.body).toEqual({})
@@ -98,7 +98,7 @@ describe("CatalogV2", () => {
 
       yield* (yield* Credential.Service).create({
         integrationID,
-        value: new Credential.Key({ type: "key", key: "secret" }),
+        value: Credential.Key.make({ type: "key", key: "secret" }),
       })
 
       expect((yield* catalog.provider.available()).map((provider) => provider.id)).toEqual([providerID])
@@ -233,16 +233,13 @@ describe("CatalogV2", () => {
           model.request.headers.shared = "model"
           model.request.body.model = true
           model.request.body.request = true
-          const options = (model.request.options ??= {})
-          options.shared = "model"
-          options.model = true
+          model.request.body.shared = "model"
         })
       })
 
       const model = required(yield* catalog.model.get(providerID, modelID))
       expect(model.request.headers).toEqual({ provider: "provider", shared: "model", model: "model" })
-      expect(model.request.body).toEqual({ provider: true, model: true, request: true })
-      expect(model.request.options).toEqual({ shared: "model", model: true })
+      expect(model.request.body).toEqual({ provider: true, model: true, request: true, shared: "model" })
     }),
   )
 

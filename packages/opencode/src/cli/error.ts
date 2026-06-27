@@ -1,4 +1,4 @@
-import { NamedError } from "@sumocode-ai/core/util/error"
+import { NamedError } from "@opencode-ai/core/util/error"
 import { errorFormat } from "@/util/error"
 import { isRecord } from "@/util/record"
 
@@ -47,7 +47,7 @@ export function FormatError(input: unknown): string | undefined {
   // MCPFailed: { name: string }
   if (NamedError.hasName(input, "MCPFailed")) {
     const data = isRecord(input) && isRecord(input.data) ? stringField(input.data, "name") : undefined
-    return `MCP server "${data}" 失败。注意，SumoCode 尚不支持 MCP 认证。`
+    return `MCP server "${data}" failed. Note, opencode does not support MCP authentication yet.`
   }
 
   // AccountServiceError, AccountTransportError: TaggedErrorClass
@@ -62,30 +62,30 @@ export function FormatError(input: unknown): string | undefined {
       ? providerModelNotFound.suggestions.filter((x) => typeof x === "string")
       : []
     return [
-      `未找到模型：${stringField(providerModelNotFound, "providerID")}/${stringField(providerModelNotFound, "modelID")}`,
-      ...(suggestions.length ? ["您是不是想用：" + suggestions.join(", ")] : []),
-      `请运行 \`opencode models\` 列出可用模型`,
-      `或检查您的配置 (sumocode.json) 中的 provider/model 名称`,
+      `Model not found: ${stringField(providerModelNotFound, "providerID")}/${stringField(providerModelNotFound, "modelID")}`,
+      ...(suggestions.length ? ["Did you mean: " + suggestions.join(", ")] : []),
+      `Try: \`opencode models\` to list available models`,
+      `Or check your config (opencode.json) provider/model names`,
     ].join("\n")
   }
 
   // ProviderInitError: { providerID: string }
   const providerInit = configData(input, "ProviderInitError")
   if (providerInit) {
-    return `初始化提供商 "${stringField(providerInit, "providerID")}" 失败。请检查凭据和配置。`
+    return `Failed to initialize provider "${stringField(providerInit, "providerID")}". Check credentials and configuration.`
   }
 
   // ConfigJsonError: { path: string, message?: string }
   const configJson = configData(input, "ConfigJsonError")
   if (configJson) {
     const message = stringField(configJson, "message")
-    return `配置文件 ${stringField(configJson, "path")} 不是有效的 JSON(C)` + (message ? `：${message}` : "")
+    return `Config file at ${stringField(configJson, "path")} is not valid JSON(C)` + (message ? `: ${message}` : "")
   }
 
   // ConfigDirectoryTypoError: { dir: string, path: string, suggestion: string }
   const configDirectoryTypo = configData(input, "ConfigDirectoryTypoError")
   if (configDirectoryTypo) {
-    return `目录 "${stringField(configDirectoryTypo, "dir")}"（位于 ${stringField(configDirectoryTypo, "path")}）无效。请将目录重命名为 "${stringField(configDirectoryTypo, "suggestion")}" 或将其删除。这是一个常见的拼写错误。`
+    return `Directory "${stringField(configDirectoryTypo, "dir")}" in ${stringField(configDirectoryTypo, "path")} is not valid. Rename the directory to "${stringField(configDirectoryTypo, "suggestion")}" or remove it. This is a common typo.`
   }
 
   // ConfigFrontmatterError: { message: string }
@@ -100,9 +100,9 @@ export function FormatError(input: unknown): string | undefined {
     const url = stringField(remoteAuth, "url")
     const remote = stringField(remoteAuth, "remote")
     return [
-      `加载远程配置失败${remote ? `（来自 ${remote}）` : ""}：服务器返回了登录页面而非 JSON。`,
-      `认证缺失或已过期（该端点可能位于 SSO 或身份感知代理之后）。`,
-      ...(url ? [`运行 \`opencode auth login ${url}\` 重新认证。`] : []),
+      `Failed to load remote config${remote ? ` from ${remote}` : ""}: the server returned a login page instead of JSON.`,
+      `Authentication is missing or has expired (the endpoint is likely behind an SSO or identity-aware proxy).`,
+      ...(url ? [`Run \`opencode auth login ${url}\` to re-authenticate.`] : []),
     ].join("\n")
   }
 
@@ -113,7 +113,7 @@ export function FormatError(input: unknown): string | undefined {
     const message = stringField(configInvalid, "message")
     const issues = configIssues(configInvalid)
     return [
-      `配置无效${path && path !== "config" ? `（位于 ${path}）` : ""}` + (message ? `：${message}` : ""),
+      `Configuration is invalid${path && path !== "config" ? ` at ${path}` : ""}` + (message ? `: ${message}` : ""),
       ...issues.map((issue) => "↳ " + issue.message + " " + issue.path.join(".")),
     ].join("\n")
   }

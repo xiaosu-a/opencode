@@ -1,7 +1,7 @@
-import { Button } from "@sumocode-ai/ui/button"
-import { useDialog } from "@sumocode-ai/ui/context/dialog"
-import { Spinner } from "@sumocode-ai/ui/spinner"
-import { showToast } from "@sumocode-ai/ui/toast"
+import { Button } from "@opencode-ai/ui/button"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { Spinner } from "@opencode-ai/ui/spinner"
+import { showToast } from "@opencode-ai/ui/toast"
 import { createEffect, createMemo, For, Match, onCleanup, Show, Switch } from "solid-js"
 import { createStore } from "solid-js/store"
 import { useLanguage } from "@/context/language"
@@ -283,7 +283,7 @@ export function DialogAddWslServer(props: DialogWslServerProps = {}) {
             ? language.t("wsl.server.label")
             : step === "distro"
               ? language.t("wsl.onboarding.step.distro")
-              : language.t("wsl.onboarding.step.sumocode"),
+              : language.t("wsl.onboarding.step.opencode"),
         state:
           active === step
             ? "current"
@@ -539,7 +539,7 @@ export function DialogAddWslServer(props: DialogWslServerProps = {}) {
             <Match when={activeStep() === "opencode"}>
               <div class="rounded-md bg-surface-base p-4 flex flex-col gap-3">
                 <div class="flex items-center justify-between gap-3">
-                  <div class="text-14-medium text-text-strong">{language.t("wsl.onboarding.step.sumocode")}</div>
+                  <div class="text-14-medium text-text-strong">{language.t("wsl.onboarding.step.opencode")}</div>
                   <div class="flex items-center gap-2">
                     <Show when={selectedDistro()}>
                       <Button

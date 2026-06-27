@@ -9,6 +9,7 @@ import { Location } from "./location"
 import { AbsolutePath } from "./schema"
 import { SystemContext } from "./system-context/index"
 import { SystemContextRegistry } from "./system-context/registry"
+import { makeLocationNode } from "./effect/node"
 
 class File extends Schema.Class<File>("InstructionContext.File")({
   path: AbsolutePath,
@@ -43,7 +44,7 @@ export const layer = Layer.effectDiscard(
       const insideProject =
         fromProject === "" || (fromProject !== ".." && !fromProject.startsWith(`..${sep}`) && !isAbsolute(fromProject))
       const discovered = new Set(
-        (Flag.SUMOCODE_DISABLE_PROJECT_CONFIG || !insideProject
+        (Flag.OPENCODE_DISABLE_PROJECT_CONFIG || !insideProject
           ? []
           : yield* fs.up({
               targets: ["AGENTS.md"],
@@ -86,6 +87,12 @@ export const layer = Layer.effectDiscard(
     })
   }),
 )
+
+export const node = makeLocationNode({
+  name: "instruction-context",
+  layer,
+  deps: [FSUtil.node, Global.node, Location.node, SystemContextRegistry.node],
+})
 
 function render(files: ReadonlyArray<File>) {
   return files.map((file) => `Instructions from: ${file.path}\n${file.content}`).join("\n\n")

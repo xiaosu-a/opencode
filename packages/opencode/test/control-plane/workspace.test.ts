@@ -7,22 +7,22 @@ import { NodeHttpServer } from "@effect/platform-node"
 import { Effect, Exit, Fiber, Layer, Schema } from "effect"
 import { FetchHttpClient, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/unstable/http"
 import { eq } from "drizzle-orm"
-import { FSUtil } from "@sumocode-ai/core/fs-util"
+import { FSUtil } from "@opencode-ai/core/fs-util"
 import { GlobalBus, type GlobalEvent } from "@/bus/global"
-import { Database } from "@sumocode-ai/core/database/database"
-import { ProjectV2 } from "@sumocode-ai/core/project"
-import { ProjectTable } from "@sumocode-ai/core/project/sql"
-import { AbsolutePath } from "@sumocode-ai/core/schema"
+import { Database } from "@opencode-ai/core/database/database"
+import { ProjectV2 } from "@opencode-ai/core/project"
+import { ProjectTable } from "@opencode-ai/core/project/sql"
+import { AbsolutePath } from "@opencode-ai/core/schema"
 import { Session as SessionNs } from "@/session/session"
 import { SessionID } from "@/session/schema"
-import { SessionTable } from "@sumocode-ai/core/session/sql"
-import { EventSequenceTable } from "@sumocode-ai/core/event/sql"
+import { SessionTable } from "@opencode-ai/core/session/sql"
+import { EventSequenceTable } from "@opencode-ai/core/event/sql"
 import { resetDatabase } from "../fixture/db"
 import { disposeAllInstances, provideTmpdirInstance, requireInstance, TestInstance } from "../fixture/fixture"
 import { testEffect } from "../lib/effect"
 import { registerAdapter } from "../../src/control-plane/adapters"
-import { WorkspaceV2 } from "@sumocode-ai/core/workspace"
-import { WorkspaceTable } from "@sumocode-ai/core/control-plane/workspace.sql"
+import { WorkspaceV2 } from "@opencode-ai/core/workspace"
+import { WorkspaceTable } from "@opencode-ai/core/control-plane/workspace.sql"
 import type { Target, WorkspaceAdapter, WorkspaceInfo } from "../../src/control-plane/types"
 import * as Workspace from "../../src/control-plane/workspace"
 import { InstanceStore } from "@/project/instance-store"
@@ -33,11 +33,11 @@ import { Project } from "@/project/project"
 import { Vcs } from "@/project/vcs"
 import { RuntimeFlags } from "@/effect/runtime-flags"
 import { EventV2Bridge } from "@/event-v2-bridge"
-import { Ripgrep } from "@sumocode-ai/core/ripgrep"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
 
 const originalEnv = {
-  SUMOCODE_AUTH_CONTENT: process.env.SUMOCODE_AUTH_CONTENT,
-  SUMOCODE_EXPERIMENTAL_WORKSPACES: process.env.SUMOCODE_EXPERIMENTAL_WORKSPACES,
+  OPENCODE_AUTH_CONTENT: process.env.OPENCODE_AUTH_CONTENT,
+  OPENCODE_EXPERIMENTAL_WORKSPACES: process.env.OPENCODE_EXPERIMENTAL_WORKSPACES,
   OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS,
   OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
   OTEL_RESOURCE_ATTRIBUTES: process.env.OTEL_RESOURCE_ATTRIBUTES,
@@ -108,7 +108,7 @@ function restoreEnv() {
 
 beforeEach(() => {
   restoreEnv()
-  process.env.SUMOCODE_EXPERIMENTAL_WORKSPACES = "true"
+  process.env.OPENCODE_EXPERIMENTAL_WORKSPACES = "true"
 })
 
 afterEach(async () => {
@@ -425,7 +425,7 @@ describe("workspace CRUD", () => {
       Effect.gen(function* () {
         const instance = yield* requireInstance
         const workspace = yield* Workspace.Service
-        process.env.SUMOCODE_AUTH_CONTENT = JSON.stringify({ test: { type: "api", key: "secret" } })
+        process.env.OPENCODE_AUTH_CONTENT = JSON.stringify({ test: { type: "api", key: "secret" } })
         process.env.OTEL_EXPORTER_OTLP_HEADERS = "authorization=otel"
         process.env.OTEL_EXPORTER_OTLP_ENDPOINT = "https://otel.test"
         process.env.OTEL_RESOURCE_ATTRIBUTES = "service.name=opencode-test"
@@ -484,11 +484,11 @@ describe("workspace CRUD", () => {
           extra: { configured: true },
           projectID: instance.project.id,
         })
-        expect(JSON.parse(recorded.calls.create[0].env.SUMOCODE_AUTH_CONTENT ?? "{}")).toEqual({
+        expect(JSON.parse(recorded.calls.create[0].env.OPENCODE_AUTH_CONTENT ?? "{}")).toEqual({
           test: { type: "api", key: "secret" },
         })
-        expect(recorded.calls.create[0].env.SUMOCODE_WORKSPACE_ID).toBe(workspaceID)
-        expect(recorded.calls.create[0].env.SUMOCODE_EXPERIMENTAL_WORKSPACES).toBe("true")
+        expect(recorded.calls.create[0].env.OPENCODE_WORKSPACE_ID).toBe(workspaceID)
+        expect(recorded.calls.create[0].env.OPENCODE_EXPERIMENTAL_WORKSPACES).toBe("true")
         expect(recorded.calls.create[0].env.OTEL_EXPORTER_OTLP_HEADERS).toBe("authorization=otel")
         expect(recorded.calls.create[0].env.OTEL_EXPORTER_OTLP_ENDPOINT).toBe("https://otel.test")
         expect(recorded.calls.create[0].env.OTEL_RESOURCE_ATTRIBUTES).toBe("service.name=opencode-test")
