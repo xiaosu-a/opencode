@@ -249,8 +249,8 @@ const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; 
     const sessions = yield* svc.list()
 
     if (sessions.length === 0) {
-      prompts.log.error("No sessions found", { output: process.stderr })
-      prompts.outro("Done", { output: process.stderr })
+      prompts.log.error("未找到会话", { output: process.stderr })
+      prompts.outro("完成", { output: process.stderr })
       return
     }
 
