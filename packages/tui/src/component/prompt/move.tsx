@@ -31,7 +31,7 @@ export function usePromptMove(input: { projectID: () => string | undefined; sess
     const projectID = input.projectID()
     if (!projectID) return
     setCreating(true)
-    setProgress("Creating copy")
+    setProgress("创建副本")
     try {
       const generated = await sdk.client.experimental.projectCopy.generateName(
         { projectID, context },
@@ -54,7 +54,7 @@ export function usePromptMove(input: { projectID: () => string | undefined; sess
       // before moving on
       await sdk.client.path.get({ directory }, { throwOnError: true })
 
-      setProgress("Creating session")
+      setProgress("创建会话")
       return directory
     } catch (err) {
       homeDestination?.clear()
@@ -126,7 +126,7 @@ export function usePromptMove(input: { projectID: () => string | undefined; sess
       dialog.clear()
       return
     }
-    setProgress("Moving session")
+    setProgress("移动会话")
     try {
       await sdk.client.experimental.controlPlane.moveSession(
         {
@@ -173,7 +173,7 @@ export function usePromptMove(input: { projectID: () => string | undefined; sess
   }
 
   function startSubmit() {
-    if (progress()) setProgress("Submitting prompt")
+    if (progress()) setProgress("提交提示")
   }
 
   function finishSubmit() {

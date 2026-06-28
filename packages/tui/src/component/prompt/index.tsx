@@ -330,7 +330,7 @@ export function Prompt(props: PromptProps) {
   const promptCommands = createMemo(() =>
     [
       {
-        title: "Clear prompt",
+        title: "清除提示",
         name: "prompt.clear",
         category: "Prompt",
         hidden: true,
@@ -340,7 +340,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Submit prompt",
+        title: "提交提示",
         name: "prompt.submit",
         category: "Prompt",
         hidden: true,
@@ -385,7 +385,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Interrupt session",
+        title: "中断会话",
         name: "session.interrupt",
         category: "Session",
         hidden: true,
@@ -539,7 +539,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Move session",
+        title: "移动会话",
         desc: "Move to another project dir",
         name: "session.move",
         category: "Session",
@@ -730,7 +730,7 @@ export function Prompt(props: PromptProps) {
   const stashCommands = createMemo(() =>
     [
       {
-        title: "Stash prompt",
+        title: "暂存提示",
         name: "prompt.stash",
         category: "Prompt",
         enabled: !!store.prompt.input,
@@ -748,7 +748,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Stash pop",
+        title: "弹出暂存",
         name: "prompt.stash.pop",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -764,7 +764,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Stash list",
+        title: "暂存列表",
         name: "prompt.stash.list",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -823,7 +823,7 @@ export function Prompt(props: PromptProps) {
       bindings: [
         {
           key: "!",
-          desc: "Shell mode",
+          desc: "Shell 模式",
           group: "Prompt",
           cmd: () => {
             setStore("placeholder", randomIndex(shell().length))
@@ -838,7 +838,7 @@ export function Prompt(props: PromptProps) {
     return {
       target: inputTarget,
       enabled: inputTarget() !== undefined && store.mode === "shell",
-      bindings: [{ key: "escape", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "escape", desc: "退出 Shell 模式", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -849,7 +849,7 @@ export function Prompt(props: PromptProps) {
         cursorVersion()
         return inputTarget() !== undefined && store.mode === "shell" && input?.visualCursor.offset === 0
       })(),
-      bindings: [{ key: "backspace", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "backspace", desc: "退出 Shell 模式", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -863,7 +863,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.previous",
-          title: "Previous prompt history",
+          title: "上一个提示历史",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== 0) {
@@ -895,7 +895,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.next",
-          title: "Next prompt history",
+          title: "下一个提示历史",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== input.plainText.length) {
