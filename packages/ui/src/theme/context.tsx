@@ -14,8 +14,8 @@ export type ColorScheme = "light" | "dark" | "system"
 const STORAGE_KEYS = {
   THEME_ID: "sumocode-theme-id",
   COLOR_SCHEME: "sumocode-color-scheme",
-  THEME_CSS_LIGHT: "opencode-theme-css-light",
-  THEME_CSS_DARK: "opencode-theme-css-dark",
+  THEME_CSS_LIGHT: "sumocode-theme-css-light",
+  THEME_CSS_DARK: "sumocode-theme-css-dark",
 } as const
 
 const THEME_STYLE_ID = "oc-theme"
