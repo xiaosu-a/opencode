@@ -61,7 +61,7 @@ async function loadWorkspaceAdapters(input: {
     return response.data
   } catch (err) {
     input.toast.show({
-      title: "Failed to load workspace adapters",
+      title: "加载工作区适配器失败",
       message: errorMessage(err),
       variant: "error",
     })
@@ -106,7 +106,7 @@ export async function warpWorkspaceSession(input: {
     })
   } catch (err) {
     input.toast.show({
-      title: "Failed to warp session",
+      title: "合并会话失败",
       message: errorMessage(err),
       variant: "error",
     })
@@ -123,7 +123,7 @@ export async function warpWorkspaceSession(input: {
     }
 
     input.toast.show({
-      title: "Failed to warp session",
+      title: "合并会话失败",
       message: errorMessage(result?.error ?? "no response"),
       variant: "error",
     })
@@ -214,9 +214,9 @@ export function DialogWorkspaceSelect(props: {
         category: "New workspace",
       })),
       {
-        title: "None",
+        title: "无",
         value: { type: "none" as const },
-        description: "Use the local project",
+        description: "使用本地项目",
         category: "Choose workspace",
       },
       ...recent.map((workspace: Workspace) => ({
@@ -233,7 +233,7 @@ export function DialogWorkspaceSelect(props: {
       ...(hasMore
         ? [
             {
-              title: "View all workspaces",
+              title: "查看所有工作区",
               value: { type: "existing-list" as const },
               description: "Choose from all workspaces",
               category: "Choose workspace",

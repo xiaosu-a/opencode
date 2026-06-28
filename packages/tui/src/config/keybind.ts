@@ -248,7 +248,7 @@ export const KeybindOverrides = Schema.Struct(
       Schema.optional(BindingValueSchema).annotate({ description: item.description }),
     ]),
   ),
-).annotate({ description: "TUI keybinding overrides" })
+).annotate({ description: "TUI 快捷键覆盖" })
 export const Descriptions = Object.fromEntries(
   Object.entries(Definitions).map(([name, item]) => [name, item.description]),
 ) as Record<KeybindName, string>

@@ -959,12 +959,12 @@ function DiffViewerHelpDialog() {
     {
       shortcut: useCommandShortcut("diff.next_hunk"),
       action: "Next hunk",
-      description: "Jump to the next diff hunk",
+      description: "跳转到下一个差异块",
     },
     {
       shortcut: useCommandShortcut("diff.previous_hunk"),
       action: "Previous hunk",
-      description: "Jump to the previous diff hunk",
+      description: "跳转到上一个差异块",
     },
     {
       shortcut: useCommandShortcut("diff.next_file"),
