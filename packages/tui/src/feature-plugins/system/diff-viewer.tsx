@@ -433,7 +433,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   const commands = [
     {
       name: "diff.close",
-      title: "Close diff viewer",
+      title: "关闭差异查看器",
       category: "VCS",
       run() {
         const returnRoute = params()?.returnRoute
@@ -447,7 +447,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.down",
-      title: "Move diff viewer down",
+      title: "向下移动差异查看器",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -461,7 +461,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.up",
-      title: "Move diff viewer up",
+      title: "向上移动差异查看器",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -475,7 +475,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.down",
-      title: "Page diff viewer down",
+      title: "向下翻页差异查看器",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -489,7 +489,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.up",
-      title: "Page diff viewer up",
+      title: "向上翻页差异查看器",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -503,7 +503,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle",
-      title: "Toggle diff viewer item",
+      title: "切换差异查看器项目",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -514,7 +514,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand",
-      title: "Expand diff viewer item",
+      title: "展开差异查看器项目",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -532,7 +532,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand_all",
-      title: "Expand all diff viewer folders",
+      title: "展开所有差异查看器文件夹",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -543,7 +543,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.collapse",
-      title: "Collapse diff viewer item",
+      title: "折叠差异查看器项目",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -562,7 +562,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_hunk",
-      title: "Jump to next diff hunk",
+      title: "跳转到下一个差异块",
       category: "VCS",
       run() {
         jumpRelativeHunk(1)
@@ -570,7 +570,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_hunk",
-      title: "Jump to previous diff hunk",
+      title: "跳转到上一个差异块",
       category: "VCS",
       run() {
         jumpRelativeHunk(-1)
@@ -578,7 +578,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_file",
-      title: "Jump to next diff file",
+      title: "跳转到下一个差异文件",
       category: "VCS",
       run() {
         jumpRelativePatchFile(1)
@@ -586,7 +586,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_file",
-      title: "Jump to previous diff file",
+      title: "跳转到上一个差异文件",
       category: "VCS",
       run() {
         jumpRelativePatchFile(-1)
@@ -594,7 +594,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.mark_reviewed",
-      title: "Toggle selected diff file reviewed",
+      title: "切换选中差异文件的已审查状态",
       category: "VCS",
       run() {
         toggleSelectedFileReviewed()
@@ -602,7 +602,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_focus",
-      title: "Switch diff viewer focus",
+      title: "切换差异查看器焦点",
       category: "VCS",
       run() {
         if (!showFileTree()) return
@@ -615,7 +615,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle_file_tree",
-      title: "Toggle diff viewer file tree",
+      title: "切换差异查看器文件树",
       category: "VCS",
       run() {
         const next = !fileTreeEnabled()
@@ -653,7 +653,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_source",
-      title: "Switch diff viewer source",
+      title: "切换差异查看器来源",
       category: "VCS",
       run() {
         openSwitchDiffDialog()
@@ -687,21 +687,21 @@ function DiffViewer(props: { api: TuiPluginApi }) {
       {
         title: "Working tree",
         value: "git" as const,
-        description: "Show current git changes",
+        description: "显示当前 git 更改",
       },
       ...(vcs?.branch && vcs.default_branch && vcs.branch !== vcs.default_branch
         ? [
             {
               title: "Main branch",
               value: "branch" as const,
-              description: "Show changes compared to main branch",
+              description: "显示与主分支相比的更改",
             },
           ]
         : []),
       {
         title: "Last turn",
         value: "last-turn" as const,
-        description: "Show changes from the last assistant turn",
+        description: "显示上一次助手回复的更改",
       },
     ]
   })
@@ -737,10 +737,10 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   useBindings(() => ({
     commands,
     bindings: [
-      { key: "j,down", cmd: "diff.down", desc: "Move diff viewer down" },
-      { key: "k,up", cmd: "diff.up", desc: "Move diff viewer up" },
-      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "Page diff viewer down" },
-      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "Page diff viewer up" },
+      { key: "j,down", cmd: "diff.down", desc: "向下移动差异查看器" },
+      { key: "k,up", cmd: "diff.up", desc: "向上移动差异查看器" },
+      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "向下翻页差异查看器" },
+      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "向上翻页差异查看器" },
       { key: "m", cmd: "diff.mark_reviewed", desc: "Mark selected file reviewed" },
       ...props.api.tuiConfig.keybinds.gather(
         "diff",
@@ -949,12 +949,12 @@ function DiffViewerHelpDialog() {
     {
       shortcut: () => "q",
       action: "Close viewer",
-      description: "Quit the diff viewer",
+      description: "退出差异查看器",
     },
     {
       shortcut: useCommandShortcut("diff.switch_focus"),
       action: "Focus file tree",
-      description: "Move keyboard focus between the file tree and patch pane",
+      description: "在文件树和补丁面板之间切换键盘焦点",
     },
     {
       shortcut: useCommandShortcut("diff.next_hunk"),
@@ -969,42 +969,42 @@ function DiffViewerHelpDialog() {
     {
       shortcut: useCommandShortcut("diff.next_file"),
       action: "Next file",
-      description: "Select the next changed file in file-tree order",
+      description: "按文件树顺序选择下一个更改的文件",
     },
     {
       shortcut: useCommandShortcut("diff.previous_file"),
       action: "Previous file",
-      description: "Select the previous changed file in file-tree order",
+      description: "按文件树顺序选择上一个更改的文件",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_file_tree"),
       action: "Toggle file tree",
-      description: "Show or hide the file tree sidebar",
+      description: "显示或隐藏文件树侧边栏",
     },
     {
       shortcut: useCommandShortcut("diff.single_patch"),
       action: "Toggle patches",
-      description: "Switch between one selected patch and all patches",
+      description: "在选中的单个补丁和所有补丁之间切换",
     },
     {
       shortcut: useCommandShortcut("diff.switch_source"),
       action: "Switch source",
-      description: "Choose working tree, main branch, or last-turn changes",
+      description: "选择工作树、主分支或上一轮的更改",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_view"),
       action: "Toggle view",
-      description: "Switch between split and unified diff layout",
+      description: "在分屏和统一差异布局之间切换",
     },
     {
       shortcut: useCommandShortcut("diff.expand_all"),
       action: "Expand all folders",
-      description: "Open every folder in the file tree",
+      description: "展开文件树中的所有文件夹",
     },
     {
       shortcut: useCommandShortcut("diff.mark_reviewed"),
       action: "Mark reviewed",
-      description: "Toggle reviewed state for the selected file",
+      description: "切换选中文件的已审查状态",
     },
   ]
 
@@ -1054,7 +1054,7 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: "diff.open",
-        title: "Open diff viewer",
+        title: "打开差异查看器",
         slashName: "diff",
         category: "VCS",
         namespace: "palette",
