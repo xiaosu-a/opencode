@@ -275,7 +275,7 @@ const TIPS: Tip[] = [
       ? `通过命令面板 (${shortcutText(shortcuts.commandList())}) 切换聊天中的用户名显示`
       : "通过命令面板切换聊天中的用户名显示",
   "运行 {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} 进行容器化使用",
-  "Use {highlight}/connect{/highlight} with OpenCode Zen for curated, tested models",
+  "使用 {highlight}/connect{/highlight} 连接 SumoCode Zen 获取精选、测试过的模型",
   "将项目的 {highlight}AGENTS.md{/highlight} 文件提交到 Git 以进行团队共享",
   "使用 {highlight}/review{/highlight} 审查未提交的更改、分支或 PRs",
   (shortcuts) => `使用 ${commandText("/help", shortcuts.helpShow())} 显示帮助对话框`,
