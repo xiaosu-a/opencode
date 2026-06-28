@@ -136,7 +136,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
     commands: [
       {
         name: "prompt.clear",
-        title: "Clear answer edit",
+        title: "清除答案编辑",
         category: "Question",
         run() {
           const text = textarea?.plainText ?? ""
@@ -217,7 +217,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
       commands: [
         {
           name: "app.exit",
-          title: "Reject question",
+          title: "拒绝问题",
           category: "Question",
           run() {
             reject()

@@ -272,7 +272,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const command = typeof data.command === "string" ? data.command : ""
               return {
                 icon: "#",
-                title: "Shell command",
+                title: "Shell 命令",
                 body: (
                   <Show when={command}>
                     <box paddingLeft={1}>
@@ -360,7 +360,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             if (permission === "doom_loop") {
               return {
                 icon: "⟳",
-                title: "Continue after repeated failures",
+                title: "重复失败后继续",
                 body: (
                   <box paddingLeft={1}>
                     <text fg={theme.textMuted}>This keeps the session running despite repeated failures.</text>
@@ -451,7 +451,7 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
     commands: [
       {
         name: "app.exit",
-        title: "Cancel permission rejection",
+        title: "取消权限拒绝",
         category: "Permission",
         run() {
           props.onCancel()
@@ -546,7 +546,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     commands: [
       {
         name: "app.exit",
-        title: "Reject permission",
+        title: "拒绝权限",
         category: "Permission",
         run() {
           if (!props.escapeKey) return
@@ -555,7 +555,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         name: "permission.prompt.fullscreen",
-        title: "Toggle permission fullscreen",
+        title: "切换权限全屏",
         category: "Permission",
         run() {
           if (!props.fullscreen) return

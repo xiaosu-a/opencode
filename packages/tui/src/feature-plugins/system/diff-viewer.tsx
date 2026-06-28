@@ -685,21 +685,21 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     const vcs = props.api.state.vcs
     return [
       {
-        title: "Working tree",
+        title: "工作树",
         value: "git" as const,
         description: "显示当前 git 更改",
       },
       ...(vcs?.branch && vcs.default_branch && vcs.branch !== vcs.default_branch
         ? [
             {
-              title: "Main branch",
+              title: "主分支",
               value: "branch" as const,
               description: "显示与主分支相比的更改",
             },
           ]
         : []),
       {
-        title: "Last turn",
+        title: "上一轮",
         value: "last-turn" as const,
         description: "显示上一次助手回复的更改",
       },
@@ -709,7 +709,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   const openSwitchDiffDialog = () => {
     props.api.ui.dialog.replace(() => (
       <DialogSelect
-        title="Switch source"
+        title="切换源"
         skipFilter={true}
         renderFilter={false}
         current={mode()}
@@ -988,7 +988,7 @@ function DiffViewerHelpDialog() {
     },
     {
       shortcut: useCommandShortcut("diff.switch_source"),
-      action: "Switch source",
+      action: "切换源",
       description: "选择工作树、主分支或上一轮的更改",
     },
     {

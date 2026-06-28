@@ -38,7 +38,7 @@ export function DialogPrompt(props: DialogPromptProps) {
     commands: [
       {
         name: "dialog.prompt.submit",
-        title: "Submit dialog prompt",
+        title: "提交对话框提示",
         category: "Dialog",
         run: confirm,
       },

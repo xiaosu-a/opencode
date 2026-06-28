@@ -373,7 +373,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
       commands: [
         {
           name: "dialog.select.prev",
-          title: "Previous item",
+          title: "上一项",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -382,7 +382,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.next",
-          title: "Next item",
+          title: "下一项",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -391,7 +391,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.page_up",
-          title: "Page up",
+          title: "向上翻页",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -400,7 +400,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.page_down",
-          title: "Page down",
+          title: "向下翻页",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -409,7 +409,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.home",
-          title: "First item",
+          title: "第一项",
           category: "Dialog",
           run() {
             if (props.locked) return
@@ -419,7 +419,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.end",
-          title: "Last item",
+          title: "最后一项",
           category: "Dialog",
           run() {
             if (props.locked) return
@@ -429,7 +429,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.submit",
-          title: "Select item",
+          title: "选择项目",
           category: "Dialog",
           run: submit,
         },

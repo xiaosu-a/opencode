@@ -256,8 +256,8 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           const value = currentModel()
           if (!value) {
             return {
-              provider: "Connect a provider",
-              model: "No provider selected",
+              provider: "连接提供商",
+              model: "未选择提供商",
               reasoning: false,
             }
           }

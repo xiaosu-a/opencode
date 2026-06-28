@@ -21,13 +21,13 @@ export function DialogSessionDeleteFailed(props: {
   const options = [
     {
       id: "delete" as const,
-      title: "Delete workspace",
+      title: "删除工作区",
       description: "删除工作区及其所有关联会话。",
       run: props.onDelete,
     },
     {
       id: "restore" as const,
-      title: "Restore to new workspace",
+      title: "恢复到新工作区",
       description: "尝试将此会话恢复到新工作区。",
       run: props.onRestore,
     },

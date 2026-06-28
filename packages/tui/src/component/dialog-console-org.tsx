@@ -51,7 +51,7 @@ export function DialogConsoleOrg() {
     if (listed === undefined) {
       return [
         {
-          title: "Loading orgs...",
+          title: "加载组织...",
           value: "loading",
           onSelect: () => {},
         },
@@ -61,7 +61,7 @@ export function DialogConsoleOrg() {
     if (listed.length === 0) {
       return [
         {
-          title: "No orgs found",
+          title: "未找到组织",
           value: "empty",
           onSelect: () => {},
         },

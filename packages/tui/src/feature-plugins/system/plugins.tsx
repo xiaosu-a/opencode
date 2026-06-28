@@ -46,7 +46,7 @@ function Install(props: { api: TuiPluginApi }) {
 
   return (
     <props.api.ui.DialogPrompt
-      title="Install plugin"
+      title="安装插件"
       placeholder="npm package name"
       busy={busy()}
       busyText="Installing plugin..."
@@ -249,7 +249,7 @@ const tui: TuiPlugin = async (api) => {
       },
       {
         name: "plugins.install",
-        title: "Install plugin",
+        title: "安装插件",
         category: "System",
         namespace: "palette",
         run() {

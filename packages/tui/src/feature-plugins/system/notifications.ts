@@ -18,12 +18,12 @@ function notify(api: TuiPluginApi, sessionID: string | undefined, message: strin
 }
 
 function sessionErrorMessage(error: SessionError) {
-  if (error?.name === "MessageAbortedError") return "Session aborted"
+  if (error?.name === "MessageAbortedError") return "会话已中止"
   const data = error?.data
   if (data && typeof data === "object" && "message" in data && data.message === "SSE read timed out") {
     return "Model stopped responding"
   }
-  return "Session error"
+  return "会话错误"
 }
 
 const tui: TuiPlugin = async (api) => {
@@ -74,7 +74,7 @@ const tui: TuiPlugin = async (api) => {
     }
 
     const session = api.state.session.get(sessionID)
-    notify(api, sessionID, "Session done", session?.parentID ? "subagent_done" : "done")
+    notify(api, sessionID, "会话完成", session?.parentID ? "subagent_done" : "done")
   })
 
   api.event.on("session.error", (event) => {

@@ -431,7 +431,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     await clipboard
       .write?.(text)
-      .then(() => toast.show({ message: "Copied to clipboard", variant: "info" }))
+      .then(() => toast.show({ message: "已复制到剪贴板", variant: "info" }))
       .catch(toast.error)
 
     renderer.clearSelection()
@@ -504,7 +504,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           if (result.data?.id) {
             route.navigate({ type: "session", sessionID: result.data.id })
           } else {
-            toast.show({ message: "Failed to fork session", variant: "error" })
+            toast.show({ message: "分叉会话失败", variant: "error" })
           }
         })
       } else {
@@ -524,7 +524,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       if (result.data?.id) {
         route.navigate({ type: "session", sessionID: result.data.id })
       } else {
-        toast.show({ message: "Failed to fork session", variant: "error" })
+        toast.show({ message: "分叉会话失败", variant: "error" })
       }
     })
   })
@@ -632,8 +632,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_recent",
-        title: "Model cycle",
-        category: "Agent",
+        title: "模型切换",
+        category: "智能体",
         hidden: true,
         run: () => {
           local.model.cycle(1)
@@ -641,8 +641,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_recent_reverse",
-        title: "Model cycle reverse",
-        category: "Agent",
+        title: "反向切换模型",
+        category: "智能体",
         hidden: true,
         run: () => {
           local.model.cycle(-1)
@@ -650,8 +650,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_favorite",
-        title: "Favorite cycle",
-        category: "Agent",
+        title: "收藏切换",
+        category: "智能体",
         hidden: true,
         run: () => {
           local.model.cycleFavorite(1)
@@ -659,8 +659,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "model.cycle_favorite_reverse",
-        title: "Favorite cycle reverse",
-        category: "Agent",
+        title: "反向切换收藏",
+        category: "智能体",
         hidden: true,
         run: () => {
           local.model.cycleFavorite(-1)
@@ -1033,8 +1033,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
     if (result.error || !result.data?.success) {
       toast.show({
         variant: "error",
-        title: "Update Failed",
-        message: "Update failed",
+        title: "更新失败",
+        message: "更新失败",
         duration: 10000,
       })
       return

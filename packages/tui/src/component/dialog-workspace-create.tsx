@@ -217,7 +217,7 @@ export function DialogWorkspaceSelect(props: {
         title: "无",
         value: { type: "none" as const },
         description: "使用本地项目",
-        category: "Choose workspace",
+        category: "选择工作区",
       },
       ...recent.map((workspace: Workspace) => ({
         title: workspace.name,
@@ -228,15 +228,15 @@ export function DialogWorkspaceSelect(props: {
           workspaceType: workspace.type,
           workspaceName: workspace.name,
         },
-        category: "Choose workspace",
+        category: "选择工作区",
       })),
       ...(hasMore
         ? [
             {
               title: "查看所有工作区",
               value: { type: "existing-list" as const },
-              description: "Choose from all workspaces",
-              category: "Choose workspace",
+              description: "从所有工作区中选择",
+              category: "选择工作区",
             },
           ]
         : []),

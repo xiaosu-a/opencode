@@ -110,7 +110,7 @@ export function DialogSessionList() {
           result = await sdk.client.experimental.workspace.create({ type: selection.workspaceType, branch: null })
         } catch (err) {
           toast.show({
-            title: "Failed to create workspace",
+            title: "创建工作区失败",
             message: errorMessage(err),
             variant: "error",
           })
@@ -119,7 +119,7 @@ export function DialogSessionList() {
         const workspace = result?.data
         if (!workspace) {
           toast.show({
-            title: "Failed to create workspace",
+            title: "创建工作区失败",
             message: errorMessage(result?.error ?? "no response"),
             variant: "error",
           })
@@ -154,7 +154,7 @@ export function DialogSessionList() {
           if (result.error) {
             toast.show({
               variant: "error",
-              title: "Failed to delete workspace",
+              title: "删除工作区失败",
               message: errorMessage(result.error),
             })
             return false
@@ -313,7 +313,7 @@ export function DialogSessionList() {
                   } else {
                     toast.show({
                       variant: "error",
-                      title: "Failed to delete session",
+                      title: "删除会话失败",
                       message: errorMessage(result.error),
                     })
                   }
@@ -326,7 +326,7 @@ export function DialogSessionList() {
                 } else {
                   toast.show({
                     variant: "error",
-                    title: "Failed to delete session",
+                    title: "删除会话失败",
                     message: errorMessage(err),
                   })
                 }

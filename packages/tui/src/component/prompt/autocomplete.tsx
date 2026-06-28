@@ -584,7 +584,7 @@ export function Autocomplete(props: {
     commands: [
       {
         name: "prompt.autocomplete.prev",
-        title: "Previous autocomplete item",
+        title: "上一个自动补全项",
         category: "Autocomplete",
         run() {
           setStore("input", "keyboard")
@@ -593,7 +593,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.next",
-        title: "Next autocomplete item",
+        title: "下一个自动补全项",
         category: "Autocomplete",
         run() {
           setStore("input", "keyboard")
@@ -602,7 +602,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.hide",
-        title: "Hide autocomplete",
+        title: "隐藏自动补全",
         category: "Autocomplete",
         run() {
           hide()
@@ -610,7 +610,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.select",
-        title: "Select autocomplete item",
+        title: "选择自动补全项",
         category: "Autocomplete",
         run() {
           select()

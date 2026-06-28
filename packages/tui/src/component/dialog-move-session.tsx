@@ -113,7 +113,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
     if (showError()) return []
     const data = directoryData()
     const current = currentRoot()?.directory
-    if (directories.loading && !data && !current) return [{ title: "Loading project directories...", value: undefined }]
+    if (directories.loading && !data && !current) return [{ title: "加载项目目录...", value: undefined }]
     const roots = [...(data ?? [])]
     if (current && !roots.some((item) => item.directory === current)) roots.unshift({ directory: current })
     roots.sort((a, b) => {
@@ -123,7 +123,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       if (!a.strategy && !b.strategy) return a.directory.length - b.directory.length
       return 0
     })
-    if (roots.length === 0) return [{ title: "No project directories found", value: undefined }]
+    if (roots.length === 0) return [{ title: "未找到项目目录", value: undefined }]
 
     const subdirectories = sync.data.session
       .filter((session) => session.projectID === props.projectID && session.path && ![".", "/"].includes(session.path))
@@ -235,7 +235,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       if ("data" in result.error && result.error.data.forceRequired) {
         const status = await sdk.client.vcs.status({ directory: selected.directory }).catch(() => undefined)
         const choice = await DialogWorkspaceFileChanges.show(dialog, status?.data ?? [], {
-          title: "Delete working copy?",
+          title: "删除工作副本？",
           message: "This working copy has file changes. Do you want to delete it anyway?",
         })
         if (choice !== "yes") {
@@ -254,7 +254,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
         if (forced.error) {
           toast.show({
             variant: "error",
-            title: "Failed to delete project copy",
+            title: "删除项目副本失败",
             message: errorMessage(forced.error),
           })
           reopen()
@@ -268,8 +268,8 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       }
       toast.show({
         variant: "error",
-        title: "Failed to delete project copy",
-        message: errorMessage(result.error),
+        title: "删除项目副本失败",
+            message: errorMessage(result.error),
       })
       return
     }

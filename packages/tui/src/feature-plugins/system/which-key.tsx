@@ -343,7 +343,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.home,
-        title: "First key binding",
+        title: "第一个键绑定",
         desc: "Jump to the first which-key binding",
         category: "System",
         run() {
@@ -352,7 +352,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.end,
-        title: "Last key binding",
+        title: "最后一个键绑定",
         desc: "Jump to the last which-key binding",
         category: "System",
         run() {
@@ -539,7 +539,7 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: command.toggle,
-        title: "Show key bindings",
+        title: "显示键绑定",
         desc: "Toggle which-key overlay",
         category: "System",
         run() {

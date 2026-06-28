@@ -783,7 +783,7 @@ export function Session() {
       },
     },
     {
-      title: "Half page up",
+      title: "向上翻半页",
       value: "session.half.page.up",
       category: "Session",
       hidden: true,
@@ -793,7 +793,7 @@ export function Session() {
       },
     },
     {
-      title: "Half page down",
+      title: "向下翻半页",
       value: "session.half.page.down",
       category: "Session",
       hidden: true,
@@ -803,7 +803,7 @@ export function Session() {
       },
     },
     {
-      title: "First message",
+      title: "第一条消息",
       value: "session.first",
       category: "Session",
       hidden: true,
@@ -813,7 +813,7 @@ export function Session() {
       },
     },
     {
-      title: "Last message",
+      title: "最后一条消息",
       value: "session.last",
       category: "Session",
       hidden: true,
@@ -823,7 +823,7 @@ export function Session() {
       },
     },
     {
-      title: "Jump to last user message",
+      title: "跳转到最后一条用户消息",
       value: "session.messages_last_user",
       category: "Session",
       hidden: true,
@@ -854,21 +854,21 @@ export function Session() {
       },
     },
     {
-      title: "Next message",
+      title: "下一条消息",
       value: "session.message.next",
       category: "Session",
       hidden: true,
       run: () => scrollToMessage("next", dialog),
     },
     {
-      title: "Previous message",
+      title: "上一条消息",
       value: "session.message.previous",
       category: "Session",
       hidden: true,
       run: () => scrollToMessage("prev", dialog),
     },
     {
-      title: "Copy last assistant message",
+      title: "复制最后一条助手消息",
       value: "messages.copy",
       category: "Session",
       run: () => {
@@ -911,7 +911,7 @@ export function Session() {
       },
     },
     {
-      title: "Copy session transcript",
+      title: "复制会话记录",
       value: "session.copy",
       category: "Session",
       slash: {
@@ -941,7 +941,7 @@ export function Session() {
       },
     },
     {
-      title: "Export session transcript",
+      title: "导出会话记录",
       value: "session.export",
       category: "Session",
       slash: {
@@ -1016,7 +1016,7 @@ export function Session() {
       },
     },
     {
-      title: "Background subagents",
+      title: "后台子智能体",
       value: "session.background",
       category: "Session",
       hidden: true,
@@ -1030,7 +1030,7 @@ export function Session() {
       },
     },
     {
-      title: "Go to child session",
+      title: "跳转到子会话",
       value: "session.child.first",
       category: "Session",
       hidden: true,
@@ -1040,7 +1040,7 @@ export function Session() {
       },
     },
     {
-      title: "Go to parent session",
+      title: "跳转到父会话",
       value: "session.parent",
       category: "Session",
       hidden: true,
@@ -1057,7 +1057,7 @@ export function Session() {
       }),
     },
     {
-      title: "Next child session",
+      title: "下一个子会话",
       value: "session.child.next",
       category: "Session",
       hidden: true,
@@ -1068,7 +1068,7 @@ export function Session() {
       }),
     },
     {
-      title: "Previous child session",
+      title: "上一个子会话",
       value: "session.child.previous",
       category: "Session",
       hidden: true,
