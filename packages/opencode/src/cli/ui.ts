@@ -2,16 +2,11 @@ import { EOL } from "os"
 import { Schema } from "effect"
 import { logo as glyphs } from "./logo"
 
-// SumoCode ASCII Logo - 严格对齐规范
-// 每个字母: 4 字符宽
-// 字母间距: 1 空格
-// 总宽度: 8 × 4 + 7 × 1 = 39 字符
-// 阴影: M 字母上方 (位置 10-13)
 const wordmark = [
-  "          ▄                              ",
-  "█▀▀█ █  █ █▄▄█ █▀▀█ █▀▀▀ █▀▀█ █▀▀▄ █▀▀▀",
-  "█__█ █  █ █^^^ █__█ █    █__█ █__█ █   ",
-  "▀▀▀▀ ▀▀▀▀ ▀~~▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀",
+  `⠀                                ▄     `,
+  `█▀▀█ █  █ █▄▄█ █▀▀█ █▀▀▀ █▀▀█ █▀▀▄ █▀▀▀`,
+  `█__█ █  █ █^^^ █__█ █    █__█ █__█ █   `,
+  `▀▀▀▀ ▀▀▀▀ ▀~~▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀`,
 ]
 
 export class CancelledError extends Schema.TaggedErrorClass<CancelledError>()("UICancelledError", {}) {}
