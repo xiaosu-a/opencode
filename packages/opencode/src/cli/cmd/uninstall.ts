@@ -24,7 +24,7 @@ interface RemovalTargets {
 
 export const UninstallCommand = {
   command: "uninstall",
-  describe: "uninstall opencode and remove all related files",
+  describe: "卸载 SumoCode 并删除所有相关文件",
   builder: (yargs: Argv) =>
     yargs
       .option("keep-config", {
@@ -133,9 +133,9 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
       pnpm: "pnpm uninstall -g sumocode-ai",
       bun: "bun remove -g sumocode-ai",
       yarn: "yarn global remove sumocode-ai",
-      brew: "brew uninstall opencode",
-      choco: "choco uninstall opencode",
-      scoop: "scoop uninstall opencode",
+      brew: "brew uninstall sumocode",
+      choco: "choco uninstall sumocode",
+      scoop: "scoop uninstall sumocode",
     }
     prompts.log.info(`  ✓ Package: ${cmds[method] || method}`)
   }

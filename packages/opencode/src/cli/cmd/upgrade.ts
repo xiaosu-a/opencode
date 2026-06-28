@@ -6,7 +6,7 @@ import { InstallationVersion } from "@sumocode-ai/core/installation/version"
 
 export const UpgradeCommand = {
   command: "upgrade [target]",
-  describe: "upgrade opencode to the latest or a specific version",
+  describe: "升级 SumoCode 到最新或指定版本",
   builder: (yargs: Argv) => {
     return yargs
       .positional("target", {
