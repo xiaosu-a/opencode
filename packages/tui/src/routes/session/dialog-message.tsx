@@ -23,7 +23,7 @@ export function DialogMessage(props: {
       title="Message Actions"
       options={[
         {
-          title: "Revert",
+          title: "撤销",
           value: "session.revert",
           description: "undo messages and file changes",
           onSelect: (dialog) => {
@@ -54,7 +54,7 @@ export function DialogMessage(props: {
           },
         },
         {
-          title: "Copy",
+          title: "复制",
           value: "message.copy",
           description: "message text to clipboard",
           onSelect: async (dialog) => {
@@ -74,7 +74,7 @@ export function DialogMessage(props: {
           },
         },
         {
-          title: "Fork",
+          title: "分叉",
           value: "session.fork",
           description: "create a new session",
           onSelect: async (dialog) => {

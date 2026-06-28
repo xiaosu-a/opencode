@@ -236,7 +236,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
         const status = await sdk.client.vcs.status({ directory: selected.directory }).catch(() => undefined)
         const choice = await DialogWorkspaceFileChanges.show(dialog, status?.data ?? [], {
           title: "删除工作副本？",
-          message: "This working copy has file changes. Do you want to delete it anyway?",
+          message: "此工作副本有文件更改。确定要删除吗？",
         })
         if (choice !== "yes") {
           reopen()

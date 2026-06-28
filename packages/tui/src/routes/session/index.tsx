@@ -457,7 +457,7 @@ export function Session() {
 
   const sessionCommandList = createMemo(() => [
     {
-      title: session()?.share?.url ? "Copy share link" : "Share session",
+      title: session()?.share?.url ? "复制分享链接" : "分享会话",
       value: "session.share",
       suggested: route.type === "session",
       category: "Session",
@@ -469,8 +469,8 @@ export function Session() {
         const copy = (url: string) =>
           clipboard
             .write?.(url)
-            .then(() => toast.show({ message: "Share URL copied to clipboard!", variant: "success" }))
-            .catch(() => toast.show({ message: "Failed to copy URL to clipboard", variant: "error" }))
+            .then(() => toast.show({ message: "分享链接已复制到剪贴板！", variant: "success" }))
+            .catch(() => toast.show({ message: "复制链接到剪贴板失败", variant: "error" }))
         const url = session()?.share?.url
         if (url) {
           await copy(url)
@@ -489,7 +489,7 @@ export function Session() {
           .then((res) => copy(res.data!.share!.url))
           .catch((error) => {
             toast.show({
-              message: error instanceof Error ? error.message : "Failed to share session",
+              message: error instanceof Error ? error.message : "分享会话失败",
               variant: "error",
             })
           })
@@ -497,7 +497,7 @@ export function Session() {
       },
     },
     {
-      title: "Rename session",
+      title: "重命名会话",
       value: "session.rename",
       category: "Session",
       slash: {
@@ -508,7 +508,7 @@ export function Session() {
       },
     },
     {
-      title: "Jump to message",
+      title: "跳转到消息",
       value: "session.timeline",
       category: "Session",
       slash: {
@@ -530,7 +530,7 @@ export function Session() {
       },
     },
     {
-      title: "Fork session",
+      title: "分叉会话",
       value: "session.fork",
       category: "Session",
       slash: {
@@ -552,7 +552,7 @@ export function Session() {
       },
     },
     {
-      title: "Compact session",
+      title: "压缩会话",
       value: "session.compact",
       category: "Session",
       slash: {
@@ -564,7 +564,7 @@ export function Session() {
         if (!selectedModel) {
           toast.show({
             variant: "warning",
-            message: "Connect a provider to summarize this session",
+            message: "连接提供商以总结此会话",
             duration: 3000,
           })
           return
@@ -578,7 +578,7 @@ export function Session() {
       },
     },
     {
-      title: "Unshare session",
+      title: "取消分享会话",
       value: "session.unshare",
       category: "Session",
       enabled: !!session()?.share?.url,
@@ -590,10 +590,10 @@ export function Session() {
           .unshare({
             sessionID: route.sessionID,
           })
-          .then(() => toast.show({ message: "Session unshared successfully", variant: "success" }))
+          .then(() => toast.show({ message: "会话已取消分享", variant: "success" }))
           .catch((error) => {
             toast.show({
-              message: error instanceof Error ? error.message : "Failed to unshare session",
+              message: error instanceof Error ? error.message : "取消分享会话失败",
               variant: "error",
             })
           })
@@ -601,7 +601,7 @@ export function Session() {
       },
     },
     {
-      title: "Undo previous message",
+      title: "撤销上一条消息",
       value: "session.undo",
       category: "Session",
       slash: {
@@ -638,7 +638,7 @@ export function Session() {
       },
     },
     {
-      title: "Redo",
+      title: "重做",
       value: "session.redo",
       category: "Session",
       enabled: !!session()?.revert?.messageID,
@@ -664,7 +664,7 @@ export function Session() {
       },
     },
     {
-      title: sidebarVisible() ? "Hide sidebar" : "Show sidebar",
+      title: sidebarVisible() ? "隐藏侧边栏" : "显示侧边栏",
       value: "session.sidebar.toggle",
       category: "Session",
       run: () => {
@@ -677,7 +677,7 @@ export function Session() {
       },
     },
     {
-      title: conceal() ? "Disable code concealment" : "Enable code concealment",
+      title: conceal() ? "禁用代码隐藏" : "启用代码隐藏",
       value: "session.toggle.conceal",
       category: "Session",
       run: () => {
@@ -686,7 +686,7 @@ export function Session() {
       },
     },
     {
-      title: showTimestamps() ? "Hide timestamps" : "Show timestamps",
+      title: showTimestamps() ? "隐藏时间戳" : "显示时间戳",
       value: "session.toggle.timestamps",
       category: "Session",
       slash: {
@@ -716,7 +716,7 @@ export function Session() {
       },
     },
     {
-      title: showDetails() ? "Hide tool details" : "Show tool details",
+      title: showDetails() ? "隐藏工具详情" : "显示工具详情",
       value: "session.toggle.actions",
       category: "Session",
       run: () => {
@@ -734,7 +734,7 @@ export function Session() {
       },
     },
     {
-      title: showGenericToolOutput() ? "Hide generic tool output" : "Show generic tool output",
+      title: showGenericToolOutput() ? "隐藏通用工具输出" : "显示通用工具输出",
       value: "session.toggle.generic_tool_output",
       category: "Session",
       run: () => {
@@ -743,7 +743,7 @@ export function Session() {
       },
     },
     {
-      title: "Page up",
+      title: "向上翻页",
       value: "session.page.up",
       category: "Session",
       hidden: true,
@@ -753,7 +753,7 @@ export function Session() {
       },
     },
     {
-      title: "Page down",
+      title: "向下翻页",
       value: "session.page.down",
       category: "Session",
       hidden: true,
@@ -763,7 +763,7 @@ export function Session() {
       },
     },
     {
-      title: "Line up",
+      title: "向上一行",
       value: "session.line.up",
       category: "Session",
       hidden: true,
@@ -773,7 +773,7 @@ export function Session() {
       },
     },
     {
-      title: "Line down",
+      title: "向下一行",
       value: "session.line.down",
       category: "Session",
       hidden: true,
@@ -877,7 +877,7 @@ export function Session() {
           (msg) => msg.role === "assistant" && (!revertID || msg.id < revertID),
         )
         if (!lastAssistantMessage) {
-          toast.show({ message: "No assistant messages found", variant: "error" })
+          toast.show({ message: "未找到助手消息", variant: "error" })
           dialog.clear()
           return
         }

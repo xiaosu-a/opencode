@@ -289,7 +289,7 @@ function WhichKeyPanel(props: {
     commands: [
       {
         name: command.groupPrevious,
-        title: "Previous key binding group",
+        title: "上一个键绑定组",
         desc: "Show the previous which-key group",
         category: "System",
         run() {
@@ -298,7 +298,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.groupNext,
-        title: "Next key binding group",
+        title: "下一个键绑定组",
         desc: "Show the next which-key group",
         category: "System",
         run() {
@@ -307,7 +307,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.scrollUp,
-        title: "Scroll key bindings up",
+        title: "向上滚动键绑定",
         desc: "Scroll the which-key panel up",
         category: "System",
         run() {
@@ -316,7 +316,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.scrollDown,
-        title: "Scroll key bindings down",
+        title: "向下滚动键绑定",
         desc: "Scroll the which-key panel down",
         category: "System",
         run() {
@@ -325,7 +325,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.pageUp,
-        title: "Page key bindings up",
+        title: "向上翻页键绑定",
         desc: "Page the which-key panel up",
         category: "System",
         run() {
@@ -334,7 +334,7 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.pageDown,
-        title: "Page key bindings down",
+        title: "向下翻页键绑定",
         desc: "Page the which-key panel down",
         category: "System",
         run() {

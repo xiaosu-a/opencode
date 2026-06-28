@@ -618,7 +618,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.complete",
-        title: "Complete autocomplete item",
+        title: "完成自动补全项",
         category: "Autocomplete",
         run() {
           const selected = options()[store.selected]

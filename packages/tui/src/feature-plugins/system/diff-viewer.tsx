@@ -673,7 +673,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.help",
-      title: "Show more diff viewer shortcuts",
+      title: "显示更多差异查看器快捷键",
       category: "VCS",
       run() {
         openHelpDialog()

@@ -212,7 +212,7 @@ export function Prompt(props: PromptProps) {
   function promptModelWarning() {
     toast.show({
       variant: "warning",
-      message: "Connect a provider to send prompts",
+      message: "连接提供商以发送提示",
       duration: 3000,
     })
     if (sync.data.provider.length === 0) {
@@ -363,7 +363,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Paste",
+        title: "粘贴",
         name: "prompt.paste",
         category: "Prompt",
         hidden: true,
@@ -508,7 +508,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Skills",
+        title: "技能",
         name: "prompt.skills",
         category: "Prompt",
         slashName: "skills",
@@ -528,7 +528,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Warp",
+        title: "合并",
         desc: "Change the workspace for the session",
         name: "workspace.set",
         category: "Session",
@@ -1007,7 +1007,7 @@ export function Prompt(props: PromptProps) {
         console.log("Creating a session failed:", res.error)
 
         toast.show({
-          message: "Creating a session failed. Open console for more details.",
+          message: "创建会话失败。请查看控制台了解详情。",
           variant: "error",
         })
 
@@ -1106,7 +1106,7 @@ export function Prompt(props: PromptProps) {
         )
         .catch((error) => {
           toast.show({
-            title: "Failed to send prompt",
+            title: "发送提示失败",
             message: errorMessage(error),
             variant: "error",
           })
